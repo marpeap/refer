@@ -3,6 +3,8 @@ import { sql } from '@/lib/db';
 import { signToken } from '@/lib/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const runtime = 'nodejs';
+
 function generateCode(fullName: string): string {
   const initials = fullName
     .split(' ')
