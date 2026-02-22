@@ -25,6 +25,17 @@ interface Sale {
   referrer_name: string
 }
 
+interface Contract {
+  id: string
+  full_name: string
+  email: string
+  pdf_filename: string
+  status: 'sent' | 'signed'
+  created_at: string
+  signed_at: string | null
+  pdf_url: string
+}
+
 const services = [
   'M-ONE',
   'M-SHOP LITE',
@@ -40,9 +51,15 @@ export default function Admin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState<'referrers' | 'sales'>('referrers')
+  const [activeTab, setActiveTab] = useState<'referrers' | 'sales' | 'contracts'>('referrers')
   const [referrers, setReferrers] = useState<Referrer[]>([])
   const [sales, setSales] = useState<Sale[]>([])
+  const [contracts, setContracts] = useState<Contract[]>([])
+  const [contractModalOpen, setContractModalOpen] = useState(false)
+  const [selectedReferrer, setSelectedReferrer] = useState<Referrer | null>(null)
+  const [contractPdfFile, setContractPdfFile] = useState<File | null>(null)
+  const [contractPdfText, setContractPdfText] = useState('')
+  const [sendContractLoading, setSendContractLoading] = useState(false)
   const [dataLoading, setDataLoading] = useState(false)
   
   // Sale form state
@@ -80,6 +97,23 @@ export default function Admin() {
         if (res.ok) {
           const data = await res.json()
           setReferrers(data)
+        }
+      } else if (activeTab === 'contracts') {
+        const [referrersRes, contractsRes] = await Promise.all([
+          fetch('/api/admin/referrers', {
+            headers: { 'x-admin-password': sessionStorage.getItem('admin_password') || '' }
+          }),
+          fetch('/api/admin/contracts', {
+            headers: { 'x-admin-password': sessionStorage.getItem('admin_password') || '' }
+          })
+        ])
+        if (referrersRes.ok) {
+          const data = await referrersRes.json()
+          setReferrers(data)
+        }
+        if (contractsRes.ok) {
+          const data = await contractsRes.json()
+          setContracts(data)
         }
       } else {
         const res = await fetch('/api/admin/sales', {
@@ -189,6 +223,49 @@ export default function Admin() {
       }
     } catch {
       // Error silently
+    }
+  }
+
+  const sendContract = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!selectedReferrer) return
+
+    setSendContractLoading(true)
+    try {
+      const formData = new FormData()
+      formData.append('referrer_id', selectedReferrer.id)
+      
+      if (contractPdfFile) {
+        formData.append('pdf', contractPdfFile)
+      } else if (contractPdfText) {
+        formData.append('pdf_text', contractPdfText)
+      } else {
+        alert('Veuillez sélectionner un fichier PDF ou saisir le texte du contrat')
+        setSendContractLoading(false)
+        return
+      }
+
+      const res = await fetch('/api/admin/contracts/send', {
+        method: 'POST',
+        headers: { 'x-admin-password': sessionStorage.getItem('admin_password') || '' },
+        body: formData
+      })
+
+      if (res.ok) {
+        setContractModalOpen(false)
+        setSelectedReferrer(null)
+        setContractPdfFile(null)
+        setContractPdfText('')
+        fetchData()
+        alert('Contrat envoyé avec succès')
+      } else {
+        const data = await res.json()
+        alert(data.error || 'Erreur lors de l\'envoi du contrat')
+      }
+    } catch {
+      alert('Erreur lors de l\'envoi du contrat')
+    } finally {
+      setSendContractLoading(false)
     }
   }
 
@@ -401,6 +478,21 @@ export default function Admin() {
           }}
         >
           Ventes
+        </button>
+        <button
+          onClick={() => setActiveTab('contracts')}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: activeTab === 'contracts' ? '#5B6EF5' : '#111118',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#ffffff',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: 500
+          }}
+        >
+          Contrats
         </button>
       </div>
 
@@ -678,6 +770,303 @@ export default function Admin() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+        </section>
+      )}
+
+      {/* Contracts Tab */}
+      {activeTab === 'contracts' && (
+        <section>
+          {/* Active Referrers with Contract Status */}
+          <h3 style={{
+            fontFamily: "'Syne', sans-serif",
+            fontSize: '18px',
+            fontWeight: 700,
+            marginBottom: '20px'
+          }}>
+            Apporteurs actifs
+          </h3>
+          {dataLoading ? (
+            <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+          ) : (
+            <div style={{ overflowX: 'auto', marginBottom: '48px' }}>
+              <table style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                backgroundColor: '#111118',
+                borderRadius: '12px',
+                overflow: 'hidden'
+              }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#1a1a25' }}>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Nom</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Email</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Code</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Statut contrat</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {referrers.filter(r => r.status === 'active').map((referrer) => {
+                    const referrerContracts = contracts.filter(c => c.email === referrer.email)
+                    const hasSignedContract = referrerContracts.some(c => c.status === 'signed')
+                    const hasSentContract = referrerContracts.some(c => c.status === 'sent')
+                    let contractStatus = 'Aucun'
+                    if (hasSignedContract) contractStatus = 'Signé'
+                    else if (hasSentContract) contractStatus = 'Envoyé'
+                    
+                    return (
+                      <tr key={referrer.id} style={{ borderTop: '1px solid #2a2a35' }}>
+                        <td style={{ padding: '16px' }}>{referrer.full_name}</td>
+                        <td style={{ padding: '16px', color: '#a0a0a0' }}>{referrer.email}</td>
+                        <td style={{ padding: '16px', fontFamily: "'Syne', monospace", fontWeight: 700 }}>{referrer.code}</td>
+                        <td style={{ padding: '16px' }}>
+                          <span style={{
+                            padding: '4px 12px',
+                            borderRadius: '12px',
+                            fontSize: '12px',
+                            fontWeight: 500,
+                            backgroundColor: hasSignedContract ? '#10b98120' : hasSentContract ? '#f59e0b20' : '#6b728020',
+                            color: hasSignedContract ? '#10b981' : hasSentContract ? '#f59e0b' : '#6b7280'
+                          }}>
+                            {contractStatus}
+                          </span>
+                        </td>
+                        <td style={{ padding: '16px' }}>
+                          {!hasSignedContract && (
+                            <button
+                              onClick={() => {
+                                setSelectedReferrer(referrer)
+                                setContractModalOpen(true)
+                              }}
+                              style={{
+                                padding: '6px 12px',
+                                backgroundColor: '#5B6EF5',
+                                border: 'none',
+                                borderRadius: '4px',
+                                color: '#ffffff',
+                                cursor: 'pointer',
+                                fontSize: '12px'
+                              }}
+                            >
+                              Envoyer un contrat
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* All Contracts */}
+          <h3 style={{
+            fontFamily: "'Syne', sans-serif",
+            fontSize: '18px',
+            fontWeight: 700,
+            marginBottom: '20px'
+          }}>
+            Tous les contrats
+          </h3>
+          {dataLoading ? (
+            <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+          ) : (
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                backgroundColor: '#111118',
+                borderRadius: '12px',
+                overflow: 'hidden'
+              }}>
+                <thead>
+                  <tr style={{ backgroundColor: '#1a1a25' }}>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Apporteur</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Date envoi</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Statut</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Date signature</th>
+                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {contracts.map((contract) => (
+                    <tr key={contract.id} style={{ borderTop: '1px solid #2a2a35' }}>
+                      <td style={{ padding: '16px' }}>{contract.full_name}</td>
+                      <td style={{ padding: '16px', color: '#a0a0a0' }}>{formatDate(contract.created_at)}</td>
+                      <td style={{ padding: '16px' }}>
+                        <span style={{
+                          padding: '4px 12px',
+                          borderRadius: '12px',
+                          fontSize: '12px',
+                          fontWeight: 500,
+                          backgroundColor: contract.status === 'signed' ? '#10b98120' : '#f59e0b20',
+                          color: contract.status === 'signed' ? '#10b981' : '#f59e0b'
+                        }}>
+                          {contract.status === 'signed' ? 'Signé' : 'Envoyé'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '16px', color: '#a0a0a0' }}>
+                        {contract.signed_at ? formatDate(contract.signed_at) : '-'}
+                      </td>
+                      <td style={{ padding: '16px' }}>
+                        <a
+                          href={`https://storage.marpeap.digital/contracts/${contract.pdf_filename}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{
+                            padding: '6px 12px',
+                            backgroundColor: '#5B6EF5',
+                            border: 'none',
+                            borderRadius: '4px',
+                            color: '#ffffff',
+                            textDecoration: 'none',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            display: 'inline-block'
+                          }}
+                        >
+                          Voir PDF
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Contract Modal */}
+          {contractModalOpen && selectedReferrer && (
+            <div style={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '24px',
+              zIndex: 1000
+            }}>
+              <div style={{
+                backgroundColor: '#111118',
+                borderRadius: '12px',
+                padding: '32px',
+                width: '100%',
+                maxWidth: '600px',
+                maxHeight: '90vh',
+                overflow: 'auto'
+              }}>
+                <h3 style={{
+                  fontFamily: "'Syne', sans-serif",
+                  fontSize: '20px',
+                  fontWeight: 700,
+                  marginBottom: '20px'
+                }}>
+                  Envoyer un contrat à {selectedReferrer.full_name}
+                </h3>
+
+                <form onSubmit={sendContract} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                  <div>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      color: '#a0a0a0'
+                    }}>Option 1 : Uploader un PDF</label>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(e) => setContractPdfFile(e.target.files?.[0] || null)}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        backgroundColor: '#080810',
+                        border: '1px solid #2a2a35',
+                        borderRadius: '8px',
+                        color: '#ffffff',
+                        fontSize: '14px'
+                      }}
+                    />
+                  </div>
+
+                  <div>
+                    <label style={{
+                      display: 'block',
+                      marginBottom: '8px',
+                      fontSize: '14px',
+                      fontWeight: 500,
+                      color: '#a0a0a0'
+                    }}>Option 2 : Saisir le texte du contrat</label>
+                    <textarea
+                      value={contractPdfText}
+                      onChange={(e) => setContractPdfText(e.target.value)}
+                      placeholder="Texte du contrat..."
+                      rows={6}
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        backgroundColor: '#080810',
+                        border: '1px solid #2a2a35',
+                        borderRadius: '8px',
+                        color: '#ffffff',
+                        fontSize: '14px',
+                        resize: 'vertical',
+                        boxSizing: 'border-box'
+                      }}
+                    />
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setContractModalOpen(false)
+                        setSelectedReferrer(null)
+                        setContractPdfFile(null)
+                        setContractPdfText('')
+                      }}
+                      style={{
+                        flex: 1,
+                        padding: '14px',
+                        backgroundColor: 'transparent',
+                        border: '1px solid #a0a0a0',
+                        borderRadius: '8px',
+                        color: '#a0a0a0',
+                        cursor: 'pointer',
+                        fontSize: '16px',
+                        fontWeight: 500
+                      }}
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={sendContractLoading}
+                      style={{
+                        flex: 1,
+                        padding: '14px',
+                        backgroundColor: '#5B6EF5',
+                        border: 'none',
+                        borderRadius: '8px',
+                        color: '#ffffff',
+                        cursor: sendContractLoading ? 'not-allowed' : 'pointer',
+                        fontSize: '16px',
+                        fontWeight: 700,
+                        opacity: sendContractLoading ? 0.7 : 1
+                      }}
+                    >
+                      {sendContractLoading ? 'Envoi...' : 'Envoyer'}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
           )}
         </section>
