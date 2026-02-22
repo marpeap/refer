@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 
     // Upload to storage
     const uploadFormData = new FormData();
-    uploadFormData.append('file', new Blob([pdfBuffer], { type: 'application/pdf' }), pdfFilename);
+    uploadFormData.append('file', new Blob([new Uint8Array(pdfBuffer)], { type: 'application/pdf' }), pdfFilename);
     uploadFormData.append('secret', UPLOAD_SECRET);
     uploadFormData.append('folder', 'contracts');
 
