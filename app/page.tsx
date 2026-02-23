@@ -14,8 +14,41 @@ export default function Home() {
       alignItems: 'center',
       justifyContent: 'center',
       padding: isMobile ? '20px 16px' : '40px 20px',
-      textAlign: 'center'
+      textAlign: 'center',
+      position: 'relative'
     }}>
+      {/* Admin button */}
+      <Link 
+        href="/admin"
+        style={{
+          position: 'absolute',
+          bottom: isMobile ? '20px' : '40px',
+          right: isMobile ? '20px' : '40px',
+          padding: '8px 12px',
+          backgroundColor: 'transparent',
+          color: '#666',
+          textDecoration: 'none',
+          borderRadius: '6px',
+          fontSize: '12px',
+          fontWeight: 500,
+          border: '1px solid #333',
+          transition: 'all 0.2s',
+          opacity: 0.7
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.opacity = '1'
+          e.currentTarget.style.color = '#5B6EF5'
+          e.currentTarget.style.borderColor = '#5B6EF5'
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.opacity = '0.7'
+          e.currentTarget.style.color = '#666'
+          e.currentTarget.style.borderColor = '#333'
+        }}
+      >
+        Admin
+      </Link>
+
       <div style={{ marginBottom: isMobile ? '40px' : '60px' }}>
         <h1 style={{
           fontFamily: "'Syne', sans-serif",
