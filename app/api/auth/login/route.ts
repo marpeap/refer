@@ -1,4 +1,4 @@
-import bcrypt from 'bcryptjs';
+import { verify } from '@node-rs/bcrypt';
 import { sql } from '@/lib/db';
 import { signToken } from '@/lib/jwt';
 import { NextRequest, NextResponse } from 'next/server';
@@ -43,7 +43,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const isValid = await bcrypt.compare(password, referrer.password_hash);
+    const isValid = await verify(password, referrer.password_hash);
 
     if (!isValid) {
       return NextResponse.json(
