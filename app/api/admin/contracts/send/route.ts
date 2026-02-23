@@ -166,8 +166,9 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error('Contract send error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Contract send error:', error.message);
+    console.error('Stack:', error.stack);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
