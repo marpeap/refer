@@ -16,8 +16,13 @@ function generateCode(fullName: string): string {
 }
 
 export async function POST(req: NextRequest) {
+  console.log('=== REGISTER START ===');
   try {
-    const { full_name, email, phone, password } = await req.json();
+    const body = await req.json();
+    console.log('Body reçu:', body);
+    
+    const { full_name, email, phone, password } = body;
+    console.log('DATABASE_URL défini:', !!process.env.DATABASE_URL);
 
     if (!full_name || !email || !phone || !password) {
       return NextResponse.json(
@@ -26,27 +31,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    console.log('Tentative hash password...');
     const password_hash = await bcrypt.hash(password, 10);
+    console.log('Hash OK');
+    
     const code = generateCode(full_name);
+    console.log('Code généré:', code);
 
+    console.log('Tentative insertion SQL...');
     await sql`
       INSERT INTO referrers (id, full_name, email, phone, password_hash, code, status, created_at)
       VALUES (gen_random_uuid(), ${full_name}, ${email}, ${phone}, ${password_hash}, ${code}, 'pending', NOW())
     `;
+    console.log('Insertion OK');
 
     return NextResponse.json(
       { message: 'Demande envoyée. Notre équipe vous contactera sous 48h.' },
       { status: 201 }
     );
   } catch (error: any) {
-    if (error.message?.includes('unique constraint')) {
-      return NextResponse.json(
-        { error: 'Cet email est déjà utilisé' },
-        { status: 409 }
-      );
-    }
+    console.error('=== REGISTER ERROR ===');
+    console.error('Message:', error.message);
+    console.error('Stack:', error.stack);
     return NextResponse.json(
-      { error: 'Erreur lors de l\'inscription' },
+      { error: 'Erreur lors de l\'inscription', detail: error.message },
       { status: 500 }
     );
   }
