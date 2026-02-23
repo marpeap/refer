@@ -6,7 +6,7 @@ const nextConfig = {
     serverComponentsExternalPackages: ['pg', 'pdf-lib']
   },
   webpack: (config) => {
-    config.externals = [...(config.externals || []), 'pdfkit'];
+    config.externals = [...(config.externals || []), 'pdfkit', '@node-rs/bcrypt'];
     return config;
   }
 }
