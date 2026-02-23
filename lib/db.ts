@@ -1,3 +1,16 @@
-import { neon } from '@neondatabase/serverless';
+import { Pool } from 'pg';
 
-export const sql = neon(process.env.DATABASE_URL!);
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: false,
+});
+
+export async function query(text: string, params?: any[]) {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(text, params);
+    return result.rows;
+  } finally {
+    client.release();
+  }
+}
