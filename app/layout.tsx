@@ -1,6 +1,7 @@
 export const metadata = {
   title: 'Marpeap - Programme d\'apporteurs d\'affaires',
   description: 'Recommandez Marpeap. Touchez une commission.',
+  viewport: 'width=device-width, initial-scale=1'
 }
 
 export default function RootLayout({

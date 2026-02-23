@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { useMobile } from '@/hooks/useMobile'
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ export default function Register() {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
+  const isMobile = useMobile()
 
   const validate = () => {
     const newErrors: Record<string, string> = {}
@@ -69,12 +71,12 @@ export default function Register() {
 
   const inputStyle = {
     width: '100%',
-    padding: '14px 16px',
+    padding: isMobile ? '12px 14px' : '14px 16px',
     backgroundColor: '#111118',
     border: '1px solid #2a2a35',
     borderRadius: '8px',
     color: '#ffffff',
-    fontSize: '16px',
+    fontSize: isMobile ? '16px' : '16px',
     fontFamily: "'DM Sans', sans-serif",
     boxSizing: 'border-box' as const
   }
@@ -93,15 +95,15 @@ export default function Register() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '40px 20px'
+      padding: isMobile ? '20px 16px' : '40px 20px'
     }}>
       <div style={{
         width: '100%',
-        maxWidth: '420px'
+        maxWidth: isMobile ? '100%' : '420px'
       }}>
         <h1 style={{
           fontFamily: "'Syne', sans-serif",
-          fontSize: '32px',
+          fontSize: isMobile ? '28px' : '32px',
           fontWeight: 800,
           marginBottom: '8px',
           textAlign: 'center'
@@ -111,7 +113,8 @@ export default function Register() {
         <p style={{
           textAlign: 'center',
           color: '#a0a0a0',
-          marginBottom: '32px'
+          marginBottom: '32px',
+          fontSize: isMobile ? '14px' : '16px'
         }}>
           Devenez apporteur d&apos;affaires
         </p>
@@ -123,7 +126,8 @@ export default function Register() {
             border: '1px solid #2a5a2a',
             borderRadius: '8px',
             marginBottom: '24px',
-            textAlign: 'center'
+            textAlign: 'center',
+            fontSize: isMobile ? '14px' : '16px'
           }}>
             {message}
           </div>
@@ -137,7 +141,8 @@ export default function Register() {
             borderRadius: '8px',
             marginBottom: '24px',
             textAlign: 'center',
-            color: '#ff6b6b'
+            color: '#ff6b6b',
+            fontSize: isMobile ? '14px' : '16px'
           }}>
             {errors.submit}
           </div>
@@ -208,12 +213,12 @@ export default function Register() {
             type="submit"
             disabled={loading}
             style={{
-              padding: '16px',
+              padding: isMobile ? '14px' : '16px',
               backgroundColor: '#5B6EF5',
               color: '#ffffff',
               border: 'none',
               borderRadius: '8px',
-              fontSize: '16px',
+              fontSize: isMobile ? '16px' : '16px',
               fontWeight: 700,
               cursor: loading ? 'not-allowed' : 'pointer',
               opacity: loading ? 0.7 : 1,
@@ -228,7 +233,7 @@ export default function Register() {
           textAlign: 'center',
           marginTop: '24px',
           color: '#a0a0a0',
-          fontSize: '14px'
+          fontSize: isMobile ? '14px' : '14px'
         }}>
           Déjà inscrit ?{' '}
           <Link href="/login" style={{ color: '#5B6EF5', textDecoration: 'none', fontWeight: 500 }}>

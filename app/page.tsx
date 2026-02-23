@@ -1,8 +1,11 @@
 'use client'
 
 import Link from 'next/link'
+import { useMobile } from '@/hooks/useMobile'
 
 export default function Home() {
+  const isMobile = useMobile()
+
   return (
     <main style={{
       minHeight: '100vh',
@@ -10,13 +13,13 @@ export default function Home() {
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '40px 20px',
+      padding: isMobile ? '20px 16px' : '40px 20px',
       textAlign: 'center'
     }}>
-      <div style={{ marginBottom: '60px' }}>
+      <div style={{ marginBottom: isMobile ? '40px' : '60px' }}>
         <h1 style={{
           fontFamily: "'Syne', sans-serif",
-          fontSize: '48px',
+          fontSize: isMobile ? '32px' : '48px',
           fontWeight: 800,
           marginBottom: '20px',
           lineHeight: 1.2
@@ -26,7 +29,7 @@ export default function Home() {
           Touchez une commission.
         </h1>
         <p style={{
-          fontSize: '18px',
+          fontSize: isMobile ? '16px' : '18px',
           color: '#a0a0a0',
           maxWidth: '600px'
         }}>
@@ -36,10 +39,12 @@ export default function Home() {
 
       <div style={{
         display: 'flex',
-        gap: '40px',
-        marginBottom: '80px',
+        gap: isMobile ? '24px' : '40px',
+        marginBottom: isMobile ? '40px' : '80px',
         flexWrap: 'wrap',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flexDirection: isMobile ? 'column' : 'row',
+        alignItems: 'center'
       }}>
         <div style={{
           display: 'flex',
@@ -61,7 +66,7 @@ export default function Home() {
           <span style={{ fontWeight: 500 }}>Inscrivez-vous</span>
         </div>
 
-        <div style={{ color: '#5B6EF5', fontSize: '24px', display: 'flex', alignItems: 'center' }}>→</div>
+        {!isMobile && <div style={{ color: '#5B6EF5', fontSize: '24px', display: 'flex', alignItems: 'center' }}>→</div>}
 
         <div style={{
           display: 'flex',
@@ -83,7 +88,7 @@ export default function Home() {
           <span style={{ fontWeight: 500 }}>Nous vous contactons</span>
         </div>
 
-        <div style={{ color: '#5B6EF5', fontSize: '24px', display: 'flex', alignItems: 'center' }}>→</div>
+        {!isMobile && <div style={{ color: '#5B6EF5', fontSize: '24px', display: 'flex', alignItems: 'center' }}>→</div>}
 
         <div style={{
           display: 'flex',
@@ -108,21 +113,26 @@ export default function Home() {
 
       <div style={{
         display: 'flex',
-        gap: '20px',
+        gap: isMobile ? '16px' : '20px',
         flexWrap: 'wrap',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        flexDirection: isMobile ? 'column' : 'row',
+        width: '100%',
+        maxWidth: isMobile ? '300px' : 'none'
       }}>
         <Link
           href="/register"
           style={{
-            padding: '16px 32px',
+            padding: isMobile ? '14px 24px' : '16px 32px',
             backgroundColor: '#5B6EF5',
             color: '#ffffff',
             textDecoration: 'none',
             borderRadius: '8px',
             fontWeight: 700,
             fontSize: '16px',
-            transition: 'opacity 0.2s'
+            transition: 'opacity 0.2s',
+            textAlign: 'center',
+            display: 'block'
           }}
         >
           Devenir apporteur
@@ -130,14 +140,16 @@ export default function Home() {
         <Link
           href="/login"
           style={{
-            padding: '16px 32px',
+            padding: isMobile ? '14px 24px' : '16px 32px',
             backgroundColor: 'transparent',
             color: '#ffffff',
             textDecoration: 'none',
             borderRadius: '8px',
             fontWeight: 700,
             fontSize: '16px',
-            border: '2px solid #5B6EF5'
+            border: '2px solid #5B6EF5',
+            textAlign: 'center',
+            display: 'block'
           }}
         >
           Se connecter
