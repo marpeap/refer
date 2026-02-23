@@ -104,18 +104,27 @@ export async function POST(request: NextRequest) {
 
     // Upload to storage
     const uploadFormData = new FormData();
-    uploadFormData.append('file', new Blob([new Uint8Array(pdfBuffer)], { type: 'application/pdf' }), pdfFilename);
-    uploadFormData.append('secret', UPLOAD_SECRET);
-    uploadFormData.append('folder', 'contracts');
+    uploadFormData.append(
+      'file', 
+      new Blob([new Uint8Array(pdfBuffer)], { type: 'application/pdf' }), 
+      pdfFilename
+    );
 
-    const uploadRes = await fetch(`${STORAGE_URL}/upload`, {
-      method: 'POST',
-      headers: { 'secret': UPLOAD_SECRET },
-      body: uploadFormData,
-    });
+    const uploadRes = await fetch(
+      `${STORAGE_URL}/upload?secret=${UPLOAD_SECRET}`, 
+      {
+        method: 'POST',
+        body: uploadFormData,
+      }
+    );
 
     if (!uploadRes.ok) {
-      return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
+      const uploadError = await uploadRes.text();
+      console.error('Upload error:', uploadError);
+      return NextResponse.json(
+        { error: `Upload failed: ${uploadError}` }, 
+        { status: 500 }
+      );
     }
 
     // Generate OTP
