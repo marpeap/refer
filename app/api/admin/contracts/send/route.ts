@@ -127,6 +127,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    const uploadData = await uploadRes.json();
+    const storedFilename = uploadData.filename;
+
     // Generate OTP
     const otpCode = generateOTP();
     const otpSentAt = new Date().toISOString();
@@ -134,7 +137,7 @@ export async function POST(request: NextRequest) {
     // Insert contract
     const contractResult = await query(
       'INSERT INTO contracts (referrer_id, pdf_filename, pdf_hash_before, status, otp_code, otp_sent_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
-      [referrerId, pdfFilename, pdfHashBefore, 'sent', otpCode, otpSentAt]
+      [referrerId, storedFilename, pdfHashBefore, 'sent', otpCode, otpSentAt]
     );
     const contractId = contractResult[0].id;
 
@@ -168,7 +171,7 @@ export async function POST(request: NextRequest) {
       `,
       attachments: [
         {
-          filename: pdfFilename,
+          filename: storedFilename,
           content: pdfBase64,
         },
       ],
