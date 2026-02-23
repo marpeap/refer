@@ -1,4 +1,6 @@
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
+
+export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 
 function verifyAdminPassword(req: NextRequest): boolean {
@@ -15,7 +17,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const result = await sql`
+    const result = await query(`
       SELECT 
         s.id,
         s.client_name,
@@ -27,7 +29,7 @@ export async function GET(req: NextRequest) {
       FROM sales s
       JOIN referrers r ON s.referrer_id = r.id
       ORDER BY s.created_at DESC
-    `;
+    `);
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
@@ -56,9 +58,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const referrerResult = await sql`
-      SELECT id FROM referrers WHERE code = ${referrer_code}
-    `;
+    const referrerResult = await query('SELECT id FROM referrers WHERE code = $1', [referrer_code]);
 
     if (referrerResult.length === 0) {
       return NextResponse.json(
@@ -69,11 +69,10 @@ export async function POST(req: NextRequest) {
 
     const referrer_id = referrerResult[0].id;
 
-    const saleResult = await sql`
-      INSERT INTO sales (id, referrer_id, client_name, service, amount, admin_note, created_at)
-      VALUES (gen_random_uuid(), ${referrer_id}, ${client_name}, ${service}, ${amount}, ${admin_note}, NOW())
-      RETURNING id, referrer_id, client_name, service, amount, admin_note, created_at
-    `;
+    const saleResult = await query(
+      'INSERT INTO sales (id, referrer_id, client_name, service, amount, admin_note, created_at) VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NOW()) RETURNING id, referrer_id, client_name, service, amount, admin_note, created_at',
+      [referrer_id, client_name, service, amount, admin_note]
+    );
 
     return NextResponse.json(saleResult[0], { status: 201 });
   } catch (error) {

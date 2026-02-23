@@ -1,4 +1,6 @@
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
+
+export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
 
 function verifyAdminPassword(req: NextRequest): boolean {
@@ -18,9 +20,7 @@ export async function DELETE(
   }
 
   try {
-    await sql`
-      DELETE FROM sales WHERE id = ${params.id}
-    `;
+    await query('DELETE FROM sales WHERE id = $1', [params.id]);
 
     return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {

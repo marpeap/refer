@@ -1,4 +1,6 @@
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
+
+export const runtime = 'nodejs';
 import { verifyToken } from '@/lib/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -15,11 +17,10 @@ export async function GET(req: NextRequest) {
     const token = authHeader.substring(7);
     const payload = verifyToken(token);
 
-    const result = await sql`
-      SELECT full_name, email, phone, code
-      FROM referrers
-      WHERE id = ${payload.id}
-    `;
+    const result = await query(
+      'SELECT full_name, email, phone, code FROM referrers WHERE id = $1',
+      [payload.id]
+    );
 
     if (result.length === 0) {
       return NextResponse.json(

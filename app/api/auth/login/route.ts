@@ -1,5 +1,7 @@
 import { verify } from '@node-rs/bcrypt';
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
+
+export const runtime = 'nodejs';
 import { signToken } from '@/lib/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -14,11 +16,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const result = await sql`
-      SELECT id, full_name, email, code, password_hash, status
-      FROM referrers
-      WHERE email = ${email}
-    `;
+    const result = await query(
+      'SELECT id, full_name, email, code, password_hash, status FROM referrers WHERE email = $1',
+      [email]
+    );
 
     if (result.length === 0) {
       return NextResponse.json(

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
+
+export const runtime = 'nodejs';
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD as string;
 
@@ -10,7 +12,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const contracts = await sql`
+    const contracts = await query(`
       SELECT 
         c.id,
         c.pdf_filename,
@@ -27,7 +29,7 @@ export async function GET(request: NextRequest) {
       FROM contracts c
       JOIN referrers r ON c.referrer_id = r.id
       ORDER BY c.created_at DESC
-    `;
+    `);
 
     return NextResponse.json(contracts);
   } catch (error) {

@@ -1,4 +1,6 @@
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
+
+export const runtime = 'nodejs';
 import { verifyToken } from '@/lib/jwt';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -15,12 +17,10 @@ export async function GET(req: NextRequest) {
     const token = authHeader.substring(7);
     const payload = verifyToken(token);
 
-    const result = await sql`
-      SELECT id, client_name, service, amount, admin_note, created_at
-      FROM sales
-      WHERE referrer_id = ${payload.id}
-      ORDER BY created_at DESC
-    `;
+    const result = await query(
+      'SELECT id, client_name, service, amount, admin_note, created_at FROM sales WHERE referrer_id = $1 ORDER BY created_at DESC',
+      [payload.id]
+    );
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {

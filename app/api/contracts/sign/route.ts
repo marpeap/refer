@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
+
+export const runtime = 'nodejs';
 import { verifyToken } from '@/lib/jwt';
 import { Resend } from 'resend';
 import crypto from 'crypto';
@@ -34,22 +36,12 @@ export async function POST(request: NextRequest) {
     const referrerId = payload.id;
 
     // Get the contract for this referrer
-    const contracts = await sql`
-      SELECT 
-        c.id,
-        c.pdf_filename,
-        c.pdf_hash_before,
-        c.otp_code,
-        c.otp_sent_at,
-        c.status,
-        r.email,
-        r.full_name
-      FROM contracts c
-      JOIN referrers r ON c.referrer_id = r.id
-      WHERE c.referrer_id = ${referrerId}
-      ORDER BY c.created_at DESC
-      LIMIT 1
-    `;
+    const contracts = await query(
+      `SELECT c.id, c.pdf_filename, c.pdf_hash_before, c.otp_code, c.otp_sent_at, c.status, r.email, r.full_name 
+       FROM contracts c JOIN referrers r ON c.referrer_id = r.id 
+       WHERE c.referrer_id = $1 ORDER BY c.created_at DESC LIMIT 1`,
+      [referrerId]
+    );
 
     if (contracts.length === 0) {
       return NextResponse.json({ error: 'No contract found' }, { status: 404 });
@@ -84,24 +76,16 @@ export async function POST(request: NextRequest) {
     const pdfHashAfter = contract.pdf_hash_before;
 
     // Update contract
-    await sql`
-      UPDATE contracts
-      SET 
-        signature_image = ${signature_image},
-        ip_address = ${ipAddress},
-        user_agent = ${userAgent},
-        signed_at = ${signedAt},
-        pdf_hash_after = ${pdfHashAfter},
-        status = 'signed',
-        otp_verified = true
-      WHERE id = ${contract.id}
-    `;
+    await query(
+      `UPDATE contracts SET signature_image = $1, ip_address = $2, user_agent = $3, signed_at = $4, pdf_hash_after = $5, status = 'signed', otp_verified = true WHERE id = $6`,
+      [signature_image, ipAddress, userAgent, signedAt, pdfHashAfter, contract.id]
+    );
 
     // Log audit
-    await sql`
-      INSERT INTO contract_audit (contract_id, action, ip_address, user_agent)
-      VALUES (${contract.id}, 'signed', ${ipAddress}, ${userAgent})
-    `;
+    await query(
+      'INSERT INTO contract_audit (contract_id, action, ip_address, user_agent) VALUES ($1, $2, $3, $4)',
+      [contract.id, 'signed', ipAddress, userAgent]
+    );
 
     // Send confirmation email
     const pdfUrl = `${STORAGE_URL}/contracts/${contract.pdf_filename}`;

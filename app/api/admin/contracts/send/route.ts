@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
+
+export const runtime = 'nodejs';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { Resend } from 'resend';
 import crypto from 'crypto';
@@ -36,7 +38,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get referrer info
-    const referrerResult = await sql`SELECT * FROM referrers WHERE id = ${referrerId}`;
+    const referrerResult = await query('SELECT * FROM referrers WHERE id = $1', [referrerId]);
     if (referrerResult.length === 0) {
       return NextResponse.json({ error: 'Referrer not found' }, { status: 404 });
     }
@@ -121,18 +123,17 @@ export async function POST(request: NextRequest) {
     const otpSentAt = new Date().toISOString();
 
     // Insert contract
-    const contractResult = await sql`
-      INSERT INTO contracts (referrer_id, pdf_filename, pdf_hash_before, status, otp_code, otp_sent_at)
-      VALUES (${referrerId}, ${pdfFilename}, ${pdfHashBefore}, 'sent', ${otpCode}, ${otpSentAt})
-      RETURNING id
-    `;
+    const contractResult = await query(
+      'INSERT INTO contracts (referrer_id, pdf_filename, pdf_hash_before, status, otp_code, otp_sent_at) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id',
+      [referrerId, pdfFilename, pdfHashBefore, 'sent', otpCode, otpSentAt]
+    );
     const contractId = contractResult[0].id;
 
     // Log audit
-    await sql`
-      INSERT INTO contract_audit (contract_id, action)
-      VALUES (${contractId}, 'sent')
-    `;
+    await query(
+      'INSERT INTO contract_audit (contract_id, action) VALUES ($1, $2)',
+      [contractId, 'sent']
+    );
 
     // Send email with OTP and PDF attachment
     const pdfBase64 = pdfBuffer.toString('base64');

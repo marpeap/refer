@@ -1,5 +1,7 @@
-import { sql } from '@/lib/db';
+import { query } from '@/lib/db';
 import { NextRequest, NextResponse } from 'next/server';
+
+export const runtime = 'nodejs';
 
 function verifyAdminPassword(req: NextRequest): boolean {
   const adminPassword = req.headers.get('x-admin-password');
@@ -15,7 +17,7 @@ export async function GET(req: NextRequest) {
   }
 
   try {
-    const result = await sql`
+    const result = await query(`
       SELECT 
         r.id,
         r.full_name,
@@ -29,7 +31,7 @@ export async function GET(req: NextRequest) {
       LEFT JOIN sales s ON s.referrer_id = r.id
       GROUP BY r.id, r.full_name, r.email, r.phone, r.code, r.status, r.created_at
       ORDER BY r.created_at DESC
-    `;
+    `);
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
