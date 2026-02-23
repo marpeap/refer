@@ -3,7 +3,11 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
-    serverComponentsExternalPackages: ['pg']
+    serverComponentsExternalPackages: ['pg', 'pdf-lib']
+  },
+  webpack: (config) => {
+    config.externals = [...(config.externals || []), 'pdfkit'];
+    return config;
   }
 }
 

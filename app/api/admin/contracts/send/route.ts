@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { sql } from '@/lib/db';
-import PDFDocument from 'pdfkit';
+import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { Resend } from 'resend';
 import crypto from 'crypto';
 
@@ -51,19 +51,47 @@ export async function POST(request: NextRequest) {
       pdfBuffer = Buffer.from(arrayBuffer);
       pdfFilename = `contract_${referrer.code}_${Date.now()}.pdf`;
     } else if (pdfText) {
-      // Generate PDF from text
-      pdfBuffer = await new Promise<Buffer>((resolve, reject) => {
-        const chunks: Buffer[] = [];
-        const doc = new PDFDocument();
+      // Generate PDF from text using pdf-lib
+      const pdfDoc = await PDFDocument.create();
+      const page = pdfDoc.addPage();
+      const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+      
+      const { width, height } = page.getSize();
+      const fontSize = 12;
+      const margin = 50;
+      const maxWidth = width - 2 * margin;
+      
+      // Simple text wrapping
+      const words = pdfText.split(' ');
+      let currentLine = '';
+      const lines: string[] = [];
+      
+      for (const word of words) {
+        const testLine = currentLine ? currentLine + ' ' + word : word;
+        const testWidth = font.widthOfTextAtSize(testLine, fontSize);
         
-        doc.on('data', chunk => chunks.push(chunk));
-        doc.on('end', () => resolve(Buffer.concat(chunks)));
-        doc.on('error', reject);
-
-        doc.fontSize(12);
-        doc.text(pdfText, 50, 50, { width: 500 });
-        doc.end();
-      });
+        if (testWidth > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      
+      // Draw text
+      let y = height - margin;
+      for (const line of lines) {
+        page.drawText(line, {
+          x: margin,
+          y,
+          size: fontSize,
+          font,
+        });
+        y -= fontSize + 4;
+      }
+      
+      pdfBuffer = Buffer.from(await pdfDoc.save());
       pdfFilename = `contract_${referrer.code}_${Date.now()}.pdf`;
     } else {
       return NextResponse.json({ error: 'Missing pdf or pdf_text' }, { status: 400 });
