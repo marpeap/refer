@@ -29,11 +29,154 @@ interface User {
   code: string
 }
 
+interface CommissionRate {
+  pack_name: string
+  commission_amount: number
+}
+
+const PACKS = [
+  {
+    name: 'M-ONE',
+    price: 290,
+    color: '#4F8AFF',
+    tagline: 'Site One-Page Ultra-Rapide',
+    description: 'Un site professionnel, beau et optimisé, livré en 48h. La solution idéale pour les TPE/PME qui veulent une présence web moderne sans se ruiner.',
+    target: 'Artisans, commerçants, auto-entrepreneurs, professions libérales, créateurs d\'entreprise',
+    features: [
+      'Design sur mesure responsive mobile',
+      'Optimisation SEO intégrée',
+      'Formulaire de contact & maps',
+      'Mise en ligne en 48h chrono',
+    ],
+    pitchArgs: [
+      'Vos concurrents sont en ligne — et vous ?',
+      'Un site pro à partir de 290€, sans engagement',
+      'Livré en 48h, pas en 3 mois comme une agence classique',
+    ],
+  },
+  {
+    name: 'M-SHOP LITE',
+    price: 490,
+    color: '#F5A623',
+    tagline: 'Boutique E-Commerce Pro',
+    description: 'Une boutique en ligne complète avec gestion des paiements et des commandes. Parfaite pour lancer ou moderniser une activité e-commerce.',
+    target: 'Créateurs, artisans vendant en ligne, commerces physiques voulant vendre sur internet',
+    features: [
+      'Boutique avec panier & paiement Stripe',
+      'Gestion des produits, stocks, livraisons',
+      'Design adapté à votre marque',
+      'Compatible mobile & SEO optimisé',
+    ],
+    pitchArgs: [
+      'Vendez 24h/24 sans effort supplémentaire',
+      'Boutique pro livrée en moins d\'une semaine',
+      'Concurrencez Amazon et Etsy sur votre niche',
+    ],
+  },
+  {
+    name: 'M-LOCAL',
+    price: 190,
+    color: '#2ED573',
+    tagline: 'Visibilité Google Maps',
+    description: 'Optimisation complète de votre fiche Google Business et référencement local. Apparaissez en premier quand vos clients cherchent "près de moi".',
+    target: 'Restaurants, coiffeurs, plombiers, médecins, tous commerces de proximité',
+    features: [
+      'Optimisation fiche Google Business',
+      'Photos & contenus SEO optimisés',
+      'Stratégie mots-clés locaux',
+      'Résultats visibles dès 30 jours',
+    ],
+    pitchArgs: [
+      '80% des recherches locales aboutissent à une visite physique',
+      'Le pack le moins cher, souvent le plus impactant',
+      '"Trouvez un plombier près de moi" — soyez le premier',
+    ],
+  },
+  {
+    name: 'M-CALLING',
+    price: 490,
+    color: '#F54EA2',
+    tagline: 'Standardiste IA 24h/24',
+    description: 'Un agent vocal IA répond à tous les appels 24h/24, 7j/7 : prise de rendez-vous, informations, gestion des demandes — sans jamais décrocher.',
+    target: 'Cabinets médicaux, restaurants, hôtels, agences immobilières, tout business recevant des appels',
+    features: [
+      'Réponse instantanée 24h/24, 7j/7',
+      'Prise de rendez-vous automatique',
+      'Disponible en plusieurs langues',
+      'Zéro coût de recrutement',
+    ],
+    pitchArgs: [
+      'Plus jamais d\'appel manqué = plus jamais de client perdu',
+      'Remplace un standardiste pour 30€/mois au lieu de 2 500€',
+      'Vos concurrents paient encore un humain pour ça',
+    ],
+  },
+  {
+    name: 'M-CAMPAIGN',
+    price: 280,
+    color: '#00C9A7',
+    tagline: 'Gestionnaire Google Ads IA',
+    description: 'Un agent IA gère vos campagnes Google Ads en continu : optimisation des enchères, mots-clés et annonces pour maximiser votre retour sur investissement.',
+    target: 'E-commerce, agences immobilières, cliniques, formations en ligne, tout business avec budget pub',
+    features: [
+      'Création & optimisation de campagnes',
+      'Suivi et ajustements en temps réel',
+      'Rapports mensuels clairs',
+      'Consultation de démarrage incluse',
+    ],
+    pitchArgs: [
+      'Dépensez moins en pub, gagnez plus de clients',
+      'Votre budget travaille 24h/24 avec l\'IA',
+      'Résultats mesurables dès le 1er mois',
+    ],
+  },
+  {
+    name: 'M-NEURAL',
+    price: 180,
+    color: '#9B5BF5',
+    tagline: 'ChatBot IA sur vos données',
+    description: 'Un chatbot intelligent formé sur vos propres données (PDF, FAQ, catalogue). Il répond instantanément à vos clients sur votre site, sans vous.',
+    target: 'E-commerce, SaaS, entreprises avec support client récurrent, formateurs en ligne',
+    features: [
+      'IA formée sur votre contenu personnalisé',
+      'Intégration site web en 48h',
+      'Répond aux questions 24h/24',
+      'Réduit les tickets support de 70%',
+    ],
+    pitchArgs: [
+      'Finies les réponses aux mêmes questions 10x par jour',
+      'Plus abordable qu\'un CDI au support client',
+      'Vos clients adorent les réponses en 3 secondes',
+    ],
+  },
+  {
+    name: 'M-CORP',
+    price: 820,
+    color: '#F1C40F',
+    tagline: 'Équipe de 5 Agents IA autonomes',
+    description: 'Cinq agents IA spécialisés travaillent en équipe pour automatiser vos processus métiers les plus complexes — votre département IA clé en main.',
+    target: 'PME à partir de 5 employés, entreprises en croissance, secteurs conseil/tech/industrie',
+    features: [
+      '5 agents IA personnalisés sur vos process',
+      'Automatisation des tâches répétitives',
+      'Intégrations CRM, Slack, Drive...',
+      'Formation équipe + support dédié',
+    ],
+    pitchArgs: [
+      'Votre propre équipe IA pour le prix d\'un freelance',
+      'ROI moyen : 40h de travail économisées par mois',
+      'Le pack "transformer sa boîte"',
+    ],
+  },
+]
+
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
   const [sales, setSales] = useState<Sale[]>([])
   const [contract, setContract] = useState<Contract | null>(null)
+  const [commissions, setCommissions] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState<'ventes' | 'catalogue' | 'ressources'>('ventes')
   const [copied, setCopied] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
   const [otpCode, setOtpCode] = useState('')
@@ -46,17 +189,15 @@ export default function Dashboard() {
 
   useEffect(() => {
     const token = localStorage.getItem('refer_token')
-    if (!token) {
-      router.push('/login')
-      return
-    }
+    if (!token) { router.push('/login'); return }
 
     const fetchData = async () => {
       try {
-        const [userRes, salesRes, contractRes] = await Promise.all([
+        const [userRes, salesRes, contractRes, ratesRes] = await Promise.all([
           fetch('/api/me', { headers: { Authorization: `Bearer ${token}` } }),
           fetch('/api/sales', { headers: { Authorization: `Bearer ${token}` } }),
-          fetch('/api/contracts/me', { headers: { Authorization: `Bearer ${token}` } })
+          fetch('/api/contracts/me', { headers: { Authorization: `Bearer ${token}` } }),
+          fetch('/api/commission-rates'),
         ])
 
         if (!userRes.ok || !salesRes.ok) {
@@ -67,13 +208,19 @@ export default function Dashboard() {
 
         const userData = await userRes.json()
         const salesData = await salesRes.json()
-
         setUser(userData)
         setSales(salesData)
 
         if (contractRes.ok) {
           const contractData = await contractRes.json()
           setContract(contractData.contract)
+        }
+
+        if (ratesRes.ok) {
+          const ratesData: CommissionRate[] = await ratesRes.json()
+          const map: Record<string, number> = {}
+          ratesData.forEach(r => { map[r.pack_name] = Number(r.commission_amount) })
+          setCommissions(map)
         }
       } catch {
         localStorage.removeItem('refer_token')
@@ -107,516 +254,559 @@ export default function Dashboard() {
     }
   }
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('fr-FR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    })
-  }
+  const formatDate = (dateString: string) =>
+    new Date(dateString).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
-  // Canvas drawing functions
-  const getCanvasCoordinates = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+  const totalCommission = sales.reduce((acc, sale) => {
+    const note = sale.admin_note || ''
+    const match = note.match(/Commission:\s*([\d.]+)/)
+    return acc + (match ? parseFloat(match[1]) : 0)
+  }, 0)
+
+  // Canvas drawing
+  const getCoords = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current
     if (!canvas) return { x: 0, y: 0 }
-    
     const rect = canvas.getBoundingClientRect()
-    let clientX, clientY
-    
-    if ('touches' in e) {
-      clientX = e.touches[0].clientX
-      clientY = e.touches[0].clientY
-    } else {
-      clientX = (e as React.MouseEvent).clientX
-      clientY = (e as React.MouseEvent).clientY
-    }
-    
-    return {
-      x: clientX - rect.left,
-      y: clientY - rect.top
-    }
+    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX
+    const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
+    return { x: clientX - rect.left, y: clientY - rect.top }
   }
 
   const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault()
     setIsDrawing(true)
-    const canvas = canvasRef.current
-    const ctx = canvas?.getContext('2d')
-    if (!canvas || !ctx) return
-    
-    const { x, y } = getCanvasCoordinates(e)
-    ctx.beginPath()
-    ctx.moveTo(x, y)
+    const ctx = canvasRef.current?.getContext('2d')
+    if (!ctx) return
+    const { x, y } = getCoords(e)
+    ctx.beginPath(); ctx.moveTo(x, y)
   }
 
   const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     e.preventDefault()
     if (!isDrawing) return
-    
-    const canvas = canvasRef.current
-    const ctx = canvas?.getContext('2d')
-    if (!canvas || !ctx) return
-    
-    const { x, y } = getCanvasCoordinates(e)
-    ctx.lineTo(x, y)
-    ctx.stroke()
+    const ctx = canvasRef.current?.getContext('2d')
+    if (!ctx) return
+    const { x, y } = getCoords(e)
+    ctx.lineTo(x, y); ctx.stroke()
   }
 
   const stopDrawing = () => {
     setIsDrawing(false)
-    const canvas = canvasRef.current
-    if (canvas) {
-      setSignatureImage(canvas.toDataURL())
-    }
+    if (canvasRef.current) setSignatureImage(canvasRef.current.toDataURL())
   }
 
   const clearSignature = () => {
     const canvas = canvasRef.current
     const ctx = canvas?.getContext('2d')
     if (!canvas || !ctx) return
-    
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     setSignatureImage('')
   }
 
   const signContract = async () => {
-    if (!otpCode || otpCode.length !== 6) {
-      alert('Veuillez entrer le code OTP à 6 chiffres')
-      return
-    }
-    if (!signatureImage) {
-      alert('Veuillez signer le contrat')
-      return
-    }
-
+    if (!otpCode || otpCode.length !== 6) { alert('Veuillez entrer le code OTP à 6 chiffres'); return }
+    if (!signatureImage) { alert('Veuillez signer le contrat'); return }
     const token = localStorage.getItem('refer_token')
     if (!token) return
-
     setSignLoading(true)
     try {
       const res = await fetch('/api/contracts/sign', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          otp_code: otpCode,
-          signature_image: signatureImage
-        })
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ otp_code: otpCode, signature_image: signatureImage }),
       })
-
       if (res.ok) {
         setSignSuccess(true)
-        // Refresh contract data
-        const contractRes = await fetch('/api/contracts/me', {
-          headers: { Authorization: `Bearer ${token}` }
-        })
-        if (contractRes.ok) {
-          const contractData = await contractRes.json()
-          setContract(contractData.contract)
-        }
+        const contractRes = await fetch('/api/contracts/me', { headers: { Authorization: `Bearer ${token}` } })
+        if (contractRes.ok) { const d = await contractRes.json(); setContract(d.contract) }
       } else {
-        const data = await res.json()
-        alert(data.error || 'Erreur lors de la signature')
+        const d = await res.json(); alert(d.error || 'Erreur lors de la signature')
       }
-    } catch {
-      alert('Erreur lors de la signature')
-    } finally {
-      setSignLoading(false)
-    }
+    } catch { alert('Erreur lors de la signature') }
+    finally { setSignLoading(false) }
   }
 
-  if (loading) {
-    return (
-      <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#a0a0a0' }}>Chargement...</div>
-      </main>
-    )
-  }
+  if (loading) return (
+    <main style={{ minHeight: '100vh', background: '#080810', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>Chargement...</div>
+    </main>
+  )
 
   if (!user) return null
 
+  const TAB_STYLE = (active: boolean): React.CSSProperties => ({
+    padding: '10px 20px',
+    background: active ? '#5B6EF5' : 'rgba(255,255,255,0.04)',
+    border: active ? 'none' : '1px solid rgba(255,255,255,0.08)',
+    borderRadius: 8,
+    color: active ? '#ffffff' : 'rgba(255,255,255,0.5)',
+    cursor: 'pointer',
+    fontSize: 14,
+    fontWeight: active ? 700 : 500,
+    fontFamily: "'DM Sans', sans-serif",
+    transition: 'all 0.2s',
+    whiteSpace: 'nowrap' as const,
+  })
+
   return (
-    <main style={{ minHeight: '100vh', padding: '24px' }}>
+    <main style={{ minHeight: '100vh', background: '#080810', color: '#fff', fontFamily: "'DM Sans', sans-serif" }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;700&family=Syne:wght@700;800&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        select option { background: #1A1A2E; color: #fff; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+        .pack-card { transition: border-color 0.2s, transform 0.15s; }
+        .pack-card:hover { transform: translateY(-2px); }
+      `}</style>
+
       {/* Header */}
       <header style={{
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        padding: '0 32px',
+        height: 58,
         display: 'flex',
-        justifyContent: 'space-between',
         alignItems: 'center',
-        paddingBottom: '24px',
-        borderBottom: '1px solid #2a2a35',
-        marginBottom: '32px'
+        justifyContent: 'space-between',
+        position: 'sticky',
+        top: 0,
+        background: 'rgba(8,8,16,0.95)',
+        backdropFilter: 'blur(12px)',
+        zIndex: 50,
       }}>
         <Link href="/" style={{ textDecoration: 'none' }}>
-          <span style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '24px',
-            fontWeight: 800,
-            color: '#ffffff'
-          }}>
+          <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800 }}>
             mar<span style={{ color: '#5B6EF5' }}>peap</span>
+            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, marginLeft: 8 }}>Apporteurs</span>
           </span>
         </Link>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <span style={{ color: '#a0a0a0' }}>{user.full_name}</span>
-          <button
-            onClick={handleLogout}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: 'transparent',
-              border: '1px solid #5B6EF5',
-              borderRadius: '6px',
-              color: '#5B6EF5',
-              cursor: 'pointer',
-              fontSize: '14px'
-            }}
-          >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+          <span style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>{user.full_name}</span>
+          <button onClick={handleLogout} style={{ background: 'none', border: '1px solid rgba(255,255,255,0.1)', color: 'rgba(255,255,255,0.4)', padding: '5px 12px', borderRadius: 6, cursor: 'pointer', fontSize: 12 }}>
             Déconnexion
           </button>
         </div>
       </header>
 
-      {/* Code Section */}
-      <section style={{
-        backgroundColor: '#111118',
-        borderRadius: '12px',
-        padding: '32px',
-        marginBottom: '32px',
-        textAlign: 'center'
-      }}>
-        <h2 style={{
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '18px',
-          fontWeight: 700,
-          marginBottom: '16px',
-          color: '#a0a0a0'
-        }}>
-          Mon code apporteur
-        </h2>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '16px',
-          flexWrap: 'wrap'
-        }}>
-          <span style={{
-            fontFamily: "'Syne', sans-serif",
-            fontSize: '48px',
-            fontWeight: 800,
-            color: '#5B6EF5',
-            letterSpacing: '2px'
-          }}>
-            {user.code}
-          </span>
-          <button
-            onClick={copyCode}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: copied ? '#1a3a1a' : '#5B6EF5',
-              border: 'none',
-              borderRadius: '6px',
-              color: '#ffffff',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 500
-            }}
-          >
-            {copied ? 'Copié !' : 'Copier'}
-          </button>
-        </div>
-      </section>
+      <div style={{ maxWidth: 1000, margin: '0 auto', padding: '32px 20px' }}>
 
-      {/* Share Link Section */}
-      <section style={{
-        backgroundColor: '#111118',
-        borderRadius: '12px',
-        padding: '24px 32px',
-        marginBottom: '32px'
-      }}>
-        <h2 style={{
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '15px',
-          fontWeight: 700,
-          marginBottom: '12px',
-          color: '#a0a0a0'
-        }}>
-          Mon lien de parrainage
-        </h2>
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px',
-          flexWrap: 'wrap'
-        }}>
-          <span style={{
-            fontFamily: 'monospace',
-            fontSize: '14px',
-            color: '#ffffff',
-            background: '#080810',
-            border: '1px solid #2a2a35',
-            borderRadius: '8px',
-            padding: '10px 16px',
-            flex: 1,
-            minWidth: 0,
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap'
-          }}>
-            https://app.marpeap.digital?ref={user.code}
-          </span>
-          <button
-            onClick={copyLink}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: copiedLink ? '#1a3a1a' : '#5B6EF5',
-              border: 'none',
-              borderRadius: '6px',
-              color: '#ffffff',
-              cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 500,
-              flexShrink: 0
-            }}
-          >
-            {copiedLink ? 'Copié !' : 'Copier le lien'}
-          </button>
-        </div>
-      </section>
-
-      {/* Contract Section */}
-      {contract && (
-        <section style={{
-          backgroundColor: '#111118',
-          borderRadius: '12px',
-          padding: '32px',
-          marginBottom: '32px'
-        }}>
-          {contract.status === 'sent' && !signSuccess && (
-            <>
-              <h2 style={{
-                fontFamily: "'Syne', sans-serif",
-                fontSize: '20px',
-                fontWeight: 700,
-                marginBottom: '20px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px'
-              }}>
-                📄 Contrat à signer
-              </h2>
-              
-              <a
-                href={contract.pdf_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-block',
-                  padding: '12px 24px',
-                  backgroundColor: '#5B6EF5',
-                  color: '#ffffff',
-                  textDecoration: 'none',
-                  borderRadius: '8px',
-                  marginBottom: '24px',
-                  fontWeight: 500
-                }}
-              >
-                Voir le contrat
-              </a>
-
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  color: '#a0a0a0'
-                }}>
-                  Signature manuscrite
-                </label>
-                <canvas
-                  ref={canvasRef}
-                  width={400}
-                  height={150}
-                  onMouseDown={startDrawing}
-                  onMouseMove={draw}
-                  onMouseUp={stopDrawing}
-                  onMouseLeave={stopDrawing}
-                  onTouchStart={startDrawing}
-                  onTouchMove={draw}
-                  onTouchEnd={stopDrawing}
-                  style={{
-                    backgroundColor: '#ffffff',
-                    border: '1px solid rgba(255,255,255,0.2)',
-                    borderRadius: '8px',
-                    cursor: 'crosshair',
-                    display: 'block'
-                  }}
-                />
-                <button
-                  onClick={clearSignature}
-                  style={{
-                    marginTop: '8px',
-                    padding: '8px 16px',
-                    backgroundColor: 'transparent',
-                    border: '1px solid #a0a0a0',
-                    borderRadius: '6px',
-                    color: '#a0a0a0',
-                    cursor: 'pointer',
-                    fontSize: '14px'
-                  }}
-                >
-                  Effacer
-                </button>
-              </div>
-
-              <div style={{ marginBottom: '24px' }}>
-                <label style={{
-                  display: 'block',
-                  marginBottom: '8px',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                  color: '#a0a0a0'
-                }}>
-                  Code reçu par email (6 chiffres)
-                </label>
-                <input
-                  type="number"
-                  value={otpCode}
-                  onChange={(e) => setOtpCode(e.target.value.slice(0, 6))}
-                  placeholder="123456"
-                  style={{
-                    width: '200px',
-                    padding: '12px 16px',
-                    backgroundColor: '#080810',
-                    border: '1px solid #2a2a35',
-                    borderRadius: '8px',
-                    color: '#ffffff',
-                    fontSize: '16px',
-                    letterSpacing: '4px',
-                    boxSizing: 'border-box'
-                  }}
-                />
-              </div>
-
-              <button
-                onClick={signContract}
-                disabled={signLoading}
-                style={{
-                  padding: '14px 32px',
-                  backgroundColor: '#10b981',
-                  border: 'none',
-                  borderRadius: '8px',
-                  color: '#ffffff',
-                  cursor: signLoading ? 'not-allowed' : 'pointer',
-                  fontSize: '16px',
-                  fontWeight: 700,
-                  opacity: signLoading ? 0.7 : 1
-                }}
-              >
-                {signLoading ? 'Signature en cours...' : 'Signer le contrat'}
-              </button>
-            </>
-          )}
-
-          {(contract.status === 'signed' || signSuccess) && (
-            <>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '8px',
-                marginBottom: '16px'
-              }}>
-                <span style={{ fontSize: '24px' }}>✅</span>
-                <h2 style={{
-                  fontFamily: "'Syne', sans-serif",
-                  fontSize: '20px',
-                  fontWeight: 700,
-                  color: '#10b981',
-                  margin: 0
-                }}>
-                  Contrat signé le {formatDate(contract.signed_at || new Date().toISOString())}
-                </h2>
-              </div>
-              <a
-                href={contract.pdf_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{
-                  display: 'inline-block',
-                  padding: '12px 24px',
-                  backgroundColor: '#5B6EF5',
-                  color: '#ffffff',
-                  textDecoration: 'none',
-                  borderRadius: '8px',
-                  fontWeight: 500
-                }}
-              >
-                Télécharger mon contrat
-              </a>
-            </>
-          )}
-        </section>
-      )}
-
-      {/* Sales Table */}
-      <section>
-        <h2 style={{
-          fontFamily: "'Syne', sans-serif",
-          fontSize: '20px',
-          fontWeight: 700,
-          marginBottom: '20px'
-        }}>
-          Mes ventes
-        </h2>
-
-        {sales.length === 0 ? (
+        {/* Banner contrat à signer */}
+        {contract && contract.status === 'sent' && !signSuccess && (
           <div style={{
-            padding: '48px',
-            textAlign: 'center',
-            color: '#a0a0a0',
-            backgroundColor: '#111118',
-            borderRadius: '12px'
+            background: 'rgba(245,166,35,0.08)',
+            border: '1px solid rgba(245,166,35,0.25)',
+            borderRadius: 12,
+            padding: '14px 20px',
+            marginBottom: 24,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 12,
           }}>
-            Aucune vente enregistrée pour le moment.
-          </div>
-        ) : (
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{
-              width: '100%',
-              borderCollapse: 'collapse',
-              backgroundColor: '#111118',
-              borderRadius: '12px',
-              overflow: 'hidden'
-            }}>
-              <thead>
-                <tr style={{ backgroundColor: '#1a1a25' }}>
-                  <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Client</th>
-                  <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Service</th>
-                  <th style={{ padding: '16px', textAlign: 'right', fontWeight: 500, color: '#a0a0a0' }}>Montant</th>
-                  <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Date</th>
-                  <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sales.map((sale) => (
-                  <tr key={sale.id} style={{ borderTop: '1px solid #2a2a35' }}>
-                    <td style={{ padding: '16px' }}>{sale.client_name}</td>
-                    <td style={{ padding: '16px' }}>{sale.service}</td>
-                    <td style={{ padding: '16px', textAlign: 'right', fontWeight: 500 }}>
-                      {sale.amount.toLocaleString('fr-FR')} €
-                    </td>
-                    <td style={{ padding: '16px', color: '#a0a0a0' }}>{formatDate(sale.created_at)}</td>
-                    <td style={{ padding: '16px', color: '#a0a0a0' }}>{sale.admin_note || '-'}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 20 }}>📄</span>
+              <span style={{ fontSize: 14, color: '#F5A623', fontWeight: 500 }}>Vous avez un contrat en attente de signature</span>
+            </div>
+            <button
+              onClick={() => setActiveTab('ventes')}
+              style={{ padding: '7px 16px', background: '#F5A623', border: 'none', borderRadius: 6, color: '#000', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}
+            >
+              Signer maintenant
+            </button>
           </div>
         )}
-      </section>
+
+        {/* Welcome card */}
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(91,110,245,0.12) 0%, rgba(155,91,245,0.08) 100%)',
+          border: '1px solid rgba(91,110,245,0.2)',
+          borderRadius: 16,
+          padding: '28px 32px',
+          marginBottom: 28,
+          display: 'grid',
+          gridTemplateColumns: '1fr auto',
+          gap: 24,
+          alignItems: 'center',
+        }}>
+          <div>
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, marginBottom: 4 }}>
+              Bonjour, {user.full_name.split(' ')[0]} 👋
+            </div>
+            <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 20 }}>
+              Bienvenue dans votre espace apporteur d'affaires Marpeap.
+            </div>
+            <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 18px', textAlign: 'center' }}>
+                <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Syne', sans-serif", color: '#5B6EF5' }}>{user.code}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>Mon code</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 18px', textAlign: 'center' }}>
+                <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Syne', sans-serif", color: '#2ED573' }}>{sales.length}</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>Ventes</div>
+              </div>
+              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 18px', textAlign: 'center' }}>
+                <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Syne', sans-serif", color: '#F1C40F' }}>{totalCommission.toLocaleString('fr-FR')}€</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>Commissions</div>
+              </div>
+            </div>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minWidth: 220 }}>
+            <div>
+              <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginBottom: 6 }}>MON LIEN DE PARRAINAGE</div>
+              <div style={{
+                background: 'rgba(0,0,0,0.3)',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 8,
+                padding: '8px 12px',
+                fontSize: 12,
+                color: 'rgba(255,255,255,0.5)',
+                fontFamily: 'monospace',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+                marginBottom: 8,
+              }}>
+                app.marpeap.digital?ref={user.code}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <button onClick={copyCode} style={{ flex: 1, padding: '8px', background: copied ? 'rgba(46,213,115,0.15)' : 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 7, color: copied ? '#2ED573' : 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>
+                {copied ? '✓ Code copié' : 'Copier le code'}
+              </button>
+              <button onClick={copyLink} style={{ flex: 1, padding: '8px', background: copiedLink ? 'rgba(46,213,115,0.15)' : '#5B6EF5', border: 'none', borderRadius: 7, color: copiedLink ? '#2ED573' : '#fff', cursor: 'pointer', fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+                {copiedLink ? '✓ Lien copié' : 'Copier le lien'}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabs */}
+        <div style={{ display: 'flex', gap: 8, marginBottom: 28, overflowX: 'auto', paddingBottom: 4 }}>
+          <button style={TAB_STYLE(activeTab === 'ventes')} onClick={() => setActiveTab('ventes')}>Mes ventes</button>
+          <button style={TAB_STYLE(activeTab === 'catalogue')} onClick={() => setActiveTab('catalogue')}>Catalogue produits</button>
+          <button style={TAB_STYLE(activeTab === 'ressources')} onClick={() => setActiveTab('ressources')}>Ressources</button>
+        </div>
+
+        {/* ── TAB: VENTES ─────────────────────────────────── */}
+        {activeTab === 'ventes' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+
+            {/* Contract signing */}
+            {contract && (
+              <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '28px 32px' }}>
+                {contract.status === 'sent' && !signSuccess ? (
+                  <>
+                    <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 700, marginBottom: 20, display: 'flex', alignItems: 'center', gap: 8 }}>
+                      📄 Contrat à signer
+                    </div>
+                    <a href={contract.pdf_url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '10px 20px', background: '#5B6EF5', color: '#fff', textDecoration: 'none', borderRadius: 8, marginBottom: 24, fontWeight: 600, fontSize: 14 }}>
+                      Voir le contrat PDF →
+                    </a>
+                    <div style={{ marginBottom: 20 }}>
+                      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>Signature manuscrite</div>
+                      <canvas ref={canvasRef} width={400} height={140}
+                        onMouseDown={startDrawing} onMouseMove={draw} onMouseUp={stopDrawing} onMouseLeave={stopDrawing}
+                        onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={stopDrawing}
+                        style={{ background: '#fff', borderRadius: 8, cursor: 'crosshair', display: 'block' }}
+                      />
+                      <button onClick={clearSignature} style={{ marginTop: 8, padding: '6px 14px', background: 'transparent', border: '1px solid rgba(255,255,255,0.15)', borderRadius: 6, color: 'rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 12 }}>Effacer</button>
+                    </div>
+                    <div style={{ marginBottom: 20 }}>
+                      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>Code OTP reçu par email (6 chiffres)</div>
+                      <input type="number" value={otpCode} onChange={e => setOtpCode(e.target.value.slice(0, 6))} placeholder="123456"
+                        style={{ width: 180, padding: '10px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff', fontSize: 18, letterSpacing: 6, textAlign: 'center', fontFamily: 'monospace' }}
+                      />
+                    </div>
+                    <button onClick={signContract} disabled={signLoading} style={{ padding: '12px 28px', background: '#10b981', border: 'none', borderRadius: 8, color: '#fff', cursor: signLoading ? 'not-allowed' : 'pointer', fontSize: 15, fontWeight: 700, opacity: signLoading ? 0.7 : 1 }}>
+                      {signLoading ? 'Signature en cours...' : 'Signer le contrat'}
+                    </button>
+                  </>
+                ) : (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <span style={{ fontSize: 28 }}>✅</span>
+                    <div>
+                      <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 16, fontWeight: 700, color: '#10b981' }}>Contrat signé</div>
+                      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>Signé le {formatDate(contract.signed_at || new Date().toISOString())}</div>
+                    </div>
+                    <a href={contract.pdf_url} target="_blank" rel="noopener noreferrer" style={{ marginLeft: 'auto', padding: '8px 16px', background: '#5B6EF5', color: '#fff', textDecoration: 'none', borderRadius: 7, fontSize: 13, fontWeight: 600 }}>Télécharger</a>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Sales table */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, overflow: 'hidden' }}>
+              <div style={{ padding: '18px 24px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700 }}>Historique des ventes</div>
+              </div>
+              {sales.length === 0 ? (
+                <div style={{ padding: '60px 24px', textAlign: 'center', color: 'rgba(255,255,255,0.2)' }}>
+                  <div style={{ fontSize: 36, marginBottom: 10 }}>📭</div>
+                  <div style={{ fontSize: 14 }}>Aucune vente enregistrée pour le moment.</div>
+                  <div style={{ fontSize: 13, marginTop: 6 }}>Partagez votre lien pour commencer !</div>
+                </div>
+              ) : (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
+                        {['Client', 'Service', 'Montant', 'Commission', 'Date'].map(h => (
+                          <th key={h} style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {sales.map(sale => {
+                        const commMatch = (sale.admin_note || '').match(/Commission:\s*([\d.]+)/)
+                        const comm = commMatch ? parseFloat(commMatch[1]) : 0
+                        return (
+                          <tr key={sale.id} style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
+                            <td style={{ padding: '14px 20px', fontSize: 14 }}>{sale.client_name}</td>
+                            <td style={{ padding: '14px 20px' }}>
+                              <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(91,110,245,0.15)', color: '#5B6EF5' }}>{sale.service}</span>
+                            </td>
+                            <td style={{ padding: '14px 20px', fontSize: 14, fontWeight: 600 }}>{sale.amount.toLocaleString('fr-FR')} €</td>
+                            <td style={{ padding: '14px 20px', fontSize: 14, fontWeight: 700, color: '#2ED573' }}>{comm > 0 ? `+${comm}€` : '—'}</td>
+                            <td style={{ padding: '14px 20px', fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>{formatDate(sale.created_at)}</td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: CATALOGUE ─────────────────────────────── */}
+        {activeTab === 'catalogue' && (
+          <div>
+            <div style={{ marginBottom: 24 }}>
+              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Catalogue des produits</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', maxWidth: 600 }}>
+                Voici les 7 solutions que vous pouvez proposer. Pour chaque vente conclue, vous touchez une commission. Les meilleures performances sont récompensées par des taux majorés.
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: 16 }}>
+              {PACKS.map(pack => {
+                const comm = commissions[pack.name] ?? 0
+                return (
+                  <div key={pack.name} className="pack-card" style={{
+                    background: 'rgba(255,255,255,0.02)',
+                    border: `1px solid rgba(255,255,255,0.07)`,
+                    borderRadius: 16,
+                    overflow: 'hidden',
+                    position: 'relative',
+                  }}>
+                    {/* Color bar */}
+                    <div style={{ height: 3, background: pack.color }} />
+
+                    <div style={{ padding: '20px 22px 22px' }}>
+                      {/* Header */}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
+                        <div>
+                          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800, color: pack.color }}>{pack.name}</div>
+                          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{pack.tagline}</div>
+                        </div>
+                        <div style={{ textAlign: 'right' }}>
+                          <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800 }}>{pack.price}€</div>
+                          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)' }}>paiement unique</div>
+                        </div>
+                      </div>
+
+                      {/* Commission highlight */}
+                      {comm > 0 && (
+                        <div style={{
+                          background: 'rgba(46,213,115,0.1)',
+                          border: '1px solid rgba(46,213,115,0.2)',
+                          borderRadius: 8,
+                          padding: '8px 14px',
+                          marginBottom: 14,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 8,
+                        }}>
+                          <span style={{ fontSize: 16 }}>💰</span>
+                          <div>
+                            <span style={{ fontSize: 18, fontWeight: 800, color: '#2ED573', fontFamily: "'Syne', sans-serif" }}>+{comm}€</span>
+                            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginLeft: 6 }}>de commission pour vous</span>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Description */}
+                      <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.55)', lineHeight: 1.6, marginBottom: 14 }}>
+                        {pack.description}
+                      </p>
+
+                      {/* Features */}
+                      <div style={{ marginBottom: 14 }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>Ce que vous vendez</div>
+                        {pack.features.map(f => (
+                          <div key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, marginBottom: 5 }}>
+                            <span style={{ color: pack.color, marginTop: 2, flexShrink: 0 }}>✓</span>
+                            <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>{f}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Target */}
+                      <div style={{ marginBottom: 14 }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>À qui le proposer</div>
+                        <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{pack.target}</div>
+                      </div>
+
+                      {/* Pitch args */}
+                      <div style={{ marginBottom: 18 }}>
+                        <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>Arguments de vente</div>
+                        {pack.pitchArgs.map(arg => (
+                          <div key={arg} style={{ background: `${pack.color}10`, border: `1px solid ${pack.color}20`, borderRadius: 6, padding: '6px 10px', marginBottom: 5, fontSize: 12, color: 'rgba(255,255,255,0.65)', fontStyle: 'italic' }}>
+                            {arg}
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* CTA */}
+                      <button onClick={copyLink} style={{
+                        width: '100%',
+                        padding: '10px',
+                        background: `${pack.color}18`,
+                        border: `1px solid ${pack.color}35`,
+                        borderRadius: 8,
+                        color: pack.color,
+                        cursor: 'pointer',
+                        fontSize: 13,
+                        fontWeight: 700,
+                        fontFamily: "'DM Sans', sans-serif",
+                      }}>
+                        Partager mon lien →
+                      </button>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+
+            {/* Motivation section */}
+            <div style={{
+              marginTop: 28,
+              background: 'linear-gradient(135deg, rgba(91,110,245,0.08), rgba(155,91,245,0.06))',
+              border: '1px solid rgba(91,110,245,0.15)',
+              borderRadius: 16,
+              padding: '24px 28px',
+              display: 'flex',
+              gap: 32,
+              flexWrap: 'wrap',
+            }}>
+              <div>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 16, fontWeight: 800, marginBottom: 6 }}>Comment progresser ?</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.45)', lineHeight: 1.7, maxWidth: 500 }}>
+                  Les apporteurs les plus actifs bénéficient de <strong style={{ color: 'rgba(255,255,255,0.7)' }}>taux de commission majorés</strong>. Plus vous apportez de clients, plus vos gains par vente augmentent. Contactez notre équipe pour en savoir plus.
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+                {[
+                  { label: 'Pack moyen', value: `${Math.round(Object.values(commissions).reduce((a, b) => a + b, 0) / Math.max(Object.values(commissions).filter(v => v > 0).length, 1))}€`, sub: 'commission moy.' },
+                  { label: '3 ventes/mois', value: `${(Object.values(commissions).reduce((a, b) => a + b, 0) / Math.max(Object.values(commissions).filter(v => v > 0).length, 1) * 3).toFixed(0)}€`, sub: 'potentiel mensuel' },
+                ].map(item => (
+                  <div key={item.label} style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 10, padding: '12px 18px', textAlign: 'center' }}>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.25)', marginBottom: 4 }}>{item.label}</div>
+                    <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 22, fontWeight: 800, color: '#5B6EF5' }}>{item.value}</div>
+                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>{item.sub}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ── TAB: RESSOURCES ────────────────────────────── */}
+        {activeTab === 'ressources' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div>
+              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Ressources & présentations</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>
+                Tous les outils pour comprendre Marpeap et convaincre vos prospects.
+              </div>
+            </div>
+
+            {/* Video */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, overflow: 'hidden' }}>
+              <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700 }}>🎬 Marpeap — Le Moteur 24/7</div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Vidéo de présentation de l'entreprise et de ses solutions IA</div>
+              </div>
+              <div style={{ padding: '20px 24px' }}>
+                <video
+                  controls
+                  style={{ width: '100%', maxWidth: 720, borderRadius: 10, background: '#000', display: 'block' }}
+                  preload="metadata"
+                >
+                  <source src="https://api.marpeap.digital/static/presentations/Marpeap___Moteur_24_7.mp4" type="video/mp4" />
+                  Votre navigateur ne supporte pas la lecture vidéo.
+                </video>
+              </div>
+            </div>
+
+            {/* PDF */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, padding: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <div style={{ width: 52, height: 52, background: 'rgba(91,110,245,0.12)', border: '1px solid rgba(91,110,245,0.2)', borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 24, flexShrink: 0 }}>
+                  📘
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Marpeap Growth Machine</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}>
+                    Présentation complète de l'entreprise Marpeap : vision, offre, positionnement. Idéal pour comprendre l'écosystème avant de vendre.
+                  </div>
+                </div>
+                <a
+                  href="https://storage.marpeap.digital/contracts/1b79abe8-53d2-4d8e-9f02-a95b4a34c695.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ padding: '10px 20px', background: '#5B6EF5', color: '#fff', textDecoration: 'none', borderRadius: 8, fontSize: 14, fontWeight: 600, flexShrink: 0, whiteSpace: 'nowrap' }}
+                >
+                  Ouvrir le PDF →
+                </a>
+              </div>
+            </div>
+
+            {/* M-CALLING product sheet */}
+            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, overflow: 'hidden' }}>
+              <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700, display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <span style={{ color: '#F54EA2' }}>M-CALLING</span> — Fiche produit
+                </div>
+                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>
+                  Infographie détaillée sur la solution de standardiste IA 24h/24
+                </div>
+              </div>
+              <div style={{ padding: '20px 24px' }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="https://api.marpeap.digital/static/presentations/Fiche_MCALLING.png"
+                  alt="Fiche produit M-CALLING"
+                  style={{ width: '100%', maxWidth: 640, borderRadius: 10, display: 'block' }}
+                />
+                <a
+                  href="https://api.marpeap.digital/static/presentations/Fiche_MCALLING.png"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ display: 'inline-block', marginTop: 12, padding: '8px 16px', background: 'rgba(245,78,162,0.12)', border: '1px solid rgba(245,78,162,0.2)', color: '#F54EA2', textDecoration: 'none', borderRadius: 7, fontSize: 13, fontWeight: 600 }}
+                >
+                  Ouvrir en plein écran →
+                </a>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
     </main>
   )
 }

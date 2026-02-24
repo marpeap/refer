@@ -2,60 +2,39 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useMobile } from '@/hooks/useMobile'
 
 export default function Register() {
-  const [formData, setFormData] = useState({
-    full_name: '',
-    email: '',
-    phone: '',
-    password: '',
-    confirmPassword: ''
-  })
+  const [formData, setFormData] = useState({ full_name: '', email: '', phone: '', password: '', confirmPassword: '' })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [message, setMessage] = useState('')
   const [loading, setLoading] = useState(false)
-  const isMobile = useMobile()
 
   const validate = () => {
-    const newErrors: Record<string, string> = {}
-    if (!formData.full_name.trim()) newErrors.full_name = 'Le nom complet est requis'
-    if (!formData.email.trim()) newErrors.email = 'L\'email est requis'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Email invalide'
-    if (!formData.phone.trim()) newErrors.phone = 'Le téléphone est requis'
-    if (!formData.password) newErrors.password = 'Le mot de passe est requis'
-    else if (formData.password.length < 8) newErrors.password = 'Le mot de passe doit faire au moins 8 caractères'
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = 'Les mots de passe ne correspondent pas'
-    return newErrors
+    const e: Record<string, string> = {}
+    if (!formData.full_name.trim()) e.full_name = 'Requis'
+    if (!formData.email.trim()) e.email = 'Requis'
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = 'Email invalide'
+    if (!formData.phone.trim()) e.phone = 'Requis'
+    if (!formData.password) e.password = 'Requis'
+    else if (formData.password.length < 8) e.password = 'Minimum 8 caractères'
+    if (formData.password !== formData.confirmPassword) e.confirmPassword = 'Mots de passe différents'
+    return e
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setMessage('')
-    
     const validationErrors = validate()
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors)
-      return
-    }
-    
+    if (Object.keys(validationErrors).length > 0) { setErrors(validationErrors); return }
     setErrors({})
     setLoading(true)
-
     try {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          full_name: formData.full_name,
-          email: formData.email,
-          phone: formData.phone,
-          password: formData.password
-        })
+        body: JSON.stringify({ full_name: formData.full_name, email: formData.email, phone: formData.phone, password: formData.password }),
       })
-
       const data = await res.json()
-      
       if (res.ok) {
         setMessage(data.message)
         setFormData({ full_name: '', email: '', phone: '', password: '', confirmPassword: '' })
@@ -69,177 +48,100 @@ export default function Register() {
     }
   }
 
-  const inputStyle = {
+  const inputStyle = (hasError: boolean): React.CSSProperties => ({
     width: '100%',
-    padding: isMobile ? '12px 14px' : '14px 16px',
-    backgroundColor: '#111118',
-    border: '1px solid #2a2a35',
-    borderRadius: '8px',
-    color: '#ffffff',
-    fontSize: isMobile ? '16px' : '16px',
+    padding: '12px 14px',
+    background: hasError ? 'rgba(231,76,60,0.07)' : 'rgba(255,255,255,0.04)',
+    border: `1px solid ${hasError ? 'rgba(231,76,60,0.3)' : 'rgba(255,255,255,0.09)'}`,
+    borderRadius: 9,
+    color: '#fff',
+    fontSize: 15,
     fontFamily: "'DM Sans', sans-serif",
-    boxSizing: 'border-box' as const
-  }
-
-  const labelStyle = {
-    display: 'block',
-    marginBottom: '8px',
-    fontSize: '14px',
-    fontWeight: 500,
-    color: '#a0a0a0'
-  }
+    transition: 'border-color 0.2s',
+  })
 
   return (
-    <main style={{
-      minHeight: '100vh',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: isMobile ? '20px 16px' : '40px 20px'
-    }}>
-      <div style={{
-        width: '100%',
-        maxWidth: isMobile ? '100%' : '420px'
-      }}>
-        <h1 style={{
-          fontFamily: "'Syne', sans-serif",
-          fontSize: isMobile ? '28px' : '32px',
-          fontWeight: 800,
-          marginBottom: '8px',
-          textAlign: 'center'
-        }}>
-          Inscription
-        </h1>
-        <p style={{
-          textAlign: 'center',
-          color: '#a0a0a0',
-          marginBottom: '32px',
-          fontSize: isMobile ? '14px' : '16px'
-        }}>
-          Devenez apporteur d&apos;affaires
-        </p>
+    <main style={{ minHeight: '100vh', background: '#080810', color: '#fff', fontFamily: "'DM Sans', sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 16px' }}>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@700;800&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        input:focus { outline: none; border-color: rgba(91,110,245,0.6) !important; }
+      `}</style>
 
-        {message && (
-          <div style={{
-            padding: '16px',
-            backgroundColor: '#1a3a1a',
-            border: '1px solid #2a5a2a',
-            borderRadius: '8px',
-            marginBottom: '24px',
-            textAlign: 'center',
-            fontSize: isMobile ? '14px' : '16px'
-          }}>
-            {message}
-          </div>
-        )}
+      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }}>
+        <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(91,110,245,0.07) 0%, transparent 70%)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: 400, height: 400, background: 'radial-gradient(circle, rgba(155,91,245,0.05) 0%, transparent 70%)', borderRadius: '50%' }} />
+      </div>
 
-        {errors.submit && (
-          <div style={{
-            padding: '16px',
-            backgroundColor: '#3a1a1a',
-            border: '1px solid #5a2a2a',
-            borderRadius: '8px',
-            marginBottom: '24px',
-            textAlign: 'center',
-            color: '#ff6b6b',
-            fontSize: isMobile ? '14px' : '16px'
-          }}>
-            {errors.submit}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <label style={labelStyle}>Nom complet</label>
-            <input
-              type="text"
-              value={formData.full_name}
-              onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-              style={{ ...inputStyle, borderColor: errors.full_name ? '#ff6b6b' : '#2a2a35' }}
-              placeholder="Jean Dupont"
-            />
-            {errors.full_name && <span style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '4px', display: 'block' }}>{errors.full_name}</span>}
-          </div>
-
-          <div>
-            <label style={labelStyle}>Email</label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              style={{ ...inputStyle, borderColor: errors.email ? '#ff6b6b' : '#2a2a35' }}
-              placeholder="jean@exemple.fr"
-            />
-            {errors.email && <span style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '4px', display: 'block' }}>{errors.email}</span>}
-          </div>
-
-          <div>
-            <label style={labelStyle}>Téléphone</label>
-            <input
-              type="tel"
-              value={formData.phone}
-              onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-              style={{ ...inputStyle, borderColor: errors.phone ? '#ff6b6b' : '#2a2a35' }}
-              placeholder="06 12 34 56 78"
-            />
-            {errors.phone && <span style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '4px', display: 'block' }}>{errors.phone}</span>}
-          </div>
-
-          <div>
-            <label style={labelStyle}>Mot de passe</label>
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              style={{ ...inputStyle, borderColor: errors.password ? '#ff6b6b' : '#2a2a35' }}
-              placeholder="8 caractères minimum"
-            />
-            {errors.password && <span style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '4px', display: 'block' }}>{errors.password}</span>}
-          </div>
-
-          <div>
-            <label style={labelStyle}>Confirmation mot de passe</label>
-            <input
-              type="password"
-              value={formData.confirmPassword}
-              onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-              style={{ ...inputStyle, borderColor: errors.confirmPassword ? '#ff6b6b' : '#2a2a35' }}
-              placeholder="Confirmez votre mot de passe"
-            />
-            {errors.confirmPassword && <span style={{ color: '#ff6b6b', fontSize: '12px', marginTop: '4px', display: 'block' }}>{errors.confirmPassword}</span>}
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              padding: isMobile ? '14px' : '16px',
-              backgroundColor: '#5B6EF5',
-              color: '#ffffff',
-              border: 'none',
-              borderRadius: '8px',
-              fontSize: isMobile ? '16px' : '16px',
-              fontWeight: 700,
-              cursor: loading ? 'not-allowed' : 'pointer',
-              opacity: loading ? 0.7 : 1,
-              marginTop: '12px'
-            }}
-          >
-            {loading ? 'Inscription...' : 'S\'inscrire'}
-          </button>
-        </form>
-
-        <p style={{
-          textAlign: 'center',
-          marginTop: '24px',
-          color: '#a0a0a0',
-          fontSize: isMobile ? '14px' : '14px'
-        }}>
-          Déjà inscrit ?{' '}
-          <Link href="/login" style={{ color: '#5B6EF5', textDecoration: 'none', fontWeight: 500 }}>
-            Se connecter
+      <div style={{ position: 'relative', width: '100%', maxWidth: 460 }}>
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
+          <Link href="/" style={{ textDecoration: 'none' }}>
+            <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, color: '#fff' }}>
+              mar<span style={{ color: '#5B6EF5' }}>peap</span>
+            </span>
           </Link>
-        </p>
+        </div>
+
+        {message ? (
+          <div style={{ background: 'rgba(46,213,115,0.08)', border: '1px solid rgba(46,213,115,0.2)', borderRadius: 20, padding: '40px 32px', textAlign: 'center' }}>
+            <div style={{ fontSize: 40, marginBottom: 16 }}>✅</div>
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 10 }}>Demande envoyée !</div>
+            <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>{message}</div>
+            <Link href="/login" style={{ display: 'inline-block', padding: '11px 24px', background: '#5B6EF5', color: '#fff', textDecoration: 'none', borderRadius: 9, fontWeight: 700, fontSize: 14 }}>
+              Se connecter
+            </Link>
+          </div>
+        ) : (
+          <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 20, padding: '36px 32px' }}>
+            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, marginBottom: 6, textAlign: 'center' }}>Devenir apporteur</div>
+            <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 14, textAlign: 'center', marginBottom: 28, lineHeight: 1.5 }}>
+              Rejoignez le programme et gagnez des commissions sur chaque vente.
+            </div>
+
+            {errors.submit && (
+              <div style={{ background: 'rgba(231,76,60,0.1)', border: '1px solid rgba(231,76,60,0.2)', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#ff6b6b', textAlign: 'center' }}>
+                {errors.submit}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {[
+                { key: 'full_name', label: 'Nom complet', type: 'text', placeholder: 'Jean Dupont' },
+                { key: 'email', label: 'Email', type: 'email', placeholder: 'jean@exemple.fr' },
+                { key: 'phone', label: 'Téléphone', type: 'tel', placeholder: '06 12 34 56 78' },
+                { key: 'password', label: 'Mot de passe', type: 'password', placeholder: '8 caractères minimum' },
+                { key: 'confirmPassword', label: 'Confirmation', type: 'password', placeholder: 'Confirmez votre mot de passe' },
+              ].map(field => (
+                <div key={field.key}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: errors[field.key] ? '#ff6b6b' : 'rgba(255,255,255,0.5)', marginBottom: 7 }}>
+                    {field.label}
+                  </label>
+                  <input
+                    type={field.type}
+                    value={formData[field.key as keyof typeof formData]}
+                    onChange={e => setFormData({ ...formData, [field.key]: e.target.value })}
+                    placeholder={field.placeholder}
+                    style={inputStyle(!!errors[field.key])}
+                  />
+                  {errors[field.key] && <span style={{ fontSize: 12, color: '#ff6b6b', marginTop: 4, display: 'block' }}>{errors[field.key]}</span>}
+                </div>
+              ))}
+
+              <button
+                type="submit"
+                disabled={loading}
+                style={{ padding: '13px', background: loading ? 'rgba(91,110,245,0.5)' : '#5B6EF5', border: 'none', borderRadius: 9, color: '#fff', fontSize: 15, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 4, fontFamily: "'DM Sans', sans-serif" }}
+              >
+                {loading ? 'Inscription...' : 'Soumettre ma demande'}
+              </button>
+            </form>
+
+            <p style={{ textAlign: 'center', marginTop: 20, color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
+              Déjà inscrit ?{' '}
+              <Link href="/login" style={{ color: '#5B6EF5', textDecoration: 'none', fontWeight: 600 }}>Se connecter</Link>
+            </p>
+          </div>
+        )}
       </div>
     </main>
   )
