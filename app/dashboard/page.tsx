@@ -9,6 +9,9 @@ interface Sale {
   client_name: string
   service: string
   amount: number
+  commission_amount: number
+  commission_paid: boolean
+  paid_at: string | null
   admin_note: string | null
   created_at: string
 }
@@ -257,11 +260,8 @@ export default function Dashboard() {
   const formatDate = (dateString: string) =>
     new Date(dateString).toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' })
 
-  const totalCommission = sales.reduce((acc, sale) => {
-    const note = sale.admin_note || ''
-    const match = note.match(/Commission:\s*([\d.]+)/)
-    return acc + (match ? parseFloat(match[1]) : 0)
-  }, 0)
+  const totalCommission = sales.reduce((acc, sale) => acc + Number(sale.commission_amount || 0), 0)
+  const pendingCommission = sales.filter(s => !s.commission_paid).reduce((acc, s) => acc + Number(s.commission_amount || 0), 0)
 
   // Canvas drawing
   const getCoords = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
@@ -450,8 +450,14 @@ export default function Dashboard() {
               </div>
               <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: '10px 18px', textAlign: 'center' }}>
                 <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Syne', sans-serif", color: '#F1C40F' }}>{totalCommission.toLocaleString('fr-FR')}€</div>
-                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>Commissions</div>
+                <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>Commissions totales</div>
               </div>
+              {pendingCommission > 0 && (
+                <div style={{ background: 'rgba(245,166,35,0.06)', border: '1px solid rgba(245,166,35,0.2)', borderRadius: 10, padding: '10px 18px', textAlign: 'center' }}>
+                  <div style={{ fontSize: 22, fontWeight: 800, fontFamily: "'Syne', sans-serif", color: '#F5A623' }}>{pendingCommission.toLocaleString('fr-FR')}€</div>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>En attente</div>
+                </div>
+              )}
             </div>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, minWidth: 220 }}>
@@ -554,15 +560,14 @@ export default function Dashboard() {
                   <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                     <thead>
                       <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
-                        {['Client', 'Service', 'Montant', 'Commission', 'Date'].map(h => (
+                        {['Client', 'Service', 'Montant', 'Commission', 'Statut', 'Date'].map(h => (
                           <th key={h} style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
                         ))}
                       </tr>
                     </thead>
                     <tbody>
                       {sales.map(sale => {
-                        const commMatch = (sale.admin_note || '').match(/Commission:\s*([\d.]+)/)
-                        const comm = commMatch ? parseFloat(commMatch[1]) : 0
+                        const comm = sale.commission_amount ?? 0
                         return (
                           <tr key={sale.id} style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                             <td style={{ padding: '14px 20px', fontSize: 14 }}>{sale.client_name}</td>
@@ -571,6 +576,12 @@ export default function Dashboard() {
                             </td>
                             <td style={{ padding: '14px 20px', fontSize: 14, fontWeight: 600 }}>{sale.amount.toLocaleString('fr-FR')} €</td>
                             <td style={{ padding: '14px 20px', fontSize: 14, fontWeight: 700, color: '#2ED573' }}>{comm > 0 ? `+${comm}€` : '—'}</td>
+                            <td style={{ padding: '14px 20px' }}>
+                              {sale.commission_paid
+                                ? <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(46,213,115,0.15)', color: '#2ED573' }}>Versée ✓</span>
+                                : <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(255,165,0,0.15)', color: '#FFA500' }}>En attente</span>
+                              }
+                            </td>
                             <td style={{ padding: '14px 20px', fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>{formatDate(sale.created_at)}</td>
                           </tr>
                         )

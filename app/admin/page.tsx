@@ -11,6 +11,7 @@ interface Referrer {
   phone: string
   code: string
   status: 'pending' | 'active' | 'suspended'
+  tier: 'bronze' | 'silver' | 'gold'
   created_at: string
   sales_count: number
 }
@@ -20,9 +21,13 @@ interface Sale {
   client_name: string
   service: string
   amount: number
+  commission_amount: number
+  commission_paid: boolean
+  paid_at: string | null
   admin_note: string | null
   created_at: string
   referrer_name: string
+  referrer_code: string
 }
 
 interface CommissionRate {
@@ -229,19 +234,46 @@ export default function Admin() {
 
   const deleteSale = async (id: string) => {
     if (!confirm('Supprimer cette vente ?')) return
-    
     try {
       const res = await fetch(`/api/admin/sales/${id}`, {
         method: 'DELETE',
         headers: { 'x-admin-password': sessionStorage.getItem('admin_password') || '' }
       })
-
-      if (res.ok) {
-        fetchData()
-      }
+      if (res.ok) fetchData()
     } catch {
       // Error silently
     }
+  }
+
+  const markCommissionPaid = async (id: string, paid: boolean) => {
+    try {
+      const res = await fetch(`/api/admin/sales/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': sessionStorage.getItem('admin_password') || ''
+        },
+        body: JSON.stringify({ commission_paid: paid })
+      })
+      if (res.ok) fetchData()
+    } catch {
+      // Error silently
+    }
+  }
+
+  const getTierBadge = (tier: string, salesCount: number) => {
+    const computed = salesCount >= 10 ? 'gold' : salesCount >= 3 ? 'silver' : 'bronze'
+    const t = computed
+    const cfg = {
+      bronze: { label: 'Bronze', color: '#cd7f32' },
+      silver: { label: 'Silver', color: '#a8a9ad' },
+      gold: { label: 'Gold', color: '#f1c40f' },
+    }[t] || { label: 'Bronze', color: '#cd7f32' }
+    return (
+      <span style={{ padding: '3px 10px', borderRadius: 10, fontSize: 11, fontWeight: 700, backgroundColor: cfg.color + '22', color: cfg.color, border: `1px solid ${cfg.color}44` }}>
+        {cfg.label}
+      </span>
+    )
   }
 
   const sendContract = async (e: React.FormEvent) => {
@@ -566,10 +598,9 @@ export default function Admin() {
                   <tr style={{ backgroundColor: '#1a1a25' }}>
                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Nom</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Email</th>
-                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Téléphone</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Code</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Statut</th>
-                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Date</th>
+                    <th style={{ padding: '16px', textAlign: 'center', fontWeight: 500, color: '#a0a0a0' }}>Niveau</th>
                     <th style={{ padding: '16px', textAlign: 'center', fontWeight: 500, color: '#a0a0a0' }}>Ventes</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Actions</th>
                   </tr>
@@ -577,13 +608,16 @@ export default function Admin() {
                 <tbody>
                   {referrers.map((referrer) => (
                     <tr key={referrer.id} style={{ borderTop: '1px solid #2a2a35' }}>
-                      <td style={{ padding: '16px' }}>{referrer.full_name}</td>
-                      <td style={{ padding: '16px', color: '#a0a0a0' }}>{referrer.email}</td>
-                      <td style={{ padding: '16px', color: '#a0a0a0' }}>{referrer.phone}</td>
+                      <td style={{ padding: '16px' }}>
+                        <div>{referrer.full_name}</div>
+                        <div style={{ fontSize: 12, color: '#a0a0a0' }}>{referrer.phone}</div>
+                        <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{formatDate(referrer.created_at)}</div>
+                      </td>
+                      <td style={{ padding: '16px', color: '#a0a0a0', fontSize: 13 }}>{referrer.email}</td>
                       <td style={{ padding: '16px', fontFamily: "'Syne', monospace", fontWeight: 700 }}>{referrer.code}</td>
                       <td style={{ padding: '16px' }}>{getStatusBadge(referrer.status)}</td>
-                      <td style={{ padding: '16px', color: '#a0a0a0' }}>{formatDate(referrer.created_at)}</td>
-                      <td style={{ padding: '16px', textAlign: 'center' }}>{referrer.sales_count}</td>
+                      <td style={{ padding: '16px', textAlign: 'center' }}>{getTierBadge(referrer.tier, referrer.sales_count)}</td>
+                      <td style={{ padding: '16px', textAlign: 'center', fontWeight: 700 }}>{referrer.sales_count}</td>
                       <td style={{ padding: '16px' }}>
                         <div style={{ display: 'flex', gap: '8px' }}>
                           {referrer.status !== 'active' && (
@@ -768,6 +802,24 @@ export default function Admin() {
             </form>
           </div>
 
+          {/* Commission summary */}
+          {!dataLoading && sales.length > 0 && (() => {
+            const unpaid = sales.filter(s => !s.commission_paid).reduce((a, s) => a + Number(s.commission_amount), 0)
+            const paid = sales.filter(s => s.commission_paid).reduce((a, s) => a + Number(s.commission_amount), 0)
+            return (
+              <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
+                <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '14px 20px', flex: 1, minWidth: 160 }}>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Commissions à verser</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: '#ef4444' }}>{unpaid.toLocaleString('fr-FR')} €</div>
+                </div>
+                <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '14px 20px', flex: 1, minWidth: 160 }}>
+                  <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Commissions versées</div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: '#10b981' }}>{paid.toLocaleString('fr-FR')} €</div>
+                </div>
+              </div>
+            )
+          })()}
+
           {/* Sales Table */}
           {dataLoading ? (
             <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
@@ -786,34 +838,50 @@ export default function Admin() {
                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Client</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Service</th>
                     <th style={{ padding: '16px', textAlign: 'right', fontWeight: 500, color: '#a0a0a0' }}>Montant</th>
+                    <th style={{ padding: '16px', textAlign: 'right', fontWeight: 500, color: '#a0a0a0' }}>Commission</th>
+                    <th style={{ padding: '16px', textAlign: 'center', fontWeight: 500, color: '#a0a0a0' }}>Paiement</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Date</th>
-                    <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Note</th>
                     <th style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {sales.map((sale) => (
                     <tr key={sale.id} style={{ borderTop: '1px solid #2a2a35' }}>
-                      <td style={{ padding: '16px' }}>{sale.referrer_name}</td>
-                      <td style={{ padding: '16px' }}>{sale.client_name}</td>
-                      <td style={{ padding: '16px' }}>{sale.service}</td>
-                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 500 }}>
-                        {sale.amount.toLocaleString('fr-FR')} €
+                      <td style={{ padding: '16px' }}>
+                        <div style={{ fontWeight: 600 }}>{sale.referrer_name}</div>
+                        <div style={{ fontSize: 11, color: '#5B6EF5', fontFamily: 'monospace' }}>{sale.referrer_code}</div>
                       </td>
-                      <td style={{ padding: '16px', color: '#a0a0a0' }}>{formatDate(sale.created_at)}</td>
-                      <td style={{ padding: '16px', color: '#a0a0a0' }}>{sale.admin_note || '-'}</td>
+                      <td style={{ padding: '16px', fontSize: 14 }}>{sale.client_name}</td>
+                      <td style={{ padding: '16px' }}>
+                        <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(91,110,245,0.15)', color: '#5B6EF5' }}>{sale.service}</span>
+                      </td>
+                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600 }}>
+                        {Number(sale.amount).toLocaleString('fr-FR')} €
+                      </td>
+                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#2ED573', fontSize: 15 }}>
+                        +{Number(sale.commission_amount).toLocaleString('fr-FR')} €
+                      </td>
+                      <td style={{ padding: '16px', textAlign: 'center' }}>
+                        {sale.commission_paid ? (
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                            <span style={{ padding: '3px 10px', borderRadius: 10, fontSize: 11, fontWeight: 700, background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>Versé ✓</span>
+                            {sale.paid_at && <span style={{ fontSize: 10, color: '#555' }}>{formatDate(sale.paid_at)}</span>}
+                            <button onClick={() => markCommissionPaid(sale.id, false)} style={{ fontSize: 10, color: '#a0a0a0', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>Annuler</button>
+                          </div>
+                        ) : (
+                          <button
+                            onClick={() => markCommissionPaid(sale.id, true)}
+                            style={{ padding: '6px 12px', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 6, color: '#10b981', cursor: 'pointer', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' }}
+                          >
+                            Marquer versé
+                          </button>
+                        )}
+                      </td>
+                      <td style={{ padding: '16px', color: '#a0a0a0', fontSize: 13 }}>{formatDate(sale.created_at)}</td>
                       <td style={{ padding: '16px' }}>
                         <button
                           onClick={() => deleteSale(sale.id)}
-                          style={{
-                            padding: '6px 12px',
-                            backgroundColor: '#ef4444',
-                            border: 'none',
-                            borderRadius: '4px',
-                            color: '#ffffff',
-                            cursor: 'pointer',
-                            fontSize: '12px'
-                          }}
+                          style={{ padding: '6px 12px', backgroundColor: '#ef4444', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}
                         >
                           Supprimer
                         </button>
