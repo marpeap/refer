@@ -25,6 +25,11 @@ interface Sale {
   referrer_name: string
 }
 
+interface CommissionRate {
+  pack_name: string
+  commission_amount: number
+}
+
 interface Contract {
   id: string
   full_name: string
@@ -51,7 +56,7 @@ export default function Admin() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-  const [activeTab, setActiveTab] = useState<'referrers' | 'sales' | 'contracts'>('referrers')
+  const [activeTab, setActiveTab] = useState<'referrers' | 'sales' | 'contracts' | 'commissions'>('referrers')
   const [referrers, setReferrers] = useState<Referrer[]>([])
   const [sales, setSales] = useState<Sale[]>([])
   const [contracts, setContracts] = useState<Contract[]>([])
@@ -61,6 +66,8 @@ export default function Admin() {
   const [contractPdfText, setContractPdfText] = useState('')
   const [sendContractLoading, setSendContractLoading] = useState(false)
   const [dataLoading, setDataLoading] = useState(false)
+  const [commissionRates, setCommissionRates] = useState<CommissionRate[]>([])
+  const [commissionSaving, setCommissionSaving] = useState(false)
   
   // Sale form state
   const [saleForm, setSaleForm] = useState({
@@ -114,6 +121,17 @@ export default function Admin() {
         if (contractsRes.ok) {
           const data = await contractsRes.json()
           setContracts(data)
+        }
+      } else if (activeTab === 'commissions') {
+        const res = await fetch('/api/admin/commission-rates', {
+          headers: { 'x-admin-password': sessionStorage.getItem('admin_password') || '' }
+        })
+        if (res.ok) {
+          const data = await res.json()
+          // Ensure all services are present
+          const existing: Record<string, number> = {}
+          data.forEach((r: CommissionRate) => { existing[r.pack_name] = r.commission_amount })
+          setCommissionRates(services.map(s => ({ pack_name: s, commission_amount: existing[s] ?? 0 })))
         }
       } else {
         const res = await fetch('/api/admin/sales', {
@@ -266,6 +284,25 @@ export default function Admin() {
       alert('Erreur lors de l\'envoi du contrat')
     } finally {
       setSendContractLoading(false)
+    }
+  }
+
+  const saveCommissions = async () => {
+    setCommissionSaving(true)
+    try {
+      const res = await fetch('/api/admin/commission-rates', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-admin-password': sessionStorage.getItem('admin_password') || ''
+        },
+        body: JSON.stringify(commissionRates)
+      })
+      if (!res.ok) alert('Erreur lors de la sauvegarde')
+    } catch {
+      alert('Erreur lors de la sauvegarde')
+    } finally {
+      setCommissionSaving(false)
     }
   }
 
@@ -493,6 +530,21 @@ export default function Admin() {
           }}
         >
           Contrats
+        </button>
+        <button
+          onClick={() => setActiveTab('commissions')}
+          style={{
+            padding: '12px 24px',
+            backgroundColor: activeTab === 'commissions' ? '#5B6EF5' : '#111118',
+            border: 'none',
+            borderRadius: '8px',
+            color: '#ffffff',
+            cursor: 'pointer',
+            fontSize: '14px',
+            fontWeight: 500
+          }}
+        >
+          Commissions
         </button>
       </div>
 
@@ -1069,6 +1121,92 @@ export default function Admin() {
               </div>
             </div>
           )}
+        </section>
+      )}
+      {/* Commissions Tab */}
+      {activeTab === 'commissions' && (
+        <section>
+          <div style={{
+            backgroundColor: '#111118',
+            borderRadius: '12px',
+            padding: '24px',
+            maxWidth: '600px'
+          }}>
+            <h3 style={{
+              fontFamily: "'Syne', sans-serif",
+              fontSize: '18px',
+              fontWeight: 700,
+              marginBottom: '8px'
+            }}>
+              Taux de commission par service
+            </h3>
+            <p style={{ color: '#a0a0a0', fontSize: '13px', marginBottom: '24px' }}>
+              Montant versé à l&apos;apporteur (en €) pour chaque vente conclue.
+            </p>
+
+            {dataLoading ? (
+              <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+                  {commissionRates.map((rate, idx) => (
+                    <div key={rate.pack_name} style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '16px',
+                      padding: '12px 16px',
+                      backgroundColor: '#080810',
+                      borderRadius: '8px',
+                      border: '1px solid #2a2a35'
+                    }}>
+                      <span style={{ flex: 1, fontWeight: 600, fontSize: '14px' }}>{rate.pack_name}</span>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <input
+                          type="number"
+                          min="0"
+                          value={rate.commission_amount}
+                          onChange={(e) => {
+                            const updated = [...commissionRates]
+                            updated[idx] = { ...rate, commission_amount: parseFloat(e.target.value) || 0 }
+                            setCommissionRates(updated)
+                          }}
+                          style={{
+                            width: '100px',
+                            padding: '8px 12px',
+                            backgroundColor: '#111118',
+                            border: '1px solid #3a3a45',
+                            borderRadius: '6px',
+                            color: '#ffffff',
+                            fontSize: '14px',
+                            textAlign: 'right'
+                          }}
+                        />
+                        <span style={{ color: '#a0a0a0', fontSize: '14px' }}>€</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  onClick={saveCommissions}
+                  disabled={commissionSaving}
+                  style={{
+                    padding: '12px 32px',
+                    backgroundColor: commissionSaving ? '#333' : '#5B6EF5',
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: '#ffffff',
+                    cursor: commissionSaving ? 'not-allowed' : 'pointer',
+                    fontSize: '14px',
+                    fontWeight: 700,
+                    opacity: commissionSaving ? 0.7 : 1
+                  }}
+                >
+                  {commissionSaving ? 'Sauvegarde...' : 'Enregistrer'}
+                </button>
+              </>
+            )}
+          </div>
         </section>
       )}
     </main>

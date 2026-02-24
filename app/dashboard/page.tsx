@@ -35,6 +35,7 @@ export default function Dashboard() {
   const [contract, setContract] = useState<Contract | null>(null)
   const [loading, setLoading] = useState(true)
   const [copied, setCopied] = useState(false)
+  const [copiedLink, setCopiedLink] = useState(false)
   const [otpCode, setOtpCode] = useState('')
   const [signatureImage, setSignatureImage] = useState('')
   const [signLoading, setSignLoading] = useState(false)
@@ -95,6 +96,14 @@ export default function Dashboard() {
       navigator.clipboard.writeText(user.code)
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  const copyLink = () => {
+    if (user?.code) {
+      navigator.clipboard.writeText(`https://app.marpeap.digital?ref=${user.code}`)
+      setCopiedLink(true)
+      setTimeout(() => setCopiedLink(false), 2000)
     }
   }
 
@@ -316,6 +325,63 @@ export default function Dashboard() {
             }}
           >
             {copied ? 'Copié !' : 'Copier'}
+          </button>
+        </div>
+      </section>
+
+      {/* Share Link Section */}
+      <section style={{
+        backgroundColor: '#111118',
+        borderRadius: '12px',
+        padding: '24px 32px',
+        marginBottom: '32px'
+      }}>
+        <h2 style={{
+          fontFamily: "'Syne', sans-serif",
+          fontSize: '15px',
+          fontWeight: 700,
+          marginBottom: '12px',
+          color: '#a0a0a0'
+        }}>
+          Mon lien de parrainage
+        </h2>
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          flexWrap: 'wrap'
+        }}>
+          <span style={{
+            fontFamily: 'monospace',
+            fontSize: '14px',
+            color: '#ffffff',
+            background: '#080810',
+            border: '1px solid #2a2a35',
+            borderRadius: '8px',
+            padding: '10px 16px',
+            flex: 1,
+            minWidth: 0,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap'
+          }}>
+            https://app.marpeap.digital?ref={user.code}
+          </span>
+          <button
+            onClick={copyLink}
+            style={{
+              padding: '10px 20px',
+              backgroundColor: copiedLink ? '#1a3a1a' : '#5B6EF5',
+              border: 'none',
+              borderRadius: '6px',
+              color: '#ffffff',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: 500,
+              flexShrink: 0
+            }}
+          >
+            {copiedLink ? 'Copié !' : 'Copier le lien'}
           </button>
         </div>
       </section>
