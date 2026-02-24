@@ -57,9 +57,15 @@ export async function POST(req: NextRequest) {
 
     const referrer_id = referrerResult[0].id;
 
-    // Look up commission rate for the service
-    const rates = await query('SELECT commission_amount FROM commission_rates WHERE pack_name = $1', [service]);
-    const commission = rates.length > 0 ? Number(rates[0].commission_amount) : 0;
+    // Taux personnalisé > taux global > 0
+    const customRate = await query(
+      'SELECT commission_amount FROM referrer_commission_rates WHERE referrer_id = $1 AND pack_name = $2',
+      [referrer_id, service]
+    );
+    const globalRate = await query('SELECT commission_amount FROM commission_rates WHERE pack_name = $1', [service]);
+    const commission = customRate.length > 0
+      ? Number(customRate[0].commission_amount)
+      : globalRate.length > 0 ? Number(globalRate[0].commission_amount) : 0;
 
     const saleResult = await query(
       `INSERT INTO sales (id, referrer_id, client_name, service, amount, commission_amount, admin_note, created_at)

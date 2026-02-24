@@ -179,7 +179,10 @@ export default function Dashboard() {
   const [contract, setContract] = useState<Contract | null>(null)
   const [commissions, setCommissions] = useState<Record<string, number>>({})
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'ventes' | 'catalogue' | 'ressources'>('ventes')
+  const [activeTab, setActiveTab] = useState<'ventes' | 'catalogue' | 'ressources' | 'classement'>('ventes')
+  const [leaderboard, setLeaderboard] = useState<{ rank: number; name: string; tier: string; sales_count: number; total_commission: number; is_me: boolean }[]>([])
+  const [myRank, setMyRank] = useState<{ rank: number; total_commission: number; sales_count: number } | null>(null)
+  const [leaderboardLoading, setLeaderboardLoading] = useState(false)
   const [copied, setCopied] = useState(false)
   const [copiedLink, setCopiedLink] = useState(false)
   const [otpCode, setOtpCode] = useState('')
@@ -335,6 +338,21 @@ export default function Dashboard() {
   )
 
   if (!user) return null
+
+  const loadLeaderboard = async () => {
+    if (leaderboard.length > 0) return // déjà chargé
+    setLeaderboardLoading(true)
+    try {
+      const token = localStorage.getItem('refer_token')
+      const res = await fetch('/api/leaderboard', { headers: { Authorization: `Bearer ${token}` } })
+      if (res.ok) {
+        const data = await res.json()
+        setLeaderboard(data.board)
+        setMyRank(data.my_rank)
+      }
+    } catch {}
+    finally { setLeaderboardLoading(false) }
+  }
 
   const TAB_STYLE = (active: boolean): React.CSSProperties => ({
     padding: '10px 20px',
@@ -495,6 +513,7 @@ export default function Dashboard() {
           <button style={TAB_STYLE(activeTab === 'ventes')} onClick={() => setActiveTab('ventes')}>Mes ventes</button>
           <button style={TAB_STYLE(activeTab === 'catalogue')} onClick={() => setActiveTab('catalogue')}>Catalogue produits</button>
           <button style={TAB_STYLE(activeTab === 'ressources')} onClick={() => setActiveTab('ressources')}>Ressources</button>
+          <button style={TAB_STYLE(activeTab === 'classement')} onClick={() => { setActiveTab('classement'); loadLeaderboard() }}>🏆 Classement</button>
         </div>
 
         {/* ── TAB: VENTES ─────────────────────────────────── */}
@@ -815,6 +834,70 @@ export default function Dashboard() {
                 </a>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* ── TAB: CLASSEMENT ────────────────────────────── */}
+        {activeTab === 'classement' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+            <div>
+              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Classement des apporteurs</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>Top 10 par commissions générées. Les noms sont partiellement masqués.</div>
+            </div>
+
+            {leaderboardLoading ? (
+              <div style={{ textAlign: 'center', padding: 48, color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>Chargement...</div>
+            ) : (
+              <>
+                {/* Tableau */}
+                <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, overflow: 'hidden' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                    <thead>
+                      <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
+                        {['#', 'Apporteur', 'Niveau', 'Ventes', 'Commissions'].map(h => (
+                          <th key={h} style={{ padding: '12px 20px', textAlign: 'left', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.3)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {leaderboard.map(entry => {
+                        const tierColors: Record<string, string> = { bronze: '#cd7f32', silver: '#a8a9ad', gold: '#f1c40f' }
+                        const medalEmoji = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : `${entry.rank}`
+                        const rowBg = entry.is_me ? 'rgba(91,110,245,0.08)' : 'transparent'
+                        const tierColor = tierColors[entry.tier] || '#cd7f32'
+                        return (
+                          <tr key={entry.rank} style={{ borderTop: '1px solid rgba(255,255,255,0.04)', background: rowBg }}>
+                            <td style={{ padding: '14px 20px', fontSize: 16, fontWeight: 800 }}>{medalEmoji}</td>
+                            <td style={{ padding: '14px 20px', fontSize: 14, fontWeight: entry.is_me ? 700 : 400 }}>
+                              {entry.name}
+                              {entry.is_me && <span style={{ marginLeft: 8, fontSize: 11, color: '#5B6EF5', background: 'rgba(91,110,245,0.12)', padding: '2px 6px', borderRadius: 100 }}>Vous</span>}
+                            </td>
+                            <td style={{ padding: '14px 20px' }}>
+                              <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: `${tierColor}22`, color: tierColor, border: `1px solid ${tierColor}44` }}>
+                                {entry.tier.charAt(0).toUpperCase() + entry.tier.slice(1)}
+                              </span>
+                            </td>
+                            <td style={{ padding: '14px 20px', fontSize: 14 }}>{entry.sales_count}</td>
+                            <td style={{ padding: '14px 20px', fontSize: 14, fontWeight: 700, color: '#2ED573' }}>{entry.total_commission.toLocaleString('fr-FR')} €</td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Ma position si hors top 10 */}
+                {myRank && !leaderboard.some(e => e.is_me) && (
+                  <div style={{ background: 'rgba(91,110,245,0.06)', border: '1px solid rgba(91,110,245,0.2)', borderRadius: 12, padding: '16px 24px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+                    <div style={{ fontSize: 14 }}>
+                      <span style={{ color: 'rgba(255,255,255,0.4)', marginRight: 8 }}>Votre position :</span>
+                      <span style={{ fontWeight: 800, color: '#5B6EF5' }}>#{myRank.rank}</span>
+                    </div>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>{myRank.sales_count} vente{myRank.sales_count > 1 ? 's' : ''} · {myRank.total_commission.toLocaleString('fr-FR')} € de commissions</div>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
       </div>

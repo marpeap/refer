@@ -73,6 +73,11 @@ export default function Admin() {
   const [dataLoading, setDataLoading] = useState(false)
   const [commissionRates, setCommissionRates] = useState<CommissionRate[]>([])
   const [commissionSaving, setCommissionSaving] = useState(false)
+
+  // Per-referrer commission modal
+  const [referrerCommissionModal, setReferrerCommissionModal] = useState<Referrer | null>(null)
+  const [referrerRates, setReferrerRates] = useState<(CommissionRate & { is_custom: boolean })[]>([])
+  const [referrerRatesSaving, setReferrerRatesSaving] = useState(false)
   
   // Sale form state
   const [saleForm, setSaleForm] = useState({
@@ -232,6 +237,29 @@ export default function Admin() {
     }
   }
 
+  const exportCSV = () => {
+    const headers = ['Apporteur', 'Code', 'Client', 'Service', 'Montant (€)', 'Commission (€)', 'Versée', 'Date versement', 'Date vente']
+    const rows = sales.map(s => [
+      s.referrer_name,
+      s.referrer_code,
+      s.client_name,
+      s.service,
+      Number(s.amount).toFixed(2),
+      Number(s.commission_amount).toFixed(2),
+      s.commission_paid ? 'Oui' : 'Non',
+      s.paid_at ? formatDate(s.paid_at) : '',
+      formatDate(s.created_at),
+    ])
+    const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n')
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `ventes-commissions-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const deleteSale = async (id: string) => {
     if (!confirm('Supprimer cette vente ?')) return
     try {
@@ -317,6 +345,38 @@ export default function Admin() {
     } finally {
       setSendContractLoading(false)
     }
+  }
+
+  const openReferrerCommissionModal = async (referrer: Referrer) => {
+    setReferrerCommissionModal(referrer)
+    const res = await fetch(`/api/admin/referrers/${referrer.id}/commission-rates`, {
+      headers: { 'x-admin-password': sessionStorage.getItem('admin_password') || '' }
+    })
+    if (res.ok) setReferrerRates(await res.json())
+  }
+
+  const saveReferrerCommissions = async () => {
+    if (!referrerCommissionModal) return
+    setReferrerRatesSaving(true)
+    try {
+      await fetch(`/api/admin/referrers/${referrerCommissionModal.id}/commission-rates`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'x-admin-password': sessionStorage.getItem('admin_password') || '' },
+        body: JSON.stringify(referrerRates.map(r => ({ pack_name: r.pack_name, commission_amount: r.commission_amount })))
+      })
+      setReferrerCommissionModal(null)
+    } catch { /* silent */ }
+    finally { setReferrerRatesSaving(false) }
+  }
+
+  const resetReferrerCommissions = async () => {
+    if (!referrerCommissionModal) return
+    if (!confirm('Remettre les taux globaux pour cet apporteur ?')) return
+    await fetch(`/api/admin/referrers/${referrerCommissionModal.id}/commission-rates`, {
+      method: 'DELETE',
+      headers: { 'x-admin-password': sessionStorage.getItem('admin_password') || '' }
+    })
+    setReferrerCommissionModal(null)
   }
 
   const saveCommissions = async () => {
@@ -619,39 +679,20 @@ export default function Admin() {
                       <td style={{ padding: '16px', textAlign: 'center' }}>{getTierBadge(referrer.tier, referrer.sales_count)}</td>
                       <td style={{ padding: '16px', textAlign: 'center', fontWeight: 700 }}>{referrer.sales_count}</td>
                       <td style={{ padding: '16px' }}>
-                        <div style={{ display: 'flex', gap: '8px' }}>
+                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                           {referrer.status !== 'active' && (
-                            <button
-                              onClick={() => updateReferrerStatus(referrer.id, 'active')}
-                              style={{
-                                padding: '6px 12px',
-                                backgroundColor: '#10b981',
-                                border: 'none',
-                                borderRadius: '4px',
-                                color: '#ffffff',
-                                cursor: 'pointer',
-                                fontSize: '12px'
-                              }}
-                            >
+                            <button onClick={() => updateReferrerStatus(referrer.id, 'active')} style={{ padding: '6px 12px', backgroundColor: '#10b981', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>
                               Activer
                             </button>
                           )}
                           {referrer.status === 'active' && (
-                            <button
-                              onClick={() => updateReferrerStatus(referrer.id, 'suspended')}
-                              style={{
-                                padding: '6px 12px',
-                                backgroundColor: '#ef4444',
-                                border: 'none',
-                                borderRadius: '4px',
-                                color: '#ffffff',
-                                cursor: 'pointer',
-                                fontSize: '12px'
-                              }}
-                            >
+                            <button onClick={() => updateReferrerStatus(referrer.id, 'suspended')} style={{ padding: '6px 12px', backgroundColor: '#ef4444', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>
                               Suspendre
                             </button>
                           )}
+                          <button onClick={() => openReferrerCommissionModal(referrer)} style={{ padding: '6px 12px', backgroundColor: 'rgba(91,110,245,0.15)', border: '1px solid rgba(91,110,245,0.3)', borderRadius: '4px', color: '#5B6EF5', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>
+                            Commissions
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -801,6 +842,15 @@ export default function Admin() {
               </div>
             </form>
           </div>
+
+          {/* Export CSV */}
+          {!dataLoading && sales.length > 0 && (
+            <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
+              <button onClick={exportCSV} style={{ padding: '8px 18px', background: 'rgba(91,110,245,0.12)', border: '1px solid rgba(91,110,245,0.3)', borderRadius: 8, color: '#5B6EF5', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
+                ↓ Exporter CSV
+              </button>
+            </div>
+          )}
 
           {/* Commission summary */}
           {!dataLoading && sales.length > 0 && (() => {
@@ -1209,7 +1259,7 @@ export default function Admin() {
               Taux de commission par service
             </h3>
             <p style={{ color: '#a0a0a0', fontSize: '13px', marginBottom: '24px' }}>
-              Montant versé à l&apos;apporteur (en €) pour chaque vente conclue.
+              Taux globaux par défaut — appliqués à tous les apporteurs sauf override individuel.
             </p>
 
             {dataLoading ? (
@@ -1276,6 +1326,52 @@ export default function Admin() {
             )}
           </div>
         </section>
+      )}
+      {/* Modal commissions par apporteur */}
+      {referrerCommissionModal && (
+        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', zIndex: 1000 }}>
+          <div style={{ backgroundColor: '#111118', borderRadius: '12px', padding: '32px', width: '100%', maxWidth: '520px', maxHeight: '90vh', overflow: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
+              <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '18px', fontWeight: 700 }}>
+                Commissions — {referrerCommissionModal.full_name}
+              </h3>
+              <button onClick={() => setReferrerCommissionModal(null)} style={{ background: 'rgba(255,255,255,0.06)', border: 'none', color: 'rgba(255,255,255,0.5)', width: 30, height: 30, borderRadius: 6, cursor: 'pointer', fontSize: 16 }}>✕</button>
+            </div>
+            <p style={{ color: '#a0a0a0', fontSize: '12px', marginBottom: '20px' }}>
+              Taux personnalisés pour cet apporteur. Les cases marquées <span style={{ color: '#5B6EF5' }}>globale</span> utilisent le taux par défaut.
+            </p>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+              {referrerRates.map((rate, idx) => (
+                <div key={rate.pack_name} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 14px', backgroundColor: '#080810', borderRadius: '8px', border: `1px solid ${rate.is_custom ? 'rgba(91,110,245,0.3)' : '#2a2a35'}` }}>
+                  <span style={{ flex: 1, fontWeight: 600, fontSize: '13px' }}>{rate.pack_name}</span>
+                  {!rate.is_custom && <span style={{ fontSize: '10px', color: '#5B6EF5', background: 'rgba(91,110,245,0.1)', padding: '2px 6px', borderRadius: 100 }}>globale</span>}
+                  <input
+                    type="number"
+                    min="0"
+                    value={rate.commission_amount}
+                    onChange={(e) => {
+                      const updated = [...referrerRates]
+                      updated[idx] = { ...rate, commission_amount: parseFloat(e.target.value) || 0, is_custom: true }
+                      setReferrerRates(updated)
+                    }}
+                    style={{ width: '90px', padding: '6px 10px', backgroundColor: '#111118', border: '1px solid #3a3a45', borderRadius: '6px', color: '#ffffff', fontSize: '13px', textAlign: 'right' }}
+                  />
+                  <span style={{ color: '#a0a0a0', fontSize: '13px' }}>€</span>
+                </div>
+              ))}
+            </div>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={resetReferrerCommissions} style={{ padding: '10px 16px', background: 'transparent', border: '1px solid #3a3a45', borderRadius: '8px', color: '#a0a0a0', cursor: 'pointer', fontSize: '13px' }}>
+                Remettre les taux globaux
+              </button>
+              <button onClick={saveReferrerCommissions} disabled={referrerRatesSaving} style={{ flex: 1, padding: '10px 24px', backgroundColor: referrerRatesSaving ? '#333' : '#5B6EF5', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: referrerRatesSaving ? 'not-allowed' : 'pointer', fontSize: '14px', fontWeight: 700, opacity: referrerRatesSaving ? 0.7 : 1 }}>
+                {referrerRatesSaving ? 'Sauvegarde...' : 'Enregistrer'}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </main>
   )
