@@ -78,7 +78,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Apporteur introuvable' }, { status: 404 });
     }
 
-    await query('UPDATE referrers SET status = $1 WHERE id = $2', [status, params.id]);
+    if (status === 'active' && referrers[0].prev_status !== 'active') {
+      await query('UPDATE referrers SET status = $1, activated_at = NOW() WHERE id = $2', [status, params.id]);
+    } else {
+      await query('UPDATE referrers SET status = $1 WHERE id = $2', [status, params.id]);
+    }
 
     // Send activation email when newly activated
     if (status === 'active' && referrers[0].prev_status !== 'active') {
