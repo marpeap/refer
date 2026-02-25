@@ -1,9 +1,13 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, Suspense } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
-export default function Register() {
+function RegisterForm() {
+  const searchParams = useSearchParams()
+  const refCode = searchParams.get('ref') || ''
+
   const [formData, setFormData] = useState({ full_name: '', email: '', phone: '', password: '', confirmPassword: '' })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [message, setMessage] = useState('')
@@ -32,7 +36,13 @@ export default function Register() {
       const res = await fetch('/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ full_name: formData.full_name, email: formData.email, phone: formData.phone, password: formData.password }),
+        body: JSON.stringify({
+          full_name: formData.full_name,
+          email: formData.email,
+          phone: formData.phone,
+          password: formData.password,
+          referred_by_code: refCode || undefined,
+        }),
       })
       const data = await res.json()
       if (res.ok) {
@@ -81,6 +91,21 @@ export default function Register() {
             </span>
           </Link>
         </div>
+
+        {refCode && (
+          <div style={{
+            background: 'rgba(91,110,245,0.08)',
+            border: '1px solid rgba(91,110,245,0.2)',
+            borderRadius: 10,
+            padding: '10px 16px',
+            marginBottom: 16,
+            fontSize: 13,
+            color: 'rgba(255,255,255,0.6)',
+            textAlign: 'center',
+          }}>
+            🤝 Invité par le code partenaire <strong style={{ color: '#5B6EF5' }}>{refCode}</strong>
+          </div>
+        )}
 
         {message ? (
           <div style={{ background: 'rgba(46,213,115,0.08)', border: '1px solid rgba(46,213,115,0.2)', borderRadius: 20, padding: '40px 32px', textAlign: 'center' }}>
@@ -144,5 +169,13 @@ export default function Register() {
         )}
       </div>
     </main>
+  )
+}
+
+export default function Register() {
+  return (
+    <Suspense>
+      <RegisterForm />
+    </Suspense>
   )
 }

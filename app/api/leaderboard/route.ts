@@ -14,13 +14,7 @@ export async function GET(req: NextRequest) {
     const myId = payload.id;
 
     // Top 10 par montant de commissions totales
-    const top = await query<{
-      id: string;
-      full_name: string;
-      tier: string;
-      sales_count: number;
-      total_commission: number;
-    }>(`
+    const top = await query(`
       SELECT
         r.id,
         r.full_name,
@@ -36,7 +30,7 @@ export async function GET(req: NextRequest) {
     `);
 
     // Position de l'utilisateur connecté (si hors top 10)
-    const myRankRow = await query<{ rank: number; total_commission: number; sales_count: number }>(`
+    const myRankRow = await query(`
       SELECT rank, total_commission, sales_count FROM (
         SELECT
           r.id,

@@ -14,11 +14,11 @@ export async function GET(
 ) {
   if (!checkAuth(req)) return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
 
-  const globals = await query<{ pack_name: string; commission_amount: number }>(
+  const globals = await query(
     'SELECT pack_name, commission_amount FROM commission_rates ORDER BY pack_name'
   );
 
-  const overrides = await query<{ pack_name: string; commission_amount: number }>(
+  const overrides = await query(
     'SELECT pack_name, commission_amount FROM referrer_commission_rates WHERE referrer_id = $1',
     [params.id]
   );

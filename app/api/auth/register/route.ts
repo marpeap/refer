@@ -16,7 +16,7 @@ function generateCode(fullName: string): string {
 
 export async function POST(req: NextRequest) {
   try {
-    const { full_name, email, phone, password } = await req.json();
+    const { full_name, email, phone, password, referred_by_code } = await req.json();
 
     if (!full_name || !email || !phone || !password) {
       return NextResponse.json(
@@ -28,10 +28,22 @@ export async function POST(req: NextRequest) {
     const password_hash = await hash(password, 10);
     const code = generateCode(full_name);
 
+    // Resolve referred_by_code → UUID
+    let referredById: string | null = null;
+    if (referred_by_code) {
+      const parrains = await query(
+        "SELECT id FROM referrers WHERE code = $1 AND status = 'active'",
+        [referred_by_code.toUpperCase()]
+      );
+      if (parrains.length > 0) {
+        referredById = parrains[0].id;
+      }
+    }
+
     await query(
-      `INSERT INTO referrers (id, full_name, email, phone, password_hash, code, status, created_at)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, 'pending', NOW())`,
-      [full_name, email, phone, password_hash, code]
+      `INSERT INTO referrers (id, full_name, email, phone, password_hash, code, status, referred_by, created_at)
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, 'pending', $6, NOW())`,
+      [full_name, email, phone, password_hash, code, referredById]
     );
 
     return NextResponse.json(

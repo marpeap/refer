@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { checkAndAwardBadges } from '@/lib/badges';
+import { sendPushNotif } from '@/lib/push';
+import { BADGE_DEFINITIONS } from '@/lib/badges';
 
 export const runtime = 'nodejs';
 
@@ -54,6 +57,69 @@ async function sendSaleEmail(referrerEmail: string, referrerName: string, client
   }
 }
 
+async function checkChallenges(referrerId: string, month: string): Promise<void> {
+  const challenges = await query(`
+    SELECT c.id, c.title, c.condition_type, c.condition_value, c.bonus_amount
+    FROM challenges c
+    LEFT JOIN challenge_completions cc ON cc.challenge_id = c.id AND cc.referrer_id = $1
+    WHERE c.active = true AND c.month = $2 AND cc.referrer_id IS NULL
+  `, [referrerId, month]);
+
+  if (challenges.length === 0) return;
+
+  // Fetch stats needed for challenge evaluation
+  const [salesCountRow] = await query(
+    'SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1',
+    [referrerId]
+  );
+  const salesCount = Number(salesCountRow?.cnt ?? 0);
+
+  const [monthAmountRow] = await query(
+    `SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales
+     WHERE referrer_id = $1 AND TO_CHAR(created_at, 'YYYY-MM') = $2`,
+    [referrerId, month]
+  );
+  const monthAmount = Number(monthAmountRow?.total ?? 0);
+
+  const monthSalesByService = await query(
+    `SELECT service, COUNT(*) AS cnt FROM sales
+     WHERE referrer_id = $1 AND TO_CHAR(created_at, 'YYYY-MM') = $2
+     GROUP BY service`,
+    [referrerId, month]
+  );
+  const serviceMap: Record<string, number> = {};
+  monthSalesByService.forEach((r: any) => { serviceMap[r.service] = Number(r.cnt); });
+
+  const [monthSalesRow] = await query(
+    `SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1 AND TO_CHAR(created_at, 'YYYY-MM') = $2`,
+    [referrerId, month]
+  );
+  const monthSalesCount = Number(monthSalesRow?.cnt ?? 0);
+
+  for (const challenge of challenges) {
+    const { condition_type, condition_value } = challenge;
+    let completed = false;
+
+    if (condition_type === 'sales_count') {
+      completed = monthSalesCount >= Number(condition_value.count ?? condition_value);
+    } else if (condition_type === 'service_sold') {
+      completed = (serviceMap[condition_value.service] ?? 0) >= (condition_value.count ?? 1);
+    } else if (condition_type === 'amount_total') {
+      completed = monthAmount >= Number(condition_value.amount ?? condition_value);
+    }
+
+    if (completed) {
+      await query(`
+        INSERT INTO challenge_completions (referrer_id, challenge_id)
+        VALUES ($1, $2)
+        ON CONFLICT DO NOTHING
+      `, [referrerId, challenge.id]);
+
+      sendPushNotif(referrerId, '🎯 Challenge complété !', `${challenge.title} — +${challenge.bonus_amount}€`).catch(() => {});
+    }
+  }
+}
+
 export async function POST(req: NextRequest) {
   const secret = req.headers.get('x-webhook-secret');
   if (!secret || secret !== process.env.WEBHOOK_SECRET) {
@@ -68,7 +134,7 @@ export async function POST(req: NextRequest) {
     }
 
     const referrers = await query(
-      "SELECT id, full_name, email FROM referrers WHERE code = $1 AND status = 'active'",
+      "SELECT id, full_name, email, referred_by FROM referrers WHERE code = $1 AND status = 'active'",
       [referrer_code.toUpperCase()]
     );
 
@@ -76,9 +142,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Referrer not found or inactive' }, { status: 404 });
     }
 
-    const { id: referrerId, full_name: referrerName, email: referrerEmail } = referrers[0];
+    const { id: referrerId, full_name: referrerName, email: referrerEmail, referred_by: referredBy } = referrers[0];
 
-    // Taux personnalisé pour cet apporteur > taux global > 0
+    // Commission rate: custom > global > 0
     const customRate = await query(
       'SELECT commission_amount FROM referrer_commission_rates WHERE referrer_id = $1 AND pack_name = $2',
       [referrerId, service]
@@ -91,22 +157,54 @@ export async function POST(req: NextRequest) {
       ? Number(customRate[0].commission_amount)
       : globalRate.length > 0 ? Number(globalRate[0].commission_amount) : 0;
 
-    await query(
+    const saleRows = await query(
       `INSERT INTO sales (id, referrer_id, client_name, service, amount, commission_amount, admin_note, created_at)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW())`,
+       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW())
+       RETURNING id`,
       [referrerId, client_name, service, amount, commission, `Auto via app.marpeap.digital`]
     );
+    const saleId = saleRows[0].id;
 
-    // Auto-update tier based on total sales
+    // Auto-update tier
     const salesCount = await query('SELECT COUNT(*) as cnt FROM sales WHERE referrer_id = $1', [referrerId]);
     const count = Number(salesCount[0].cnt);
     const tier = count >= 10 ? 'gold' : count >= 3 ? 'silver' : 'bronze';
     await query('UPDATE referrers SET tier = $1 WHERE id = $2', [tier, referrerId]);
 
-    // Send email notification (non-blocking)
+    // Cascade commission (MLM niveau 1)
+    if (referredBy && commission > 0) {
+      const [rateRow] = await query('SELECT rate FROM cascade_rate WHERE id = 1');
+      const cascadeRate = Number(rateRow?.rate ?? 5);
+      const cascadeAmount = Math.round(commission * cascadeRate) / 100;
+
+      if (cascadeAmount > 0) {
+        await query(`
+          INSERT INTO cascade_commissions (sale_id, referrer_id, filleul_id, amount)
+          VALUES ($1, $2, $3, $4)
+        `, [saleId, referredBy, referrerId, cascadeAmount]);
+
+        // Notify parrain
+        sendPushNotif(referredBy, '💸 Commission cascade !', `${referrerName} a fait une vente — +${cascadeAmount.toFixed(2)}€`).catch(() => {});
+      }
+    }
+
+    // Check and award badges
+    const newBadgeIds = await checkAndAwardBadges(referrerId);
+    for (const badgeId of newBadgeIds) {
+      const badgeDef = BADGE_DEFINITIONS.find(b => b.id === badgeId);
+      if (badgeDef) {
+        sendPushNotif(referrerId, `${badgeDef.icon} Badge gagné !`, badgeDef.name).catch(() => {});
+      }
+    }
+
+    // Check challenges
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    checkChallenges(referrerId, currentMonth).catch(() => {});
+
+    // Send email (non-blocking)
     sendSaleEmail(referrerEmail, referrerName, client_name, service, amount, commission);
 
-    return NextResponse.json({ ok: true, commission });
+    return NextResponse.json({ ok: true, commission, sale_id: saleId });
   } catch (error: any) {
     console.error('Webhook sale error:', error);
     return NextResponse.json({ error: error.message }, { status: 500 });
