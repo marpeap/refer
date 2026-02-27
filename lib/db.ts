@@ -122,6 +122,11 @@ export async function runMigrations() {
       INSERT INTO cascade_rate (id, rate) VALUES (1, 5) ON CONFLICT DO NOTHING
     `);
 
+    // Colonnes potentiellement absentes si les tables core ont été créées manuellement
+    await client.query(`ALTER TABLE sales ADD COLUMN IF NOT EXISTS commission_paid BOOLEAN DEFAULT FALSE`);
+    await client.query(`ALTER TABLE sales ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ`);
+    await client.query(`ALTER TABLE referrers ADD COLUMN IF NOT EXISTS tier VARCHAR DEFAULT 'bronze'`);
+
     console.log('[DB] Migrations completed');
   } catch (err) {
     console.error('[DB] Migration error:', err);

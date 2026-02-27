@@ -3,7 +3,8 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
-    serverComponentsExternalPackages: ['pg', 'pdf-lib', 'web-push']
+    serverComponentsExternalPackages: ['pg', 'pdf-lib', 'web-push'],
+    instrumentationHook: true,
   },
   webpack: (config) => {
     config.externals = [...(config.externals || []), 'pdfkit', '@node-rs/bcrypt'];
