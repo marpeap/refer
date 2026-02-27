@@ -1222,7 +1222,7 @@ export default function Admin() {
                     </div>
                   </div>
 
-                  {expandedChallenge === ch.id && ch.completions.length > 0 && (
+                  {expandedChallenge === ch.id && (ch.completions?.length ?? 0) > 0 && (
                     <div style={{ borderTop: '1px solid #2a2a35', padding: '12px 20px', background: 'rgba(255,255,255,0.02)' }}>
                       <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Completions</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>

@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
       COALESCE(SUM(commission_amount), 0) AS commission
     FROM sales
     WHERE created_at >= NOW() - INTERVAL '6 months'
-    GROUP BY month
+    GROUP BY TO_CHAR(date_trunc('month', created_at), 'YYYY-MM')
     ORDER BY month ASC
   `);
 
