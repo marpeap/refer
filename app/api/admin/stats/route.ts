@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
   );
   const commAll = await query('SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales');
   const commPending = await query(
-    "SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales WHERE paid = false"
+    "SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales WHERE commission_paid = false"
   );
 
   // Top referrer this month

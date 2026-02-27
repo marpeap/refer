@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
       ) AS pending_cascade,
       COUNT(s.id) AS sales_count
     FROM referrers r
-    LEFT JOIN sales s ON s.referrer_id = r.id AND s.paid = false
+    LEFT JOIN sales s ON s.referrer_id = r.id AND s.commission_paid = false
     WHERE r.status = 'active'
     GROUP BY r.id, r.full_name, r.code, r.email
     HAVING COALESCE(SUM(s.commission_amount), 0) > 0
