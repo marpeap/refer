@@ -207,10 +207,10 @@ export default function Admin() {
         if (contractsRes.ok) setContracts(await contractsRes.json())
       } else if (activeTab === 'annonces') {
         const res = await fetch('/api/admin/announcements', { headers: adminHeaders() })
-        if (res.ok) setAnnouncements(await res.json())
+        if (res.ok) { const d = await res.json(); setAnnouncements(d.announcements || []) }
       } else if (activeTab === 'challenges') {
         const res = await fetch('/api/admin/challenges', { headers: adminHeaders() })
-        if (res.ok) setChallenges(await res.json())
+        if (res.ok) { const d = await res.json(); setChallenges(d.challenges || []) }
       } else if (activeTab === 'cascade') {
         const res = await fetch('/api/admin/cascade', { headers: adminHeaders() })
         if (res.ok) {

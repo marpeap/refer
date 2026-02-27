@@ -17,6 +17,7 @@ export async function GET(req: NextRequest) {
       (SELECT JSON_AGG(JSON_BUILD_OBJECT(
         'referrer_id', cc.referrer_id,
         'referrer_name', r.full_name,
+        'referrer_code', r.code,
         'completed_at', cc.completed_at,
         'bonus_paid', cc.bonus_paid
       ))
