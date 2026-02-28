@@ -1202,10 +1202,10 @@ export default function Admin() {
                     </div>
                     <div style={{ textAlign: 'right', marginRight: 12 }}>
                       <div style={{ fontSize: 20, fontWeight: 800, color: '#2ED573' }}>+{Number(ch.bonus_amount).toLocaleString('fr-FR')} €</div>
-                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{ch.completions.length} completion(s)</div>
+                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{ch.completions?.length ?? 0} completion(s)</div>
                     </div>
                     <div style={{ display: 'flex', gap: 8 }}>
-                      {ch.completions.length > 0 && (
+                      {(ch.completions?.length ?? 0) > 0 && (
                         <button onClick={() => setExpandedChallenge(expandedChallenge === ch.id ? null : ch.id)}
                           style={{ padding: '6px 12px', background: 'rgba(91,110,245,0.15)', border: '1px solid rgba(91,110,245,0.3)', borderRadius: 6, color: '#5B6EF5', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
                           {expandedChallenge === ch.id ? '▲' : '▼'} Completions
