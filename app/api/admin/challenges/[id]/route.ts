@@ -45,6 +45,13 @@ export async function DELETE(
 ) {
   if (!checkAdmin(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  await query('DELETE FROM challenges WHERE id = $1', [params.id]);
-  return NextResponse.json({ ok: true });
+  try {
+    // Suppression manuelle des completions d'abord (au cas où CASCADE n'est pas configuré en prod)
+    await query('DELETE FROM challenge_completions WHERE challenge_id = $1', [params.id]);
+    await query('DELETE FROM challenges WHERE id = $1', [params.id]);
+    return NextResponse.json({ ok: true });
+  } catch (err) {
+    console.error('[DELETE challenge]', err);
+    return NextResponse.json({ error: 'Erreur lors de la suppression' }, { status: 500 });
+  }
 }
