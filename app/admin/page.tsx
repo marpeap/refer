@@ -103,7 +103,7 @@ interface CascadeCommission {
 
 const services = ['M-ONE', 'M-SHOP LITE', 'M-LOCAL', 'M-CALLING', 'M-CAMPAIGN', 'M-NEURAL', 'M-CORP']
 
-const SERVICE_COLORS = ['#5B6EF5', '#9B5BF5', '#2ED573', '#F59E0B', '#EF4444', '#06B6D4', '#F97316']
+const SERVICE_COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#F97316']
 
 type TabType = 'dashboard' | 'referrers' | 'sales' | 'commissions' | 'contracts' | 'annonces' | 'challenges' | 'cascade'
 
@@ -556,12 +556,12 @@ export default function Admin() {
   }
 
   const announcementTypeColor: Record<string, string> = {
-    info: '#5B6EF5', success: '#10b981', warning: '#f59e0b', promo: '#9B5BF5'
+    info: '#3B82F6', success: '#10b981', warning: '#f59e0b', promo: '#8B5CF6'
   }
 
   const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '10px 12px', backgroundColor: '#080810',
-    border: '1px solid #2a2a35', borderRadius: '6px', color: '#ffffff', fontSize: '14px', boxSizing: 'border-box'
+    width: '100%', padding: '10px 12px', backgroundColor: '#0A0F1C',
+    border: '1px solid #374151', borderRadius: '6px', color: '#ffffff', fontSize: '14px', boxSizing: 'border-box'
   }
 
   const tabs: { id: TabType; label: string }[] = [
@@ -580,26 +580,26 @@ export default function Admin() {
     return (
       <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
         <div style={{ width: '100%', maxWidth: '420px' }}>
-          <h1 style={{ fontFamily: "'Syne', sans-serif", fontSize: '32px', fontWeight: 800, marginBottom: '8px', textAlign: 'center' }}>Administration</h1>
-          <p style={{ textAlign: 'center', color: '#a0a0a0', marginBottom: '32px' }}>Accès réservé</p>
+          <h1 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '32px', fontWeight: 800, marginBottom: '8px', textAlign: 'center' }}>Administration</h1>
+          <p style={{ textAlign: 'center', color: '#9CA3AF', marginBottom: '32px' }}>Accès réservé</p>
           {error && (
-            <div style={{ padding: '16px', backgroundColor: '#3a1a1a', border: '1px solid #5a2a2a', borderRadius: '8px', marginBottom: '24px', textAlign: 'center', color: '#ff6b6b' }}>
+            <div style={{ padding: '16px', backgroundColor: '#7f1d1d', border: '1px solid #450a0a', borderRadius: '8px', marginBottom: '24px', textAlign: 'center', color: '#EF4444' }}>
               {error}
             </div>
           )}
           <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#a0a0a0' }}>Mot de passe admin</label>
+              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#9CA3AF' }}>Mot de passe admin</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                style={{ width: '100%', padding: '14px 16px', backgroundColor: '#111118', border: '1px solid #2a2a35', borderRadius: '8px', color: '#ffffff', fontSize: '16px', boxSizing: 'border-box' }}
+                style={{ width: '100%', padding: '14px 16px', backgroundColor: '#111827', border: '1px solid #374151', borderRadius: '8px', color: '#ffffff', fontSize: '16px', boxSizing: 'border-box' }}
                 placeholder="Mot de passe" required />
             </div>
-            <button type="submit" disabled={loading} style={{ padding: '16px', backgroundColor: '#5B6EF5', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+            <button type="submit" disabled={loading} style={{ padding: '16px', backgroundColor: '#3B82F6', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
               {loading ? 'Vérification...' : 'Accéder'}
             </button>
           </form>
           <p style={{ textAlign: 'center', marginTop: '24px' }}>
-            <Link href="/" style={{ color: '#a0a0a0', textDecoration: 'none', fontSize: '14px' }}>Retour à l&apos;accueil</Link>
+            <Link href="/" style={{ color: '#9CA3AF', textDecoration: 'none', fontSize: '14px' }}>Retour à l&apos;accueil</Link>
           </p>
         </div>
       </main>
@@ -610,17 +610,17 @@ export default function Admin() {
   return (
     <main style={{ minHeight: '100vh', padding: '24px' }}>
       {/* Header */}
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '24px', borderBottom: '1px solid #2a2a35', marginBottom: '24px' }}>
+      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '24px', borderBottom: '1px solid #374151', marginBottom: '24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: "'Syne', sans-serif", fontSize: '24px', fontWeight: 800, color: '#ffffff' }}>
-              mar<span style={{ color: '#5B6EF5' }}>peap</span>
+            <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '24px', fontWeight: 800, color: '#ffffff' }}>
+              mar<span style={{ color: '#3B82F6' }}>peap</span>
             </span>
           </Link>
-          <span style={{ color: '#5B6EF5', fontWeight: 500 }}>Admin</span>
+          <span style={{ color: '#3B82F6', fontWeight: 500 }}>Admin</span>
         </div>
         <button onClick={() => { sessionStorage.removeItem('admin_auth'); sessionStorage.removeItem('admin_password'); setIsAuthenticated(false) }}
-          style={{ padding: '8px 16px', backgroundColor: 'transparent', border: '1px solid #5B6EF5', borderRadius: '6px', color: '#5B6EF5', cursor: 'pointer', fontSize: '14px' }}>
+          style={{ padding: '8px 16px', backgroundColor: 'transparent', border: '1px solid #3B82F6', borderRadius: '6px', color: '#3B82F6', cursor: 'pointer', fontSize: '14px' }}>
           Déconnexion
         </button>
       </header>
@@ -629,7 +629,7 @@ export default function Admin() {
       <div style={{ display: 'flex', gap: '6px', marginBottom: '28px', flexWrap: 'wrap' }}>
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-            style={{ padding: '10px 18px', backgroundColor: activeTab === tab.id ? '#5B6EF5' : '#111118', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: 'pointer', fontSize: '13px', fontWeight: activeTab === tab.id ? 700 : 500 }}>
+            style={{ padding: '10px 18px', backgroundColor: activeTab === tab.id ? '#3B82F6' : '#111827', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: 'pointer', fontSize: '13px', fontWeight: activeTab === tab.id ? 700 : 500 }}>
             {tab.label}
           </button>
         ))}
@@ -639,18 +639,18 @@ export default function Admin() {
       {activeTab === 'dashboard' && (
         <section>
           {dataLoading || !adminStats ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: '#a0a0a0' }}>Chargement...</div>
+            <div style={{ textAlign: 'center', padding: '60px', color: '#9CA3AF' }}>Chargement...</div>
           ) : (
             <>
               {/* Stat cards */}
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 28 }}>
                 {[
-                  { label: 'Apporteurs actifs', value: adminStats.referrers.active, sub: `${adminStats.referrers.pending} en attente`, color: '#5B6EF5' },
-                  { label: 'Ventes ce mois', value: adminStats.sales.this_month, sub: `${adminStats.sales.all_time} au total`, color: '#9B5BF5' },
+                  { label: 'Apporteurs actifs', value: adminStats.referrers.active, sub: `${adminStats.referrers.pending} en attente`, color: '#3B82F6' },
+                  { label: 'Ventes ce mois', value: adminStats.sales.this_month, sub: `${adminStats.sales.all_time} au total`, color: '#8B5CF6' },
                   { label: 'Commissions à verser', value: `${adminStats.commissions.pending.toLocaleString('fr-FR')} €`, sub: `${adminStats.commissions.this_month.toLocaleString('fr-FR')} € ce mois`, color: '#f59e0b' },
-                  { label: 'Top apporteur', value: adminStats.top_referrer?.name ?? '-', sub: adminStats.top_referrer ? `${adminStats.top_referrer.sales} ventes — ${adminStats.top_referrer.commission} €` : '', color: '#2ED573' },
+                  { label: 'Top apporteur', value: adminStats.top_referrer?.name ?? '-', sub: adminStats.top_referrer ? `${adminStats.top_referrer.sales} ventes — ${adminStats.top_referrer.commission} €` : '', color: '#10B981' },
                 ].map((card, i) => (
-                  <div key={i} style={{ background: '#111118', border: '1px solid #2a2a35', borderRadius: 12, padding: '18px 20px' }}>
+                  <div key={i} style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: '18px 20px' }}>
                     <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>{card.label}</div>
                     <div style={{ fontSize: 22, fontWeight: 800, color: card.color, marginBottom: 4 }}>{card.value}</div>
                     <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>{card.sub}</div>
@@ -660,22 +660,22 @@ export default function Admin() {
 
               {/* Area chart — commissions par mois */}
               {adminStats.series_monthly.length > 0 && (
-                <div style={{ background: '#111118', border: '1px solid #2a2a35', borderRadius: 12, padding: '20px 24px', marginBottom: 20 }}>
+                <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: '20px 24px', marginBottom: 20 }}>
                   <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: 'rgba(255,255,255,0.8)' }}>Évolution mensuelle</div>
                   <ResponsiveContainer width="100%" height={220}>
                     <AreaChart data={adminStats.series_monthly} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                       <defs>
                         <linearGradient id="adminCommGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#5B6EF5" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#5B6EF5" stopOpacity={0} />
+                          <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                       <XAxis dataKey="month" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
                       <YAxis tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip contentStyle={{ background: '#1a1a25', border: '1px solid #2a2a35', borderRadius: 8, color: '#fff', fontSize: 12 }} />
-                      <Area type="monotone" dataKey="commission" name="Commissions (€)" stroke="#5B6EF5" fill="url(#adminCommGrad)" strokeWidth={2} dot={false} />
-                      <Area type="monotone" dataKey="sales" name="Ventes" stroke="#9B5BF5" fill="none" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                      <Tooltip contentStyle={{ background: '#1F2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', fontSize: 12 }} />
+                      <Area type="monotone" dataKey="commission" name="Commissions (€)" stroke="#3B82F6" fill="url(#adminCommGrad)" strokeWidth={2} dot={false} />
+                      <Area type="monotone" dataKey="sales" name="Ventes" stroke="#8B5CF6" fill="none" strokeWidth={2} strokeDasharray="5 5" dot={false} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -683,14 +683,14 @@ export default function Admin() {
 
               {/* Bar chart — par service */}
               {adminStats.by_service.length > 0 && (
-                <div style={{ background: '#111118', border: '1px solid #2a2a35', borderRadius: 12, padding: '20px 24px' }}>
+                <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: '20px 24px' }}>
                   <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: 'rgba(255,255,255,0.8)' }}>Répartition par service</div>
                   <ResponsiveContainer width="100%" height={200}>
                     <BarChart data={adminStats.by_service} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                       <XAxis dataKey="service" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
                       <YAxis tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip contentStyle={{ background: '#1a1a25', border: '1px solid #2a2a35', borderRadius: 8, color: '#fff', fontSize: 12 }} />
+                      <Tooltip contentStyle={{ background: '#1F2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', fontSize: 12 }} />
                       <Bar dataKey="count" name="Ventes" radius={[4, 4, 0, 0]}>
                         {adminStats.by_service.map((_, i) => (
                           <Cell key={i} fill={SERVICE_COLORS[i % SERVICE_COLORS.length]} />
@@ -709,27 +709,27 @@ export default function Admin() {
       {activeTab === 'referrers' && (
         <section>
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111118', borderRadius: '12px', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
                 <thead>
-                  <tr style={{ backgroundColor: '#1a1a25' }}>
+                  <tr style={{ backgroundColor: '#1F2937' }}>
                     {['Nom', 'Email', 'Code', 'Statut', 'Niveau', 'Ventes', 'Actions'].map(h => (
-                      <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>{h}</th>
+                      <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {referrers.map((referrer) => (
-                    <tr key={referrer.id} style={{ borderTop: '1px solid #2a2a35' }}>
+                    <tr key={referrer.id} style={{ borderTop: '1px solid #374151' }}>
                       <td style={{ padding: '16px' }}>
                         <div>{referrer.full_name}</div>
-                        <div style={{ fontSize: 12, color: '#a0a0a0' }}>{referrer.phone}</div>
-                        <div style={{ fontSize: 11, color: '#555', marginTop: 2 }}>{formatDate(referrer.created_at)}</div>
+                        <div style={{ fontSize: 12, color: '#9CA3AF' }}>{referrer.phone}</div>
+                        <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2 }}>{formatDate(referrer.created_at)}</div>
                       </td>
-                      <td style={{ padding: '16px', color: '#a0a0a0', fontSize: 13 }}>{referrer.email}</td>
-                      <td style={{ padding: '16px', fontFamily: "'Syne', monospace", fontWeight: 700 }}>{referrer.code}</td>
+                      <td style={{ padding: '16px', color: '#9CA3AF', fontSize: 13 }}>{referrer.email}</td>
+                      <td style={{ padding: '16px', fontFamily: "'Fira Code', monospace", fontWeight: 700 }}>{referrer.code}</td>
                       <td style={{ padding: '16px' }}>{getStatusBadge(referrer.status)}</td>
                       <td style={{ padding: '16px', textAlign: 'center' }}>{getTierBadge(referrer.tier, referrer.sales_count)}</td>
                       <td style={{ padding: '16px', textAlign: 'center', fontWeight: 700 }}>{referrer.sales_count}</td>
@@ -741,7 +741,7 @@ export default function Admin() {
                           {referrer.status === 'active' && (
                             <button onClick={() => updateReferrerStatus(referrer.id, 'suspended')} style={{ padding: '6px 12px', backgroundColor: '#ef4444', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>Suspendre</button>
                           )}
-                          <button onClick={() => openReferrerCommissionModal(referrer)} style={{ padding: '6px 12px', backgroundColor: 'rgba(91,110,245,0.15)', border: '1px solid rgba(91,110,245,0.3)', borderRadius: '4px', color: '#5B6EF5', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Commissions</button>
+                          <button onClick={() => openReferrerCommissionModal(referrer)} style={{ padding: '6px 12px', backgroundColor: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: '4px', color: '#3B82F6', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Commissions</button>
                         </div>
                       </td>
                     </tr>
@@ -757,8 +757,8 @@ export default function Admin() {
       {activeTab === 'sales' && (
         <section>
           {/* Sale Form */}
-          <div style={{ backgroundColor: '#111118', borderRadius: '12px', padding: '24px', marginBottom: '32px' }}>
-            <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Enregistrer une vente</h3>
+          <div style={{ backgroundColor: '#111827', borderRadius: '12px', padding: '24px', marginBottom: '32px' }}>
+            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Enregistrer une vente</h3>
             <form onSubmit={createSale} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
               {[
                 { label: 'Code apporteur', key: 'referrer_code', type: 'text', placeholder: 'DUPONT-7K3M' },
@@ -766,25 +766,25 @@ export default function Admin() {
                 { label: 'Montant (€)', key: 'amount', type: 'number', placeholder: '15000' },
               ].map(field => (
                 <div key={field.key}>
-                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#a0a0a0' }}>{field.label}</label>
+                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#9CA3AF' }}>{field.label}</label>
                   <input type={field.type} value={saleForm[field.key as keyof typeof saleForm]} onChange={(e) => setSaleForm({ ...saleForm, [field.key]: e.target.value })}
                     style={inputStyle} placeholder={field.placeholder} required />
                 </div>
               ))}
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#a0a0a0' }}>Service</label>
+                <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#9CA3AF' }}>Service</label>
                 <select value={saleForm.service} onChange={(e) => setSaleForm({ ...saleForm, service: e.target.value })}
                   style={{ ...inputStyle, cursor: 'pointer' }} required>
                   {services.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#a0a0a0' }}>Note (optionnel)</label>
+                <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#9CA3AF' }}>Note (optionnel)</label>
                 <input type="text" value={saleForm.admin_note} onChange={(e) => setSaleForm({ ...saleForm, admin_note: e.target.value })}
                   style={inputStyle} placeholder="Note interne" />
               </div>
               <div>
-                <button type="submit" style={{ padding: '12px 24px', backgroundColor: '#5B6EF5', border: 'none', borderRadius: '6px', color: '#ffffff', cursor: 'pointer', fontSize: '14px', fontWeight: 500 }}>Enregistrer</button>
+                <button type="submit" style={{ padding: '12px 24px', backgroundColor: '#3B82F6', border: 'none', borderRadius: '6px', color: '#ffffff', cursor: 'pointer', fontSize: '14px', fontWeight: 500 }}>Enregistrer</button>
               </div>
             </form>
           </div>
@@ -792,7 +792,7 @@ export default function Admin() {
           {!dataLoading && sales.length > 0 && (
             <>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
-                <button onClick={exportCSV} style={{ padding: '8px 18px', background: 'rgba(91,110,245,0.12)', border: '1px solid rgba(91,110,245,0.3)', borderRadius: 8, color: '#5B6EF5', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>↓ Exporter CSV</button>
+                <button onClick={exportCSV} style={{ padding: '8px 18px', background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, color: '#3B82F6', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>↓ Exporter CSV</button>
               </div>
               {(() => {
                 const unpaid = sales.filter(s => !s.commission_paid).reduce((a, s) => a + Number(s.commission_amount), 0)
@@ -814,42 +814,42 @@ export default function Admin() {
           )}
 
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
           ) : (
             <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111118', borderRadius: '12px', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
                 <thead>
-                  <tr style={{ backgroundColor: '#1a1a25' }}>
+                  <tr style={{ backgroundColor: '#1F2937' }}>
                     {['Apporteur', 'Client', 'Service', 'Montant', 'Commission', 'Paiement', 'Date', 'Actions'].map(h => (
-                      <th key={h} style={{ padding: '16px', textAlign: h === 'Montant' || h === 'Commission' ? 'right' : h === 'Paiement' ? 'center' : 'left', fontWeight: 500, color: '#a0a0a0' }}>{h}</th>
+                      <th key={h} style={{ padding: '16px', textAlign: h === 'Montant' || h === 'Commission' ? 'right' : h === 'Paiement' ? 'center' : 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {sales.map((sale) => (
-                    <tr key={sale.id} style={{ borderTop: '1px solid #2a2a35' }}>
+                    <tr key={sale.id} style={{ borderTop: '1px solid #374151' }}>
                       <td style={{ padding: '16px' }}>
                         <div style={{ fontWeight: 600 }}>{sale.referrer_name}</div>
-                        <div style={{ fontSize: 11, color: '#5B6EF5', fontFamily: 'monospace' }}>{sale.referrer_code}</div>
+                        <div style={{ fontSize: 11, color: '#3B82F6', fontFamily: 'monospace' }}>{sale.referrer_code}</div>
                       </td>
                       <td style={{ padding: '16px', fontSize: 14 }}>{sale.client_name}</td>
                       <td style={{ padding: '16px' }}>
-                        <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(91,110,245,0.15)', color: '#5B6EF5' }}>{sale.service}</span>
+                        <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(59,130,246,0.15)', color: '#3B82F6' }}>{sale.service}</span>
                       </td>
                       <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600 }}>{Number(sale.amount).toLocaleString('fr-FR')} €</td>
-                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#2ED573', fontSize: 15 }}>+{Number(sale.commission_amount).toLocaleString('fr-FR')} €</td>
+                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#10B981', fontSize: 15 }}>+{Number(sale.commission_amount).toLocaleString('fr-FR')} €</td>
                       <td style={{ padding: '16px', textAlign: 'center' }}>
                         {sale.commission_paid ? (
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
                             <span style={{ padding: '3px 10px', borderRadius: 10, fontSize: 11, fontWeight: 700, background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>Versé ✓</span>
-                            {sale.paid_at && <span style={{ fontSize: 10, color: '#555' }}>{formatDate(sale.paid_at)}</span>}
-                            <button onClick={() => markCommissionPaid(sale.id, false)} style={{ fontSize: 10, color: '#a0a0a0', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>Annuler</button>
+                            {sale.paid_at && <span style={{ fontSize: 10, color: '#6B7280' }}>{formatDate(sale.paid_at)}</span>}
+                            <button onClick={() => markCommissionPaid(sale.id, false)} style={{ fontSize: 10, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>Annuler</button>
                           </div>
                         ) : (
                           <button onClick={() => markCommissionPaid(sale.id, true)} style={{ padding: '6px 12px', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 6, color: '#10b981', cursor: 'pointer', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' }}>Marquer versé</button>
                         )}
                       </td>
-                      <td style={{ padding: '16px', color: '#a0a0a0', fontSize: 13 }}>{formatDate(sale.created_at)}</td>
+                      <td style={{ padding: '16px', color: '#9CA3AF', fontSize: 13 }}>{formatDate(sale.created_at)}</td>
                       <td style={{ padding: '16px' }}>
                         <button onClick={() => deleteSale(sale.id)} style={{ padding: '6px 12px', backgroundColor: '#ef4444', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>Supprimer</button>
                       </td>
@@ -865,27 +865,27 @@ export default function Admin() {
       {/* ── COMMISSIONS TAB ───────────────────────────────────────────────── */}
       {activeTab === 'commissions' && (
         <section>
-          <div style={{ backgroundColor: '#111118', borderRadius: '12px', padding: '24px', maxWidth: '600px' }}>
-            <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Taux de commission par service</h3>
-            <p style={{ color: '#a0a0a0', fontSize: '13px', marginBottom: '24px' }}>Taux globaux par défaut — appliqués à tous les apporteurs sauf override individuel.</p>
+          <div style={{ backgroundColor: '#111827', borderRadius: '12px', padding: '24px', maxWidth: '600px' }}>
+            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Taux de commission par service</h3>
+            <p style={{ color: '#9CA3AF', fontSize: '13px', marginBottom: '24px' }}>Taux globaux par défaut — appliqués à tous les apporteurs sauf override individuel.</p>
             {dataLoading ? (
-              <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+              <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
             ) : (
               <>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
                   {commissionRates.map((rate, idx) => (
-                    <div key={rate.pack_name} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '12px 16px', backgroundColor: '#080810', borderRadius: '8px', border: '1px solid #2a2a35' }}>
+                    <div key={rate.pack_name} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '12px 16px', backgroundColor: '#0A0F1C', borderRadius: '8px', border: '1px solid #374151' }}>
                       <span style={{ flex: 1, fontWeight: 600, fontSize: '14px' }}>{rate.pack_name}</span>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                         <input type="number" min="0" value={rate.commission_amount}
                           onChange={(e) => { const updated = [...commissionRates]; updated[idx] = { ...rate, commission_amount: parseFloat(e.target.value) || 0 }; setCommissionRates(updated) }}
-                          style={{ width: '100px', padding: '8px 12px', backgroundColor: '#111118', border: '1px solid #3a3a45', borderRadius: '6px', color: '#ffffff', fontSize: '14px', textAlign: 'right' }} />
-                        <span style={{ color: '#a0a0a0', fontSize: '14px' }}>€</span>
+                          style={{ width: '100px', padding: '8px 12px', backgroundColor: '#111827', border: '1px solid #4B5563', borderRadius: '6px', color: '#ffffff', fontSize: '14px', textAlign: 'right' }} />
+                        <span style={{ color: '#9CA3AF', fontSize: '14px' }}>€</span>
                       </div>
                     </div>
                   ))}
                 </div>
-                <button onClick={saveCommissions} disabled={commissionSaving} style={{ padding: '12px 32px', backgroundColor: commissionSaving ? '#333' : '#5B6EF5', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: commissionSaving ? 'not-allowed' : 'pointer', fontSize: '14px', fontWeight: 700, opacity: commissionSaving ? 0.7 : 1 }}>
+                <button onClick={saveCommissions} disabled={commissionSaving} style={{ padding: '12px 32px', backgroundColor: commissionSaving ? '#374151' : '#3B82F6', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: commissionSaving ? 'not-allowed' : 'pointer', fontSize: '14px', fontWeight: 700, opacity: commissionSaving ? 0.7 : 1 }}>
                   {commissionSaving ? 'Sauvegarde...' : 'Enregistrer'}
                 </button>
               </>
@@ -897,16 +897,16 @@ export default function Admin() {
       {/* ── CONTRACTS TAB ─────────────────────────────────────────────────── */}
       {activeTab === 'contracts' && (
         <section>
-          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Apporteurs actifs</h3>
+          <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Apporteurs actifs</h3>
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
           ) : (
             <div style={{ overflowX: 'auto', marginBottom: '48px' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111118', borderRadius: '12px', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
                 <thead>
-                  <tr style={{ backgroundColor: '#1a1a25' }}>
+                  <tr style={{ backgroundColor: '#1F2937' }}>
                     {['Nom', 'Email', 'Code', 'Statut contrat', 'Actions'].map(h => (
-                      <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>{h}</th>
+                      <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -917,10 +917,10 @@ export default function Admin() {
                     const hasSent = rc.some(c => c.status === 'sent')
                     const contractStatus = hasSigned ? 'Signé' : hasSent ? 'Envoyé' : 'Aucun'
                     return (
-                      <tr key={referrer.id} style={{ borderTop: '1px solid #2a2a35' }}>
+                      <tr key={referrer.id} style={{ borderTop: '1px solid #374151' }}>
                         <td style={{ padding: '16px' }}>{referrer.full_name}</td>
-                        <td style={{ padding: '16px', color: '#a0a0a0' }}>{referrer.email}</td>
-                        <td style={{ padding: '16px', fontFamily: "'Syne', monospace", fontWeight: 700 }}>{referrer.code}</td>
+                        <td style={{ padding: '16px', color: '#9CA3AF' }}>{referrer.email}</td>
+                        <td style={{ padding: '16px', fontFamily: "'Fira Code', monospace", fontWeight: 700 }}>{referrer.code}</td>
                         <td style={{ padding: '16px' }}>
                           <span style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, backgroundColor: hasSigned ? '#10b98120' : hasSent ? '#f59e0b20' : '#6b728020', color: hasSigned ? '#10b981' : hasSent ? '#f59e0b' : '#6b7280' }}>
                             {contractStatus}
@@ -929,7 +929,7 @@ export default function Admin() {
                         <td style={{ padding: '16px' }}>
                           {!hasSigned && (
                             <button onClick={() => { setSelectedReferrer(referrer); setContractModalOpen(true) }}
-                              style={{ padding: '6px 12px', backgroundColor: '#5B6EF5', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>
+                              style={{ padding: '6px 12px', backgroundColor: '#3B82F6', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>
                               Envoyer un contrat
                             </button>
                           )}
@@ -942,30 +942,30 @@ export default function Admin() {
             </div>
           )}
 
-          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Tous les contrats</h3>
+          <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Tous les contrats</h3>
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111118', borderRadius: '12px', overflow: 'hidden' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
               <thead>
-                <tr style={{ backgroundColor: '#1a1a25' }}>
+                <tr style={{ backgroundColor: '#1F2937' }}>
                   {['Apporteur', 'Date envoi', 'Statut', 'Date signature', 'Actions'].map(h => (
-                    <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>{h}</th>
+                    <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {contracts.map((contract) => (
-                  <tr key={contract.id} style={{ borderTop: '1px solid #2a2a35' }}>
+                  <tr key={contract.id} style={{ borderTop: '1px solid #374151' }}>
                     <td style={{ padding: '16px' }}>{contract.full_name}</td>
-                    <td style={{ padding: '16px', color: '#a0a0a0' }}>{formatDate(contract.created_at)}</td>
+                    <td style={{ padding: '16px', color: '#9CA3AF' }}>{formatDate(contract.created_at)}</td>
                     <td style={{ padding: '16px' }}>
                       <span style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, backgroundColor: contract.status === 'signed' ? '#10b98120' : '#f59e0b20', color: contract.status === 'signed' ? '#10b981' : '#f59e0b' }}>
                         {contract.status === 'signed' ? 'Signé' : 'Envoyé'}
                       </span>
                     </td>
-                    <td style={{ padding: '16px', color: '#a0a0a0' }}>{contract.signed_at ? formatDate(contract.signed_at) : '-'}</td>
+                    <td style={{ padding: '16px', color: '#9CA3AF' }}>{contract.signed_at ? formatDate(contract.signed_at) : '-'}</td>
                     <td style={{ padding: '16px' }}>
                       <a href={`https://storage.marpeap.digital/contracts/${contract.pdf_filename}`} target="_blank" rel="noopener noreferrer"
-                        style={{ padding: '6px 12px', backgroundColor: '#5B6EF5', border: 'none', borderRadius: '4px', color: '#ffffff', textDecoration: 'none', cursor: 'pointer', fontSize: '12px', display: 'inline-block' }}>
+                        style={{ padding: '6px 12px', backgroundColor: '#3B82F6', border: 'none', borderRadius: '4px', color: '#ffffff', textDecoration: 'none', cursor: 'pointer', fontSize: '12px', display: 'inline-block' }}>
                         Voir PDF
                       </a>
                     </td>
@@ -978,26 +978,26 @@ export default function Admin() {
           {/* Contract Modal */}
           {contractModalOpen && selectedReferrer && (
             <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', zIndex: 1000 }}>
-              <div style={{ backgroundColor: '#111118', borderRadius: '12px', padding: '32px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflow: 'auto' }}>
-                <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '20px', fontWeight: 700, marginBottom: '20px' }}>Envoyer un contrat à {selectedReferrer.full_name}</h3>
+              <div style={{ backgroundColor: '#111827', borderRadius: '12px', padding: '32px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflow: 'auto' }}>
+                <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '20px', fontWeight: 700, marginBottom: '20px' }}>Envoyer un contrat à {selectedReferrer.full_name}</h3>
                 <form onSubmit={sendContract} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#a0a0a0' }}>Option 1 : Uploader un PDF</label>
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#9CA3AF' }}>Option 1 : Uploader un PDF</label>
                     <input type="file" accept=".pdf" onChange={(e) => setContractPdfFile(e.target.files?.[0] || null)}
-                      style={{ width: '100%', padding: '12px', backgroundColor: '#080810', border: '1px solid #2a2a35', borderRadius: '8px', color: '#ffffff', fontSize: '14px' }} />
+                      style={{ width: '100%', padding: '12px', backgroundColor: '#0A0F1C', border: '1px solid #374151', borderRadius: '8px', color: '#ffffff', fontSize: '14px' }} />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#a0a0a0' }}>Option 2 : Saisir le texte du contrat</label>
+                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#9CA3AF' }}>Option 2 : Saisir le texte du contrat</label>
                     <textarea value={contractPdfText} onChange={(e) => setContractPdfText(e.target.value)} placeholder="Texte du contrat..." rows={6}
-                      style={{ width: '100%', padding: '12px', backgroundColor: '#080810', border: '1px solid #2a2a35', borderRadius: '8px', color: '#ffffff', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' }} />
+                      style={{ width: '100%', padding: '12px', backgroundColor: '#0A0F1C', border: '1px solid #374151', borderRadius: '8px', color: '#ffffff', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' }} />
                   </div>
                   <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
                     <button type="button" onClick={() => { setContractModalOpen(false); setSelectedReferrer(null); setContractPdfFile(null); setContractPdfText('') }}
-                      style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: '1px solid #a0a0a0', borderRadius: '8px', color: '#a0a0a0', cursor: 'pointer', fontSize: '16px', fontWeight: 500 }}>
+                      style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: '1px solid #9CA3AF', borderRadius: '8px', color: '#9CA3AF', cursor: 'pointer', fontSize: '16px', fontWeight: 500 }}>
                       Annuler
                     </button>
                     <button type="submit" disabled={sendContractLoading}
-                      style={{ flex: 1, padding: '14px', backgroundColor: '#5B6EF5', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: sendContractLoading ? 'not-allowed' : 'pointer', fontSize: '16px', fontWeight: 700, opacity: sendContractLoading ? 0.7 : 1 }}>
+                      style={{ flex: 1, padding: '14px', backgroundColor: '#3B82F6', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: sendContractLoading ? 'not-allowed' : 'pointer', fontSize: '16px', fontWeight: 700, opacity: sendContractLoading ? 0.7 : 1 }}>
                       {sendContractLoading ? 'Envoi...' : 'Envoyer'}
                     </button>
                   </div>
@@ -1012,29 +1012,29 @@ export default function Admin() {
       {activeTab === 'annonces' && (
         <section>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '18px', fontWeight: 700 }}>Annonces</h3>
+            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700 }}>Annonces</h3>
             <button onClick={() => setShowAnnouncementForm(!showAnnouncementForm)}
-              style={{ padding: '10px 20px', background: '#5B6EF5', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
+              style={{ padding: '10px 20px', background: '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
               {showAnnouncementForm ? '✕ Annuler' : '+ Nouvelle annonce'}
             </button>
           </div>
 
           {showAnnouncementForm && (
-            <div style={{ background: '#111118', border: '1px solid #2a2a35', borderRadius: 12, padding: 24, marginBottom: 24 }}>
+            <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: 24, marginBottom: 24 }}>
               <form onSubmit={createAnnouncement} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Titre</label>
+                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Titre</label>
                     <input type="text" value={announcementForm.title} onChange={e => setAnnouncementForm({ ...announcementForm, title: e.target.value })}
                       style={inputStyle} placeholder="Titre de l'annonce" required />
                   </div>
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Contenu</label>
+                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Contenu</label>
                     <textarea value={announcementForm.content} onChange={e => setAnnouncementForm({ ...announcementForm, content: e.target.value })}
                       style={{ ...inputStyle, resize: 'vertical' }} rows={3} placeholder="Contenu de l'annonce" required />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Type</label>
+                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Type</label>
                     <select value={announcementForm.type} onChange={e => setAnnouncementForm({ ...announcementForm, type: e.target.value })}
                       style={{ ...inputStyle, cursor: 'pointer' }}>
                       {[['info', 'Info'], ['success', 'Succès'], ['warning', 'Alerte'], ['promo', 'Promo']].map(([v, l]) => (
@@ -1043,13 +1043,13 @@ export default function Admin() {
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Expiration (optionnel)</label>
+                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Expiration (optionnel)</label>
                     <input type="datetime-local" value={announcementForm.expires_at} onChange={e => setAnnouncementForm({ ...announcementForm, expires_at: e.target.value })}
                       style={inputStyle} />
                   </div>
                 </div>
                 <div>
-                  <button type="submit" disabled={announcementCreating} style={{ padding: '12px 28px', background: announcementCreating ? '#333' : '#5B6EF5', border: 'none', borderRadius: 8, color: '#fff', cursor: announcementCreating ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700 }}>
+                  <button type="submit" disabled={announcementCreating} style={{ padding: '12px 28px', background: announcementCreating ? '#374151' : '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: announcementCreating ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700 }}>
                     {announcementCreating ? 'Création...' : 'Publier l\'annonce'}
                   </button>
                 </div>
@@ -1058,13 +1058,13 @@ export default function Admin() {
           )}
 
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {announcements.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0', background: '#111118', borderRadius: 12 }}>Aucune annonce</div>
+                <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF', background: '#111827', borderRadius: 12 }}>Aucune annonce</div>
               ) : announcements.map(ann => (
-                <div key={ann.id} style={{ background: '#111118', border: `1px solid ${ann.active ? announcementTypeColor[ann.type] + '33' : '#2a2a35'}`, borderRadius: 12, padding: '16px 20px' }}>
+                <div key={ann.id} style={{ background: '#111827', border: `1px solid ${ann.active ? announcementTypeColor[ann.type] + '33' : '#374151'}`, borderRadius: 12, padding: '16px 20px' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                     <span style={{ padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: announcementTypeColor[ann.type] + '22', color: announcementTypeColor[ann.type], flexShrink: 0 }}>
                       {ann.type}
@@ -1078,7 +1078,7 @@ export default function Admin() {
                     </div>
                     <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
                       <button onClick={() => pushAnnouncementAll(ann.id, ann.title, ann.content)}
-                        style={{ padding: '6px 12px', background: 'rgba(155,91,245,0.15)', border: '1px solid rgba(155,91,245,0.3)', borderRadius: 6, color: '#9B5BF5', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+                        style={{ padding: '6px 12px', background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.3)', borderRadius: 6, color: '#8B5CF6', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
                         🔔 Push
                       </button>
                       <button onClick={() => toggleAnnouncement(ann.id, ann.active)}
@@ -1102,29 +1102,29 @@ export default function Admin() {
       {activeTab === 'challenges' && (
         <section>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '18px', fontWeight: 700 }}>Challenges mensuels</h3>
+            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700 }}>Challenges mensuels</h3>
             <button onClick={() => setShowChallengeForm(!showChallengeForm)}
-              style={{ padding: '10px 20px', background: '#5B6EF5', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
+              style={{ padding: '10px 20px', background: '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
               {showChallengeForm ? '✕ Annuler' : '+ Nouveau challenge'}
             </button>
           </div>
 
           {showChallengeForm && (
-            <div style={{ background: '#111118', border: '1px solid #2a2a35', borderRadius: 12, padding: 24, marginBottom: 24 }}>
+            <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: 24, marginBottom: 24 }}>
               <form onSubmit={createChallenge} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
                   <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Titre</label>
+                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Titre</label>
                     <input type="text" value={challengeForm.title} onChange={e => setChallengeForm({ ...challengeForm, title: e.target.value })}
                       style={inputStyle} placeholder="Ex: 3 ventes ce mois" required />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Mois</label>
+                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Mois</label>
                     <input type="month" value={challengeForm.month} onChange={e => setChallengeForm({ ...challengeForm, month: e.target.value })}
                       style={inputStyle} required />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Type de condition</label>
+                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Type de condition</label>
                     <select value={challengeForm.condition_type} onChange={e => setChallengeForm({ ...challengeForm, condition_type: e.target.value as typeof challengeForm.condition_type })}
                       style={{ ...inputStyle, cursor: 'pointer' }}>
                       <option value="sales_count">Nb ventes ce mois</option>
@@ -1135,7 +1135,7 @@ export default function Admin() {
 
                   {challengeForm.condition_type === 'sales_count' && (
                     <div>
-                      <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Nombre de ventes requis</label>
+                      <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Nombre de ventes requis</label>
                       <input type="number" min="1" value={challengeForm.condition_count} onChange={e => setChallengeForm({ ...challengeForm, condition_count: e.target.value })}
                         style={inputStyle} required />
                     </div>
@@ -1144,14 +1144,14 @@ export default function Admin() {
                   {challengeForm.condition_type === 'service_sold' && (
                     <>
                       <div>
-                        <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Service</label>
+                        <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Service</label>
                         <select value={challengeForm.condition_service} onChange={e => setChallengeForm({ ...challengeForm, condition_service: e.target.value })}
                           style={{ ...inputStyle, cursor: 'pointer' }}>
                           {services.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Nb ventes de ce service</label>
+                        <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Nb ventes de ce service</label>
                         <input type="number" min="1" value={challengeForm.condition_service_count} onChange={e => setChallengeForm({ ...challengeForm, condition_service_count: e.target.value })}
                           style={inputStyle} required />
                       </div>
@@ -1160,20 +1160,20 @@ export default function Admin() {
 
                   {challengeForm.condition_type === 'amount_total' && (
                     <div>
-                      <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Montant commissions (€)</label>
+                      <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Montant commissions (€)</label>
                       <input type="number" min="1" value={challengeForm.condition_amount} onChange={e => setChallengeForm({ ...challengeForm, condition_amount: e.target.value })}
                         style={inputStyle} required />
                     </div>
                   )}
 
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#a0a0a0' }}>Bonus (€)</label>
+                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Bonus (€)</label>
                     <input type="number" min="1" value={challengeForm.bonus_amount} onChange={e => setChallengeForm({ ...challengeForm, bonus_amount: e.target.value })}
                       style={inputStyle} required />
                   </div>
                 </div>
                 <div>
-                  <button type="submit" disabled={challengeCreating} style={{ padding: '12px 28px', background: challengeCreating ? '#333' : '#5B6EF5', border: 'none', borderRadius: 8, color: '#fff', cursor: challengeCreating ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700 }}>
+                  <button type="submit" disabled={challengeCreating} style={{ padding: '12px 28px', background: challengeCreating ? '#374151' : '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: challengeCreating ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700 }}>
                     {challengeCreating ? 'Création...' : 'Créer le challenge'}
                   </button>
                 </div>
@@ -1182,18 +1182,18 @@ export default function Admin() {
           )}
 
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {challenges.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0', background: '#111118', borderRadius: 12 }}>Aucun challenge</div>
+                <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF', background: '#111827', borderRadius: 12 }}>Aucun challenge</div>
               ) : challenges.map(ch => (
-                <div key={ch.id} style={{ background: '#111118', border: `1px solid ${ch.active ? 'rgba(46,213,115,0.2)' : '#2a2a35'}`, borderRadius: 12, overflow: 'hidden' }}>
+                <div key={ch.id} style={{ background: '#111827', border: `1px solid ${ch.active ? 'rgba(46,213,115,0.2)' : '#374151'}`, borderRadius: 12, overflow: 'hidden' }}>
                   <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
                         <span style={{ fontWeight: 700, fontSize: 15 }}>{ch.title}</span>
-                        <span style={{ padding: '2px 8px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: ch.active ? 'rgba(46,213,115,0.15)' : 'rgba(255,255,255,0.07)', color: ch.active ? '#2ED573' : '#a0a0a0' }}>
+                        <span style={{ padding: '2px 8px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: ch.active ? 'rgba(46,213,115,0.15)' : 'rgba(255,255,255,0.07)', color: ch.active ? '#10B981' : '#9CA3AF' }}>
                           {ch.active ? 'Actif' : 'Inactif'}
                         </span>
                         <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{ch.month}</span>
@@ -1201,13 +1201,13 @@ export default function Admin() {
                       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>{formatCondition(ch)}</div>
                     </div>
                     <div style={{ textAlign: 'right', marginRight: 12 }}>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: '#2ED573' }}>+{Number(ch.bonus_amount).toLocaleString('fr-FR')} €</div>
+                      <div style={{ fontSize: 20, fontWeight: 800, color: '#10B981' }}>+{Number(ch.bonus_amount).toLocaleString('fr-FR')} €</div>
                       <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{ch.completions?.length ?? 0} completion(s)</div>
                     </div>
                     <div style={{ display: 'flex', gap: 8 }}>
                       {(ch.completions?.length ?? 0) > 0 && (
                         <button onClick={() => setExpandedChallenge(expandedChallenge === ch.id ? null : ch.id)}
-                          style={{ padding: '6px 12px', background: 'rgba(91,110,245,0.15)', border: '1px solid rgba(91,110,245,0.3)', borderRadius: 6, color: '#5B6EF5', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+                          style={{ padding: '6px 12px', background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 6, color: '#3B82F6', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
                           {expandedChallenge === ch.id ? '▲' : '▼'} Completions
                         </button>
                       )}
@@ -1223,14 +1223,14 @@ export default function Admin() {
                   </div>
 
                   {expandedChallenge === ch.id && (ch.completions?.length ?? 0) > 0 && (
-                    <div style={{ borderTop: '1px solid #2a2a35', padding: '12px 20px', background: 'rgba(255,255,255,0.02)' }}>
+                    <div style={{ borderTop: '1px solid #374151', padding: '12px 20px', background: 'rgba(255,255,255,0.02)' }}>
                       <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Completions</div>
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                         {ch.completions.map(comp => (
                           <div key={comp.referrer_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8 }}>
                             <div style={{ flex: 1 }}>
                               <span style={{ fontWeight: 600, fontSize: 14 }}>{comp.referrer_name}</span>
-                              <span style={{ fontSize: 12, color: '#5B6EF5', fontFamily: 'monospace', marginLeft: 8 }}>{comp.referrer_code}</span>
+                              <span style={{ fontSize: 12, color: '#3B82F6', fontFamily: 'monospace', marginLeft: 8 }}>{comp.referrer_code}</span>
                             </div>
                             <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{formatDate(comp.completed_at)}</span>
                             {comp.bonus_paid ? (
@@ -1257,17 +1257,17 @@ export default function Admin() {
       {activeTab === 'cascade' && (
         <section>
           {/* Rate card */}
-          <div style={{ background: '#111118', border: '1px solid #2a2a35', borderRadius: 12, padding: '20px 24px', marginBottom: 24, maxWidth: 400 }}>
-            <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '16px', fontWeight: 700, marginBottom: 6 }}>Taux de commission cascade</h3>
+          <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: '20px 24px', marginBottom: 24, maxWidth: 400 }}>
+            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '16px', fontWeight: 700, marginBottom: 6 }}>Taux de commission cascade</h3>
             <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 16 }}>Pourcentage de la commission du filleul reversé au parrain.</p>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
               <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
                 <input type="number" min="0" max="100" step="0.5" value={cascadeRateEdit} onChange={e => setCascadeRateEdit(e.target.value)}
-                  style={{ width: 80, padding: '10px 12px', backgroundColor: '#080810', border: '1px solid #2a2a35', borderRadius: 8, color: '#ffffff', fontSize: 18, fontWeight: 700, textAlign: 'center' }} />
+                  style={{ width: 80, padding: '10px 12px', backgroundColor: '#0A0F1C', border: '1px solid #374151', borderRadius: 8, color: '#ffffff', fontSize: 18, fontWeight: 700, textAlign: 'center' }} />
                 <span style={{ fontSize: 18, fontWeight: 700, color: 'rgba(255,255,255,0.5)' }}>%</span>
               </div>
               <button onClick={updateCascadeRate} disabled={cascadeRateSaving}
-                style={{ padding: '10px 20px', background: cascadeRateSaving ? '#333' : '#5B6EF5', border: 'none', borderRadius: 8, color: '#fff', cursor: cascadeRateSaving ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700 }}>
+                style={{ padding: '10px 20px', background: cascadeRateSaving ? '#374151' : '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: cascadeRateSaving ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700 }}>
                 {cascadeRateSaving ? '...' : 'Enregistrer'}
               </button>
             </div>
@@ -1275,9 +1275,9 @@ export default function Admin() {
           </div>
 
           {/* Cascade commissions table */}
-          <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '16px', fontWeight: 700, marginBottom: 16 }}>Commissions cascade</h3>
+          <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '16px', fontWeight: 700, marginBottom: 16 }}>Commissions cascade</h3>
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#a0a0a0' }}>Chargement...</div>
+            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
           ) : (
             <>
               {/* Summary */}
@@ -1291,48 +1291,48 @@ export default function Admin() {
                     </div>
                     <div style={{ background: 'rgba(46,213,115,0.08)', border: '1px solid rgba(46,213,115,0.2)', borderRadius: 10, padding: '14px 20px', flex: 1, minWidth: 160 }}>
                       <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 4, textTransform: 'uppercase' }}>Total cascade</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: '#2ED573' }}>{cascadeCommissions.reduce((a, c) => a + Number(c.amount), 0).toLocaleString('fr-FR')} €</div>
+                      <div style={{ fontSize: 22, fontWeight: 800, color: '#10B981' }}>{cascadeCommissions.reduce((a, c) => a + Number(c.amount), 0).toLocaleString('fr-FR')} €</div>
                     </div>
                   </div>
                 )
               })()}
 
               <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111118', borderRadius: '12px', overflow: 'hidden' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
                   <thead>
-                    <tr style={{ backgroundColor: '#1a1a25' }}>
+                    <tr style={{ backgroundColor: '#1F2937' }}>
                       {['Parrain', 'Filleul', 'Cascade', 'Statut', 'Date', 'Action'].map(h => (
-                        <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#a0a0a0' }}>{h}</th>
+                        <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {cascadeCommissions.length === 0 ? (
                       <tr>
-                        <td colSpan={6} style={{ padding: '48px', textAlign: 'center', color: '#a0a0a0' }}>Aucune commission cascade</td>
+                        <td colSpan={6} style={{ padding: '48px', textAlign: 'center', color: '#9CA3AF' }}>Aucune commission cascade</td>
                       </tr>
                     ) : cascadeCommissions.map(cc => (
-                      <tr key={cc.id} style={{ borderTop: '1px solid #2a2a35' }}>
+                      <tr key={cc.id} style={{ borderTop: '1px solid #374151' }}>
                         <td style={{ padding: '16px' }}>
                           <div style={{ fontWeight: 600 }}>{cc.parrain_name}</div>
-                          <div style={{ fontSize: 11, color: '#5B6EF5', fontFamily: 'monospace' }}>{cc.parrain_code}</div>
+                          <div style={{ fontSize: 11, color: '#3B82F6', fontFamily: 'monospace' }}>{cc.parrain_code}</div>
                         </td>
                         <td style={{ padding: '16px' }}>
                           <div style={{ fontWeight: 500 }}>{cc.filleul_name}</div>
                           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{cc.filleul_code}</div>
                         </td>
-                        <td style={{ padding: '16px', fontWeight: 800, color: '#2ED573', fontSize: 15 }}>+{Number(cc.amount).toLocaleString('fr-FR')} €</td>
+                        <td style={{ padding: '16px', fontWeight: 800, color: '#10B981', fontSize: 15 }}>+{Number(cc.amount).toLocaleString('fr-FR')} €</td>
                         <td style={{ padding: '16px' }}>
                           {cc.paid ? (
                             <div>
                               <span style={{ padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>Versé ✓</span>
-                              {cc.paid_at && <div style={{ fontSize: 10, color: '#555', marginTop: 4 }}>{formatDate(cc.paid_at)}</div>}
+                              {cc.paid_at && <div style={{ fontSize: 10, color: '#6B7280', marginTop: 4 }}>{formatDate(cc.paid_at)}</div>}
                             </div>
                           ) : (
                             <span style={{ padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: 'rgba(239,68,68,0.12)', color: '#ef4444' }}>En attente</span>
                           )}
                         </td>
-                        <td style={{ padding: '16px', color: '#a0a0a0', fontSize: 13 }}>{formatDate(cc.created_at)}</td>
+                        <td style={{ padding: '16px', color: '#9CA3AF', fontSize: 13 }}>{formatDate(cc.created_at)}</td>
                         <td style={{ padding: '16px' }}>
                           {!cc.paid && (
                             <button onClick={() => markCascadePaid(cc.id)}
@@ -1354,31 +1354,31 @@ export default function Admin() {
       {/* ── MODAL: Per-referrer commission rates ─────────────────────────── */}
       {referrerCommissionModal && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', zIndex: 1000 }}>
-          <div style={{ backgroundColor: '#111118', borderRadius: '12px', padding: '32px', width: '100%', maxWidth: '520px', maxHeight: '90vh', overflow: 'auto' }}>
+          <div style={{ backgroundColor: '#111827', borderRadius: '12px', padding: '32px', width: '100%', maxWidth: '520px', maxHeight: '90vh', overflow: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
-              <h3 style={{ fontFamily: "'Syne', sans-serif", fontSize: '18px', fontWeight: 700 }}>Commissions — {referrerCommissionModal.full_name}</h3>
+              <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700 }}>Commissions — {referrerCommissionModal.full_name}</h3>
               <button onClick={() => setReferrerCommissionModal(null)} style={{ background: 'rgba(255,255,255,0.06)', border: 'none', color: 'rgba(255,255,255,0.5)', width: 30, height: 30, borderRadius: 6, cursor: 'pointer', fontSize: 16 }}>✕</button>
             </div>
-            <p style={{ color: '#a0a0a0', fontSize: '12px', marginBottom: '20px' }}>
-              Taux personnalisés pour cet apporteur. Les cases marquées <span style={{ color: '#5B6EF5' }}>globale</span> utilisent le taux par défaut.
+            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '20px' }}>
+              Taux personnalisés pour cet apporteur. Les cases marquées <span style={{ color: '#3B82F6' }}>globale</span> utilisent le taux par défaut.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
               {referrerRates.map((rate, idx) => (
-                <div key={rate.pack_name} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 14px', backgroundColor: '#080810', borderRadius: '8px', border: `1px solid ${rate.is_custom ? 'rgba(91,110,245,0.3)' : '#2a2a35'}` }}>
+                <div key={rate.pack_name} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 14px', backgroundColor: '#0A0F1C', borderRadius: '8px', border: `1px solid ${rate.is_custom ? 'rgba(59,130,246,0.3)' : '#374151'}` }}>
                   <span style={{ flex: 1, fontWeight: 600, fontSize: '13px' }}>{rate.pack_name}</span>
-                  {!rate.is_custom && <span style={{ fontSize: '10px', color: '#5B6EF5', background: 'rgba(91,110,245,0.1)', padding: '2px 6px', borderRadius: 100 }}>globale</span>}
+                  {!rate.is_custom && <span style={{ fontSize: '10px', color: '#3B82F6', background: 'rgba(59,130,246,0.1)', padding: '2px 6px', borderRadius: 100 }}>globale</span>}
                   <input type="number" min="0" value={rate.commission_amount}
                     onChange={(e) => { const updated = [...referrerRates]; updated[idx] = { ...rate, commission_amount: parseFloat(e.target.value) || 0, is_custom: true }; setReferrerRates(updated) }}
-                    style={{ width: '90px', padding: '6px 10px', backgroundColor: '#111118', border: '1px solid #3a3a45', borderRadius: '6px', color: '#ffffff', fontSize: '13px', textAlign: 'right' }} />
-                  <span style={{ color: '#a0a0a0', fontSize: '13px' }}>€</span>
+                    style={{ width: '90px', padding: '6px 10px', backgroundColor: '#111827', border: '1px solid #4B5563', borderRadius: '6px', color: '#ffffff', fontSize: '13px', textAlign: 'right' }} />
+                  <span style={{ color: '#9CA3AF', fontSize: '13px' }}>€</span>
                 </div>
               ))}
             </div>
             <div style={{ display: 'flex', gap: '10px' }}>
-              <button onClick={resetReferrerCommissions} style={{ padding: '10px 16px', background: 'transparent', border: '1px solid #3a3a45', borderRadius: '8px', color: '#a0a0a0', cursor: 'pointer', fontSize: '13px' }}>
+              <button onClick={resetReferrerCommissions} style={{ padding: '10px 16px', background: 'transparent', border: '1px solid #4B5563', borderRadius: '8px', color: '#9CA3AF', cursor: 'pointer', fontSize: '13px' }}>
                 Remettre les taux globaux
               </button>
-              <button onClick={saveReferrerCommissions} disabled={referrerRatesSaving} style={{ flex: 1, padding: '10px 24px', backgroundColor: referrerRatesSaving ? '#333' : '#5B6EF5', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: referrerRatesSaving ? 'not-allowed' : 'pointer', fontSize: '14px', fontWeight: 700, opacity: referrerRatesSaving ? 0.7 : 1 }}>
+              <button onClick={saveReferrerCommissions} disabled={referrerRatesSaving} style={{ flex: 1, padding: '10px 24px', backgroundColor: referrerRatesSaving ? '#374151' : '#3B82F6', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: referrerRatesSaving ? 'not-allowed' : 'pointer', fontSize: '14px', fontWeight: 700, opacity: referrerRatesSaving ? 0.7 : 1 }}>
                 {referrerRatesSaving ? 'Sauvegarde...' : 'Enregistrer'}
               </button>
             </div>

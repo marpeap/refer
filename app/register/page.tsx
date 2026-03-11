@@ -66,36 +66,36 @@ function RegisterForm() {
     borderRadius: 9,
     color: '#fff',
     fontSize: 15,
-    fontFamily: "'DM Sans', sans-serif",
+    fontFamily: "'Inter', sans-serif",
     transition: 'border-color 0.2s',
   })
 
   return (
-    <main style={{ minHeight: '100vh', background: '#080810', color: '#fff', fontFamily: "'DM Sans', sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 16px' }}>
+    <main style={{ minHeight: '100vh', background: '#0A0F1C', color: '#fff', fontFamily: "'Inter', sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 16px' }}>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Syne:wght@700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap');
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        input:focus { outline: none; border-color: rgba(91,110,245,0.6) !important; }
+        input:focus { outline: none; border-color: rgba(59,130,246,0.6) !important; }
       `}</style>
 
       <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }}>
-        <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(91,110,245,0.07) 0%, transparent 70%)', borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: 400, height: 400, background: 'radial-gradient(circle, rgba(155,91,245,0.05) 0%, transparent 70%)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)', borderRadius: '50%' }} />
+        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: 400, height: 400, background: 'radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%)', borderRadius: '50%' }} />
       </div>
 
       <div style={{ position: 'relative', width: '100%', maxWidth: 460 }}>
         <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, color: '#fff' }}>
-              mar<span style={{ color: '#5B6EF5' }}>peap</span>
+            <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 24, fontWeight: 800, color: '#fff' }}>
+              mar<span style={{ color: '#3B82F6' }}>peap</span>
             </span>
           </Link>
         </div>
 
         {refCode && (
           <div style={{
-            background: 'rgba(91,110,245,0.08)',
-            border: '1px solid rgba(91,110,245,0.2)',
+            background: 'rgba(59,130,246,0.08)',
+            border: '1px solid rgba(59,130,246,0.2)',
             borderRadius: 10,
             padding: '10px 16px',
             marginBottom: 16,
@@ -103,28 +103,28 @@ function RegisterForm() {
             color: 'rgba(255,255,255,0.6)',
             textAlign: 'center',
           }}>
-            🤝 Invité par le code partenaire <strong style={{ color: '#5B6EF5' }}>{refCode}</strong>
+            🤝 Invité par le code partenaire <strong style={{ color: '#3B82F6' }}>{refCode}</strong>
           </div>
         )}
 
         {message ? (
           <div style={{ background: 'rgba(46,213,115,0.08)', border: '1px solid rgba(46,213,115,0.2)', borderRadius: 20, padding: '40px 32px', textAlign: 'center' }}>
             <div style={{ fontSize: 40, marginBottom: 16 }}>✅</div>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 10 }}>Demande envoyée !</div>
+            <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 10 }}>Demande envoyée !</div>
             <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>{message}</div>
-            <Link href="/login" style={{ display: 'inline-block', padding: '11px 24px', background: '#5B6EF5', color: '#fff', textDecoration: 'none', borderRadius: 9, fontWeight: 700, fontSize: 14 }}>
+            <Link href="/login" style={{ display: 'inline-block', padding: '11px 24px', background: '#3B82F6', color: '#fff', textDecoration: 'none', borderRadius: 9, fontWeight: 700, fontSize: 14 }}>
               Se connecter
             </Link>
           </div>
         ) : (
           <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 20, padding: '36px 32px' }}>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 24, fontWeight: 800, marginBottom: 6, textAlign: 'center' }}>Devenir apporteur</div>
+            <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 24, fontWeight: 800, marginBottom: 6, textAlign: 'center' }}>Devenir apporteur</div>
             <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 14, textAlign: 'center', marginBottom: 28, lineHeight: 1.5 }}>
               Rejoignez le programme et gagnez des commissions sur chaque vente.
             </div>
 
             {errors.submit && (
-              <div style={{ background: 'rgba(231,76,60,0.1)', border: '1px solid rgba(231,76,60,0.2)', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#ff6b6b', textAlign: 'center' }}>
+              <div style={{ background: 'rgba(231,76,60,0.1)', border: '1px solid rgba(231,76,60,0.2)', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#EF4444', textAlign: 'center' }}>
                 {errors.submit}
               </div>
             )}
@@ -138,7 +138,7 @@ function RegisterForm() {
                 { key: 'confirmPassword', label: 'Confirmation', type: 'password', placeholder: 'Confirmez votre mot de passe' },
               ].map(field => (
                 <div key={field.key}>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: errors[field.key] ? '#ff6b6b' : 'rgba(255,255,255,0.5)', marginBottom: 7 }}>
+                  <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: errors[field.key] ? '#EF4444' : 'rgba(255,255,255,0.5)', marginBottom: 7 }}>
                     {field.label}
                   </label>
                   <input
@@ -148,14 +148,14 @@ function RegisterForm() {
                     placeholder={field.placeholder}
                     style={inputStyle(!!errors[field.key])}
                   />
-                  {errors[field.key] && <span style={{ fontSize: 12, color: '#ff6b6b', marginTop: 4, display: 'block' }}>{errors[field.key]}</span>}
+                  {errors[field.key] && <span style={{ fontSize: 12, color: '#EF4444', marginTop: 4, display: 'block' }}>{errors[field.key]}</span>}
                 </div>
               ))}
 
               <button
                 type="submit"
                 disabled={loading}
-                style={{ padding: '13px', background: loading ? 'rgba(91,110,245,0.5)' : '#5B6EF5', border: 'none', borderRadius: 9, color: '#fff', fontSize: 15, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 4, fontFamily: "'DM Sans', sans-serif" }}
+                style={{ padding: '13px', background: loading ? 'rgba(59,130,246,0.5)' : '#3B82F6', border: 'none', borderRadius: 9, color: '#fff', fontSize: 15, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 4, fontFamily: "'Inter', sans-serif" }}
               >
                 {loading ? 'Inscription...' : 'Soumettre ma demande'}
               </button>
@@ -163,7 +163,7 @@ function RegisterForm() {
 
             <p style={{ textAlign: 'center', marginTop: 20, color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
               Déjà inscrit ?{' '}
-              <Link href="/login" style={{ color: '#5B6EF5', textDecoration: 'none', fontWeight: 600 }}>Se connecter</Link>
+              <Link href="/login" style={{ color: '#3B82F6', textDecoration: 'none', fontWeight: 600 }}>Se connecter</Link>
             </p>
           </div>
         )}

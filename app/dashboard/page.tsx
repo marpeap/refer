@@ -22,19 +22,19 @@ interface Announcement { id: string; title: string; content: string; type: strin
 const PACKS = [
   { name: 'M-ONE', price: 290, color: '#4F8AFF', tagline: 'Site One-Page Ultra-Rapide', description: 'Un site professionnel, beau et optimisé, livré en 48h.', target: 'Artisans, commerçants, auto-entrepreneurs, professions libérales', features: ['Design sur mesure responsive', 'Optimisation SEO intégrée', 'Formulaire de contact & maps', 'Mise en ligne en 48h'], pitchArgs: ['Vos concurrents sont en ligne — et vous ?', 'Un site pro à partir de 290€', 'Livré en 48h, pas en 3 mois'] },
   { name: 'M-SHOP LITE', price: 490, color: '#F5A623', tagline: 'Boutique E-Commerce Pro', description: 'Une boutique en ligne complète avec gestion des paiements.', target: 'Créateurs, artisans, commerces physiques', features: ['Boutique avec panier & Stripe', 'Gestion produits, stocks, livraisons', 'Design adapté à votre marque', 'SEO optimisé'], pitchArgs: ['Vendez 24h/24 sans effort', 'Boutique pro en moins d\'une semaine', 'Concurrencez Amazon sur votre niche'] },
-  { name: 'M-LOCAL', price: 190, color: '#2ED573', tagline: 'Visibilité Google Maps', description: 'Optimisation complète de votre fiche Google Business.', target: 'Restaurants, coiffeurs, plombiers, médecins', features: ['Optimisation fiche Google Business', 'Photos & contenus SEO', 'Stratégie mots-clés locaux', 'Résultats en 30 jours'], pitchArgs: ['80% des recherches locales aboutissent à une visite', 'Le pack le moins cher, souvent le plus impactant', '"Trouvez un plombier près de moi" — soyez le 1er'] },
+  { name: 'M-LOCAL', price: 190, color: '#10B981', tagline: 'Visibilité Google Maps', description: 'Optimisation complète de votre fiche Google Business.', target: 'Restaurants, coiffeurs, plombiers, médecins', features: ['Optimisation fiche Google Business', 'Photos & contenus SEO', 'Stratégie mots-clés locaux', 'Résultats en 30 jours'], pitchArgs: ['80% des recherches locales aboutissent à une visite', 'Le pack le moins cher, souvent le plus impactant', '"Trouvez un plombier près de moi" — soyez le 1er'] },
   { name: 'M-CALLING', price: 490, color: '#F54EA2', tagline: 'Standardiste IA 24h/24', description: 'Un agent vocal IA répond à tous les appels 24h/24, 7j/7.', target: 'Cabinets médicaux, restaurants, hôtels, agences', features: ['Réponse instantanée 24h/24', 'Prise de rendez-vous auto', 'Disponible en plusieurs langues', 'Zéro coût de recrutement'], pitchArgs: ['Plus jamais d\'appel manqué', 'Remplace un standardiste pour 30€/mois', 'Vos concurrents paient encore un humain'] },
   { name: 'M-CAMPAIGN', price: 280, color: '#00C9A7', tagline: 'Gestionnaire Google Ads IA', description: 'Un agent IA gère vos campagnes Google Ads en continu.', target: 'E-commerce, agences, cliniques, formations', features: ['Création & optimisation campagnes', 'Suivi temps réel', 'Rapports mensuels clairs', 'Consultation de démarrage'], pitchArgs: ['Dépensez moins en pub, gagnez plus', 'Votre budget travaille 24h/24', 'Résultats mesurables dès le 1er mois'] },
   { name: 'M-NEURAL', price: 180, color: '#9B5BF5', tagline: 'ChatBot IA sur vos données', description: 'Un chatbot intelligent formé sur vos propres données.', target: 'E-commerce, SaaS, formateurs en ligne', features: ['IA formée sur votre contenu', 'Intégration site en 48h', 'Répond 24h/24', 'Réduit tickets support de 70%'], pitchArgs: ['Finies les réponses aux mêmes questions', 'Plus abordable qu\'un CDI support', 'Vos clients adorent les réponses en 3 secondes'] },
   { name: 'M-CORP', price: 820, color: '#F1C40F', tagline: 'Équipe de 5 Agents IA autonomes', description: '5 agents IA spécialisés automatisent vos processus métiers.', target: 'PME à partir de 5 employés, entreprises en croissance', features: ['5 agents IA personnalisés', 'Automatisation tâches répétitives', 'Intégrations CRM, Slack, Drive', 'Formation équipe + support'], pitchArgs: ['Votre propre équipe IA pour le prix d\'un freelance', 'ROI moyen : 40h économisées/mois', 'Le pack "transformer sa boîte"'] },
 ]
 
-const PIE_COLORS = ['#5B6EF5', '#2ED573', '#F1C40F', '#F54EA2', '#00C9A7', '#9B5BF5', '#F5A623']
+const PIE_COLORS = ['#3B82F6', '#10B981', '#F1C40F', '#F54EA2', '#00C9A7', '#8B5CF6', '#F5A623']
 
 /* ── QR Code SVG (simple, sans lib) ───────────────────── */
 function generateQRDataUrl(text: string): string {
   // Simple display for the link - just returns a placeholder SVG
-  const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="#0D0D1A"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#5B6EF5" font-size="10" font-family="monospace">QR: ${text.slice(0, 12)}...</text></svg>`
+  const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="120" height="120" viewBox="0 0 120 120"><rect width="120" height="120" fill="#0A0F1C"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#3B82F6" font-size="10" font-family="monospace">QR: ${text.slice(0, 12)}...</text></svg>`
   return `data:image/svg+xml;base64,${btoa(svgContent)}`
 }
 
@@ -194,34 +194,34 @@ export default function Dashboard() {
   }
 
   const visibleAnnouncements = announcements.filter(a => !dismissedAnnouncements.includes(a.id))
-  const annTypeColor: Record<string, string> = { info: '#5B6EF5', success: '#2ED573', warning: '#F5A623', promo: '#9B5BF5' }
-  const TAB_STYLE = (active: boolean): React.CSSProperties => ({ padding: '9px 18px', background: active ? '#5B6EF5' : 'rgba(255,255,255,0.04)', border: active ? 'none' : '1px solid rgba(255,255,255,0.08)', borderRadius: 8, color: active ? '#fff' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 13, fontWeight: active ? 700 : 500, fontFamily: "'DM Sans', sans-serif", whiteSpace: 'nowrap' as const, transition: 'all 0.2s' })
+  const annTypeColor: Record<string, string> = { info: '#3B82F6', success: '#10B981', warning: '#F5A623', promo: '#8B5CF6' }
+  const TAB_STYLE = (active: boolean): React.CSSProperties => ({ padding: '9px 18px', background: active ? '#3B82F6' : 'rgba(255,255,255,0.04)', border: active ? 'none' : '1px solid rgba(255,255,255,0.08)', borderRadius: 8, color: active ? '#fff' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 13, fontWeight: active ? 700 : 500, fontFamily: "'Inter', sans-serif", whiteSpace: 'nowrap' as const, transition: 'all 0.2s' })
   const Card = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (<div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, ...style }}>{children}</div>)
   const StatCard = ({ value, label, color, sub }: { value: string | number; label: string; color?: string; sub?: string }) => (
     <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 20px', minWidth: 120 }}>
-      <div style={{ fontSize: 26, fontWeight: 800, fontFamily: "'Syne', sans-serif", color: color || '#fff' }}>{value}</div>
+      <div style={{ fontSize: 26, fontWeight: 800, fontFamily: "'Montserrat', sans-serif", color: color || '#fff' }}>{value}</div>
       <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{label}</div>
       {sub && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.2)', marginTop: 2 }}>{sub}</div>}
     </div>
   )
 
-  if (loading) return (<main style={{ minHeight: '100vh', background: '#080810', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>Chargement...</div></main>)
+  if (loading) return (<main style={{ minHeight: '100vh', background: '#0A0F1C', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><div style={{ color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>Chargement...</div></main>)
   if (!user) return null
 
   return (
-    <main style={{ minHeight: '100vh', background: '#080810', color: '#fff', fontFamily: "'DM Sans', sans-serif" }}>
+    <main style={{ minHeight: '100vh', background: '#0A0F1C', color: '#fff', fontFamily: "'Inter', sans-serif" }}>
       <style>{`
         * { box-sizing: border-box; margin: 0; padding: 0; }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
         .pack-card:hover { transform: translateY(-2px); }
-        .recharts-tooltip-wrapper .recharts-default-tooltip { background: #1A1A2E !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px !important; }
+        .recharts-tooltip-wrapper .recharts-default-tooltip { background: #1F2937 !important; border: 1px solid rgba(255,255,255,0.1) !important; border-radius: 8px !important; }
       `}</style>
 
       {/* ── Header ── */}
       <header style={{ borderBottom: '1px solid rgba(255,255,255,0.06)', padding: '0 32px', height: 56, display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'sticky', top: 0, background: 'rgba(8,8,16,0.95)', backdropFilter: 'blur(12px)', zIndex: 50 }}>
         <Link href="/" style={{ textDecoration: 'none' }}>
-          <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800 }}>mar<span style={{ color: '#5B6EF5' }}>peap</span><span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontFamily: "'DM Sans', sans-serif", fontWeight: 400, marginLeft: 8 }}>Apporteurs</span></span>
+          <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 18, fontWeight: 800 }}>mar<span style={{ color: '#3B82F6' }}>peap</span><span style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', fontFamily: "'Inter', sans-serif", fontWeight: 400, marginLeft: 8 }}>Apporteurs</span></span>
         </Link>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           {badges.earned.length > 0 && <span title={`${badges.earned.length} badge(s)`} style={{ fontSize: 16 }}>{badges.earned[0].icon}</span>}
@@ -236,7 +236,7 @@ export default function Dashboard() {
         {visibleAnnouncements.length > 0 && (
           <div style={{ marginBottom: 20 }}>
             {visibleAnnouncements.map(ann => (
-              <div key={ann.id} style={{ background: `${annTypeColor[ann.type] || '#5B6EF5'}12`, border: `1px solid ${annTypeColor[ann.type] || '#5B6EF5'}30`, borderRadius: 10, padding: '10px 16px', marginBottom: 8, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+              <div key={ann.id} style={{ background: `${annTypeColor[ann.type] || '#3B82F6'}12`, border: `1px solid ${annTypeColor[ann.type] || '#3B82F6'}30`, borderRadius: 10, padding: '10px 16px', marginBottom: 8, display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 2 }}>{ann.title}</div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{ann.content}</div>
@@ -256,13 +256,13 @@ export default function Dashboard() {
         )}
 
         {/* ── Welcome card ── */}
-        <div style={{ background: 'linear-gradient(135deg, rgba(91,110,245,0.12), rgba(155,91,245,0.08))', border: '1px solid rgba(91,110,245,0.2)', borderRadius: 16, padding: '24px 28px', marginBottom: 24, display: 'grid', gridTemplateColumns: '1fr auto', gap: 20, alignItems: 'center' }}>
+        <div style={{ background: 'linear-gradient(135deg, rgba(59,130,246,0.12), rgba(139,92,246,0.08))', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 16, padding: '24px 28px', marginBottom: 24, display: 'grid', gridTemplateColumns: '1fr auto', gap: 20, alignItems: 'center' }}>
           <div>
-            <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 4 }}>Bonjour, {user.full_name.split(' ')[0]} 👋</div>
+            <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 4 }}>Bonjour, {user.full_name.split(' ')[0]} 👋</div>
             <div style={{ color: 'rgba(255,255,255,0.4)', fontSize: 13, marginBottom: 16 }}>Espace apporteur d'affaires Marpeap</div>
             <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <StatCard value={user.code} label="Mon code" color="#5B6EF5" />
-              <StatCard value={sales.length} label="Ventes totales" color="#2ED573" />
+              <StatCard value={user.code} label="Mon code" color="#3B82F6" />
+              <StatCard value={sales.length} label="Ventes totales" color="#10B981" />
               <StatCard value={`${totalCommission.toLocaleString('fr-FR')}€`} label="Commissions" color="#F1C40F" />
               {pendingCommission > 0 && <StatCard value={`${pendingCommission.toLocaleString('fr-FR')}€`} label="En attente" color="#F5A623" />}
             </div>
@@ -271,8 +271,8 @@ export default function Dashboard() {
             <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginBottom: 2 }}>MON LIEN DE PARRAINAGE</div>
             <div style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 7, padding: '7px 10px', fontSize: 11, color: 'rgba(255,255,255,0.5)', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>refer.marpeap.digital/r/{user.code}</div>
             <div style={{ display: 'flex', gap: 6 }}>
-              <button onClick={() => copy(user.code, 'code')} style={{ flex: 1, padding: '7px', background: copied === 'code' ? 'rgba(46,213,115,0.15)' : 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: copied === 'code' ? '#2ED573' : 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 12, fontFamily: "'DM Sans', sans-serif" }}>{copied === 'code' ? '✓ Copié' : 'Copier code'}</button>
-              <button onClick={() => copy(`https://refer.marpeap.digital/r/${user.code}`, 'link')} style={{ flex: 1, padding: '7px', background: copied === 'link' ? 'rgba(46,213,115,0.15)' : '#5B6EF5', border: 'none', borderRadius: 6, color: copied === 'link' ? '#2ED573' : '#fff', cursor: 'pointer', fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>{copied === 'link' ? '✓ Copié' : 'Copier lien'}</button>
+              <button onClick={() => copy(user.code, 'code')} style={{ flex: 1, padding: '7px', background: copied === 'code' ? 'rgba(46,213,115,0.15)' : 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 6, color: copied === 'code' ? '#10B981' : 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 12, fontFamily: "'Inter', sans-serif" }}>{copied === 'code' ? '✓ Copié' : 'Copier code'}</button>
+              <button onClick={() => copy(`https://refer.marpeap.digital/r/${user.code}`, 'link')} style={{ flex: 1, padding: '7px', background: copied === 'link' ? 'rgba(46,213,115,0.15)' : '#3B82F6', border: 'none', borderRadius: 6, color: copied === 'link' ? '#10B981' : '#fff', cursor: 'pointer', fontSize: 12, fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>{copied === 'link' ? '✓ Copié' : 'Copier lien'}</button>
             </div>
           </div>
         </div>
@@ -291,9 +291,9 @@ export default function Dashboard() {
             <Card style={{ padding: 20, gridColumn: 'span 2' }}>
               <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>Ce mois-ci</div>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                <StatCard value={salesThisMonth.length} label="Ventes ce mois" color="#2ED573" />
-                <StatCard value={`${salesThisMonth.reduce((a, s) => a + Number(s.commission_amount), 0).toFixed(0)}€`} label="Commissions mois" color="#5B6EF5" />
-                {stats && <StatCard value={stats.clicks.this_month} label="Visites lien" color="#9B5BF5" />}
+                <StatCard value={salesThisMonth.length} label="Ventes ce mois" color="#10B981" />
+                <StatCard value={`${salesThisMonth.reduce((a, s) => a + Number(s.commission_amount), 0).toFixed(0)}€`} label="Commissions mois" color="#3B82F6" />
+                {stats && <StatCard value={stats.clicks.this_month} label="Visites lien" color="#8B5CF6" />}
                 {stats && <StatCard value={`${(stats.clicks.conversion_rate * 100).toFixed(0)}%`} label="Taux conversion" color="#F5A623" />}
               </div>
             </Card>
@@ -302,7 +302,7 @@ export default function Dashboard() {
             {nextPayment && (
               <Card style={{ padding: 20 }}>
                 <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12 }}>💳 Prochain versement estimé</div>
-                <div style={{ fontSize: 22, fontWeight: 800, color: '#2ED573', marginBottom: 4 }}>{pendingCommission.toFixed(2)} €</div>
+                <div style={{ fontSize: 22, fontWeight: 800, color: '#10B981', marginBottom: 4 }}>{pendingCommission.toFixed(2)} €</div>
                 <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>Estimé le {nextPayment}</div>
               </Card>
             )}
@@ -333,7 +333,7 @@ export default function Dashboard() {
                 challenges.slice(0, 2).map(c => (
                   <div key={c.id} style={{ background: c.completed ? 'rgba(46,213,115,0.06)' : 'rgba(255,255,255,0.03)', border: `1px solid ${c.completed ? 'rgba(46,213,115,0.2)' : 'rgba(255,255,255,0.07)'}`, borderRadius: 10, padding: '12px 14px', marginBottom: 8 }}>
                     <div style={{ fontWeight: 700, fontSize: 13 }}>{c.title}</div>
-                    <div style={{ fontSize: 13, color: c.completed ? '#2ED573' : '#F1C40F', marginTop: 4, fontWeight: 700 }}>{c.completed ? '✅ Complété !' : `Bonus : +${c.bonus_amount}€`}</div>
+                    <div style={{ fontSize: 13, color: c.completed ? '#10B981' : '#F1C40F', marginTop: 4, fontWeight: 700 }}>{c.completed ? '✅ Complété !' : `Bonus : +${c.bonus_amount}€`}</div>
                   </div>
                 ))
               )}
@@ -345,7 +345,7 @@ export default function Dashboard() {
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 14 }}>
                 {pushEnabled ? 'Vous recevez les notifications pour vos badges et ventes.' : 'Activez les notifications pour ne rien manquer.'}
               </div>
-              <button onClick={pushEnabled ? disablePush : enablePush} disabled={pushLoading} style={{ padding: '9px 18px', background: pushEnabled ? 'rgba(255,255,255,0.06)' : '#5B6EF5', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
+              <button onClick={pushEnabled ? disablePush : enablePush} disabled={pushLoading} style={{ padding: '9px 18px', background: pushEnabled ? 'rgba(255,255,255,0.06)' : '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
                 {pushLoading ? '...' : pushEnabled ? '🔕 Désactiver' : '🔔 Activer'}
               </button>
             </Card>
@@ -358,16 +358,16 @@ export default function Dashboard() {
             {/* PDF + Clics */}
             <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
               {stats && (
-                <div style={{ background: 'rgba(155,91,245,0.06)', border: '1px solid rgba(155,91,245,0.2)', borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
+                <div style={{ background: 'rgba(139,92,246,0.06)', border: '1px solid rgba(139,92,246,0.2)', borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10 }}>
                   <span style={{ fontSize: 20 }}>👁️</span>
                   <div>
-                    <div style={{ fontWeight: 700, fontSize: 16, color: '#9B5BF5' }}>{stats.clicks.this_month}</div>
+                    <div style={{ fontWeight: 700, fontSize: 16, color: '#8B5CF6' }}>{stats.clicks.this_month}</div>
                     <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>visites lien ce mois</div>
                   </div>
                 </div>
               )}
               {sales.filter(s => s.created_at.startsWith(thisMonthKey)).length > 0 && (
-                <a href={`/api/statement/${thisMonthKey}`} style={{ background: 'rgba(91,110,245,0.08)', border: '1px solid rgba(91,110,245,0.2)', borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: '#fff', cursor: 'pointer' }}>
+                <a href={`/api/statement/${thisMonthKey}`} style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'center', gap: 10, textDecoration: 'none', color: '#fff', cursor: 'pointer' }}>
                   <span style={{ fontSize: 20 }}>📄</span>
                   <div>
                     <div style={{ fontWeight: 700, fontSize: 14 }}>Relevé PDF</div>
@@ -382,8 +382,8 @@ export default function Dashboard() {
               <Card style={{ padding: '24px 28px' }}>
                 {contract.status === 'sent' && !signSuccess ? (
                   <>
-                    <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 16, fontWeight: 700, marginBottom: 18 }}>📄 Contrat à signer</div>
-                    <a href={contract.pdf_url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '9px 18px', background: '#5B6EF5', color: '#fff', textDecoration: 'none', borderRadius: 8, marginBottom: 20, fontWeight: 600, fontSize: 13 }}>Voir le contrat PDF →</a>
+                    <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 16, fontWeight: 700, marginBottom: 18 }}>📄 Contrat à signer</div>
+                    <a href={contract.pdf_url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '9px 18px', background: '#3B82F6', color: '#fff', textDecoration: 'none', borderRadius: 8, marginBottom: 20, fontWeight: 600, fontSize: 13 }}>Voir le contrat PDF →</a>
                     <div style={{ marginBottom: 16 }}>
                       <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 8 }}>Signature manuscrite</div>
                       <canvas ref={canvasRef} width={400} height={140} onMouseDown={startDrawing} onMouseMove={draw} onMouseUp={stopDrawing} onMouseLeave={stopDrawing} onTouchStart={startDrawing} onTouchMove={draw} onTouchEnd={stopDrawing} style={{ background: '#fff', borderRadius: 8, cursor: 'crosshair', display: 'block' }} />
@@ -399,7 +399,7 @@ export default function Dashboard() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                     <span style={{ fontSize: 28 }}>✅</span>
                     <div><div style={{ fontWeight: 700, color: '#10b981' }}>Contrat signé</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>Signé le {formatDate(contract.signed_at || new Date().toISOString())}</div></div>
-                    <a href={contract.pdf_url} target="_blank" rel="noopener noreferrer" style={{ marginLeft: 'auto', padding: '7px 14px', background: '#5B6EF5', color: '#fff', textDecoration: 'none', borderRadius: 7, fontSize: 13, fontWeight: 600 }}>Télécharger</a>
+                    <a href={contract.pdf_url} target="_blank" rel="noopener noreferrer" style={{ marginLeft: 'auto', padding: '7px 14px', background: '#3B82F6', color: '#fff', textDecoration: 'none', borderRadius: 7, fontSize: 13, fontWeight: 600 }}>Télécharger</a>
                   </div>
                 )}
               </Card>
@@ -408,7 +408,7 @@ export default function Dashboard() {
             {/* Sales table */}
             <Card style={{ overflow: 'hidden' }}>
               <div style={{ padding: '16px 24px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700 }}>Historique des ventes</div>
+                <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}>Historique des ventes</div>
               </div>
               {sales.length === 0 ? (
                 <div style={{ padding: '60px 24px', textAlign: 'center', color: 'rgba(255,255,255,0.2)' }}>
@@ -430,10 +430,10 @@ export default function Dashboard() {
                       {sales.map(sale => (
                         <tr key={sale.id} style={{ borderTop: '1px solid rgba(255,255,255,0.04)' }}>
                           <td style={{ padding: '13px 18px', fontSize: 14 }}>{sale.client_name}</td>
-                          <td style={{ padding: '13px 18px' }}><span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(91,110,245,0.15)', color: '#5B6EF5' }}>{sale.service}</span></td>
+                          <td style={{ padding: '13px 18px' }}><span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(59,130,246,0.15)', color: '#3B82F6' }}>{sale.service}</span></td>
                           <td style={{ padding: '13px 18px', fontSize: 14, fontWeight: 600 }}>{Number(sale.amount).toLocaleString('fr-FR')} €</td>
-                          <td style={{ padding: '13px 18px', fontSize: 14, fontWeight: 700, color: '#2ED573' }}>{Number(sale.commission_amount) > 0 ? `+${sale.commission_amount}€` : '—'}</td>
-                          <td style={{ padding: '13px 18px' }}>{sale.commission_paid ? <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(46,213,115,0.15)', color: '#2ED573' }}>Versée ✓</span> : <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(255,165,0,0.15)', color: '#FFA500' }}>En attente</span>}</td>
+                          <td style={{ padding: '13px 18px', fontSize: 14, fontWeight: 700, color: '#10B981' }}>{Number(sale.commission_amount) > 0 ? `+${sale.commission_amount}€` : '—'}</td>
+                          <td style={{ padding: '13px 18px' }}>{sale.commission_paid ? <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(46,213,115,0.15)', color: '#10B981' }}>Versée ✓</span> : <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(255,165,0,0.15)', color: '#FFA500' }}>En attente</span>}</td>
                           <td style={{ padding: '13px 18px', fontSize: 13, color: 'rgba(255,255,255,0.3)' }}>{formatDate(sale.created_at)}</td>
                         </tr>
                       ))}
@@ -454,10 +454,10 @@ export default function Dashboard() {
               <>
                 {/* KPI cards */}
                 <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                  <StatCard value={`${stats.projection.monthly_estimate}€`} label="Projection mensuelle" color="#5B6EF5" sub={stats.projection.trend === 'up' ? '↑ En hausse' : stats.projection.trend === 'down' ? '↓ En baisse' : '→ Stable'} />
-                  <StatCard value={stats.clicks.total} label="Visites totales" color="#9B5BF5" />
+                  <StatCard value={`${stats.projection.monthly_estimate}€`} label="Projection mensuelle" color="#3B82F6" sub={stats.projection.trend === 'up' ? '↑ En hausse' : stats.projection.trend === 'down' ? '↓ En baisse' : '→ Stable'} />
+                  <StatCard value={stats.clicks.total} label="Visites totales" color="#8B5CF6" />
                   <StatCard value={`${(stats.clicks.conversion_rate * 100).toFixed(1)}%`} label="Taux conversion" color="#F1C40F" />
-                  <StatCard value={`${stats.cascade.total_cascade_earned.toFixed(0)}€`} label="Gains cascade" color="#2ED573" />
+                  <StatCard value={`${stats.cascade.total_cascade_earned.toFixed(0)}€`} label="Gains cascade" color="#10B981" />
                   <StatCard value={stats.cascade.filleuls_count} label="Filleuls actifs" color="#F54EA2" />
                 </div>
 
@@ -471,15 +471,15 @@ export default function Dashboard() {
                       <AreaChart data={stats.series_weekly} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
                         <defs>
                           <linearGradient id="commGrad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#5B6EF5" stopOpacity={0.3} />
-                            <stop offset="95%" stopColor="#5B6EF5" stopOpacity={0} />
+                            <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
+                            <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
                           </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                         <XAxis dataKey="week" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 11 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                        <Tooltip contentStyle={{ background: '#1A1A2E', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff' }} />
-                        <Area type="monotone" dataKey="commission" stroke="#5B6EF5" strokeWidth={2} fill="url(#commGrad)" name="Commission €" />
+                        <Tooltip contentStyle={{ background: '#1F2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff' }} />
+                        <Area type="monotone" dataKey="commission" stroke="#3B82F6" strokeWidth={2} fill="url(#commGrad)" name="Commission €" />
                       </AreaChart>
                     </ResponsiveContainer>
                   )}
@@ -494,7 +494,7 @@ export default function Dashboard() {
                         <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
                         <XAxis dataKey="service" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 11 }} axisLine={false} tickLine={false} />
                         <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                        <Tooltip contentStyle={{ background: '#1A1A2E', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff' }} />
+                        <Tooltip contentStyle={{ background: '#1F2937', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff' }} />
                         <Bar dataKey="commission" name="Commission €" radius={[4, 4, 0, 0]}>
                           {stats.by_service.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                         </Bar>
@@ -508,7 +508,7 @@ export default function Dashboard() {
                   <Card style={{ padding: 24 }}>
                     <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 16 }}>🤝 Cascade (niveau 1)</div>
                     <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-                      <StatCard value={stats.cascade.filleuls_count} label="Filleuls recrutés" color="#2ED573" />
+                      <StatCard value={stats.cascade.filleuls_count} label="Filleuls recrutés" color="#10B981" />
                       <StatCard value={`${stats.cascade.total_cascade_earned.toFixed(2)}€`} label="Cascade gagnée" color="#F1C40F" />
                       <StatCard value={`${stats.cascade.pending_cascade.toFixed(2)}€`} label="Cascade en attente" color="#F5A623" />
                     </div>
@@ -530,7 +530,7 @@ export default function Dashboard() {
               ) : (
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                   {badges.earned.map(b => (
-                    <div key={b.id} style={{ background: 'rgba(91,110,245,0.08)', border: '1px solid rgba(91,110,245,0.2)', borderRadius: 12, padding: '14px 18px', textAlign: 'center', minWidth: 100 }}>
+                    <div key={b.id} style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 12, padding: '14px 18px', textAlign: 'center', minWidth: 100 }}>
                       <div style={{ fontSize: 32, marginBottom: 6 }}>{b.icon}</div>
                       <div style={{ fontWeight: 700, fontSize: 13 }}>{b.name}</div>
                       <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 2 }}>{formatDate(b.earned_at!)}</div>
@@ -555,7 +555,7 @@ export default function Dashboard() {
                         {b.progress && (
                           <>
                             <div style={{ height: 4, background: 'rgba(255,255,255,0.08)', borderRadius: 2, overflow: 'hidden' }}>
-                              <div style={{ height: '100%', background: '#5B6EF5', width: `${pct}%`, transition: 'width 0.4s' }} />
+                              <div style={{ height: '100%', background: '#3B82F6', width: `${pct}%`, transition: 'width 0.4s' }} />
                             </div>
                             <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>{b.progress.current} / {b.progress.target}</div>
                           </>
@@ -588,7 +588,7 @@ export default function Dashboard() {
                         <div style={{ textAlign: 'right', flexShrink: 0 }}>
                           <div style={{ fontSize: 20, fontWeight: 800, color: '#F1C40F' }}>+{c.bonus_amount}€</div>
                           {c.completed ? (
-                            <div style={{ fontSize: 12, color: '#2ED573', marginTop: 4 }}>✅ Complété{c.bonus_paid ? ' · Payé' : ''}</div>
+                            <div style={{ fontSize: 12, color: '#10B981', marginTop: 4 }}>✅ Complété{c.bonus_paid ? ' · Payé' : ''}</div>
                           ) : (
                             <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>En cours...</div>
                           )}
@@ -606,7 +606,7 @@ export default function Dashboard() {
         {activeTab === 'catalogue' && (
           <div>
             <div style={{ marginBottom: 20 }}>
-              <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Catalogue des produits</div>
+              <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Catalogue des produits</div>
               <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', maxWidth: 600 }}>7 solutions que vous pouvez proposer. Pour chaque vente, vous touchez une commission.</div>
             </div>
 
@@ -618,10 +618,10 @@ export default function Dashboard() {
                     <div style={{ height: 3, background: pack.color }} />
                     <div style={{ padding: '18px 20px 20px' }}>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 10 }}>
-                        <div><div style={{ fontFamily: "'Syne', sans-serif", fontSize: 17, fontWeight: 800, color: pack.color }}>{pack.name}</div><div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{pack.tagline}</div></div>
-                        <div style={{ textAlign: 'right' }}><div style={{ fontFamily: "'Syne', sans-serif", fontSize: 18, fontWeight: 800 }}>{pack.price}€</div></div>
+                        <div><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 17, fontWeight: 800, color: pack.color }}>{pack.name}</div><div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)', marginTop: 2 }}>{pack.tagline}</div></div>
+                        <div style={{ textAlign: 'right' }}><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 18, fontWeight: 800 }}>{pack.price}€</div></div>
                       </div>
-                      {comm > 0 && <div style={{ background: 'rgba(46,213,115,0.1)', border: '1px solid rgba(46,213,115,0.2)', borderRadius: 7, padding: '7px 12px', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}><span>💰</span><span style={{ fontSize: 16, fontWeight: 800, color: '#2ED573' }}>+{comm}€</span><span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>commission</span></div>}
+                      {comm > 0 && <div style={{ background: 'rgba(46,213,115,0.1)', border: '1px solid rgba(46,213,115,0.2)', borderRadius: 7, padding: '7px 12px', marginBottom: 12, display: 'flex', alignItems: 'center', gap: 6 }}><span>💰</span><span style={{ fontSize: 16, fontWeight: 800, color: '#10B981' }}>+{comm}€</span><span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>commission</span></div>}
                       <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.6, marginBottom: 12 }}>{pack.description}</p>
                       <div style={{ marginBottom: 12 }}>
                         {pack.features.map(f => <div key={f} style={{ display: 'flex', gap: 6, marginBottom: 4 }}><span style={{ color: pack.color, flexShrink: 0 }}>✓</span><span style={{ fontSize: 12, color: 'rgba(255,255,255,0.55)' }}>{f}</span></div>)}
@@ -630,7 +630,7 @@ export default function Dashboard() {
                         <div style={{ fontSize: 11, fontWeight: 700, color: 'rgba(255,255,255,0.25)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>Arguments</div>
                         {pack.pitchArgs.map(a => <div key={a} style={{ background: `${pack.color}10`, border: `1px solid ${pack.color}20`, borderRadius: 5, padding: '5px 9px', marginBottom: 4, fontSize: 11, color: 'rgba(255,255,255,0.6)', fontStyle: 'italic' }}>{a}</div>)}
                       </div>
-                      <button onClick={() => copy(`https://refer.marpeap.digital/r/${user?.code}`, 'pack-' + pack.name)} style={{ width: '100%', padding: '9px', background: `${pack.color}18`, border: `1px solid ${pack.color}35`, borderRadius: 7, color: pack.color, cursor: 'pointer', fontSize: 13, fontWeight: 700, fontFamily: "'DM Sans', sans-serif" }}>Partager mon lien →</button>
+                      <button onClick={() => copy(`https://refer.marpeap.digital/r/${user?.code}`, 'pack-' + pack.name)} style={{ width: '100%', padding: '9px', background: `${pack.color}18`, border: `1px solid ${pack.color}35`, borderRadius: 7, color: pack.color, cursor: 'pointer', fontSize: 13, fontWeight: 700, fontFamily: "'Inter', sans-serif" }}>Partager mon lien →</button>
                     </div>
                   </div>
                 )
@@ -650,7 +650,7 @@ export default function Dashboard() {
                   <div key={channel} style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '14px 18px' }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
                       <div style={{ fontWeight: 700, fontSize: 13 }}>{channel}</div>
-                      <button onClick={() => copy(text, 'msg-' + channel)} style={{ padding: '5px 12px', background: copied === 'msg-' + channel ? 'rgba(46,213,115,0.15)' : 'rgba(91,110,245,0.15)', border: `1px solid ${copied === 'msg-' + channel ? 'rgba(46,213,115,0.3)' : 'rgba(91,110,245,0.3)'}`, borderRadius: 6, color: copied === 'msg-' + channel ? '#2ED573' : '#5B6EF5', cursor: 'pointer', fontSize: 12, fontWeight: 600, fontFamily: "'DM Sans', sans-serif" }}>
+                      <button onClick={() => copy(text, 'msg-' + channel)} style={{ padding: '5px 12px', background: copied === 'msg-' + channel ? 'rgba(46,213,115,0.15)' : 'rgba(59,130,246,0.15)', border: `1px solid ${copied === 'msg-' + channel ? 'rgba(46,213,115,0.3)' : 'rgba(59,130,246,0.3)'}`, borderRadius: 6, color: copied === 'msg-' + channel ? '#10B981' : '#3B82F6', cursor: 'pointer', fontSize: 12, fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>
                         {copied === 'msg-' + channel ? '✓ Copié' : '📋 Copier'}
                       </button>
                     </div>
@@ -661,7 +661,7 @@ export default function Dashboard() {
               <div style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
                 <div>
                   <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginBottom: 6 }}>Mon lien de parrainage</div>
-                  <div style={{ fontFamily: 'monospace', fontSize: 14, color: '#5B6EF5', background: 'rgba(91,110,245,0.08)', border: '1px solid rgba(91,110,245,0.2)', borderRadius: 8, padding: '8px 14px' }}>https://refer.marpeap.digital/r/{user?.code}</div>
+                  <div style={{ fontFamily: 'monospace', fontSize: 14, color: '#3B82F6', background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 8, padding: '8px 14px' }}>https://refer.marpeap.digital/r/{user?.code}</div>
                 </div>
               </div>
             </Card>
@@ -671,9 +671,9 @@ export default function Dashboard() {
         {/* ══════════════ TAB: RESSOURCES ══════════════ */}
         {activeTab === 'ressources' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div><div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Ressources & présentations</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>Tous les outils pour comprendre Marpeap et convaincre vos prospects.</div></div>
+            <div><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Ressources & présentations</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>Tous les outils pour comprendre Marpeap et convaincre vos prospects.</div></div>
             <Card style={{ overflow: 'hidden' }}>
-              <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700 }}>🎬 Marpeap — Le Moteur 24/7</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Vidéo de présentation de l'entreprise</div></div>
+              <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}>🎬 Marpeap — Le Moteur 24/7</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Vidéo de présentation de l'entreprise</div></div>
               <div style={{ padding: '20px 24px' }}>
                 <video controls style={{ width: '100%', maxWidth: 720, borderRadius: 10, background: '#000', display: 'block' }} preload="metadata">
                   <source src="https://api.marpeap.digital/static/presentations/Marpeap___Moteur_24_7.mp4" type="video/mp4" />
@@ -682,16 +682,16 @@ export default function Dashboard() {
             </Card>
             <Card style={{ padding: 24 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ width: 48, height: 48, background: 'rgba(91,110,245,0.12)', border: '1px solid rgba(91,110,245,0.2)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>📘</div>
+                <div style={{ width: 48, height: 48, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>📘</div>
                 <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Marpeap Growth Machine</div>
+                  <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Marpeap Growth Machine</div>
                   <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}>Présentation complète : vision, offre, positionnement.</div>
                 </div>
-                <a href="https://storage.marpeap.digital/contracts/1b79abe8-53d2-4d8e-9f02-a95b4a34c695.pdf" target="_blank" rel="noopener noreferrer" style={{ padding: '9px 18px', background: '#5B6EF5', color: '#fff', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, flexShrink: 0 }}>Ouvrir PDF →</a>
+                <a href="https://storage.marpeap.digital/contracts/1b79abe8-53d2-4d8e-9f02-a95b4a34c695.pdf" target="_blank" rel="noopener noreferrer" style={{ padding: '9px 18px', background: '#3B82F6', color: '#fff', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, flexShrink: 0 }}>Ouvrir PDF →</a>
               </div>
             </Card>
             <Card style={{ overflow: 'hidden' }}>
-              <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><div style={{ fontFamily: "'Syne', sans-serif", fontSize: 15, fontWeight: 700 }}><span style={{ color: '#F54EA2' }}>M-CALLING</span> — Fiche produit</div></div>
+              <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}><span style={{ color: '#F54EA2' }}>M-CALLING</span> — Fiche produit</div></div>
               <div style={{ padding: '20px 24px' }}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src="https://api.marpeap.digital/static/presentations/Fiche_MCALLING.png" alt="Fiche M-CALLING" style={{ width: '100%', maxWidth: 640, borderRadius: 10, display: 'block' }} />
@@ -704,7 +704,7 @@ export default function Dashboard() {
         {/* ══════════════ TAB: CLASSEMENT ══════════════ */}
         {activeTab === 'classement' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div><div style={{ fontFamily: "'Syne', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Classement des apporteurs</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>Top 10 par commissions générées.</div></div>
+            <div><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Classement des apporteurs</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>Top 10 par commissions générées.</div></div>
             {leaderboardLoading ? (
               <div style={{ textAlign: 'center', padding: 48, color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>Chargement...</div>
             ) : (
@@ -724,12 +724,12 @@ export default function Dashboard() {
                         const medal = entry.rank === 1 ? '🥇' : entry.rank === 2 ? '🥈' : entry.rank === 3 ? '🥉' : `${entry.rank}`
                         const tierColor = tierColors[entry.tier] || '#cd7f32'
                         return (
-                          <tr key={entry.rank} style={{ borderTop: '1px solid rgba(255,255,255,0.04)', background: entry.is_me ? 'rgba(91,110,245,0.08)' : 'transparent' }}>
+                          <tr key={entry.rank} style={{ borderTop: '1px solid rgba(255,255,255,0.04)', background: entry.is_me ? 'rgba(59,130,246,0.08)' : 'transparent' }}>
                             <td style={{ padding: '13px 18px', fontSize: 16, fontWeight: 800 }}>{medal}</td>
-                            <td style={{ padding: '13px 18px', fontSize: 14, fontWeight: entry.is_me ? 700 : 400 }}>{entry.name}{entry.is_me && <span style={{ marginLeft: 8, fontSize: 11, color: '#5B6EF5', background: 'rgba(91,110,245,0.12)', padding: '2px 6px', borderRadius: 100 }}>Vous</span>}</td>
+                            <td style={{ padding: '13px 18px', fontSize: 14, fontWeight: entry.is_me ? 700 : 400 }}>{entry.name}{entry.is_me && <span style={{ marginLeft: 8, fontSize: 11, color: '#3B82F6', background: 'rgba(59,130,246,0.12)', padding: '2px 6px', borderRadius: 100 }}>Vous</span>}</td>
                             <td style={{ padding: '13px 18px' }}><span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: `${tierColor}22`, color: tierColor, border: `1px solid ${tierColor}44` }}>{entry.tier.charAt(0).toUpperCase() + entry.tier.slice(1)}</span></td>
                             <td style={{ padding: '13px 18px', fontSize: 14 }}>{entry.sales_count}</td>
-                            <td style={{ padding: '13px 18px', fontSize: 14, fontWeight: 700, color: '#2ED573' }}>{entry.total_commission.toLocaleString('fr-FR')} €</td>
+                            <td style={{ padding: '13px 18px', fontSize: 14, fontWeight: 700, color: '#10B981' }}>{entry.total_commission.toLocaleString('fr-FR')} €</td>
                           </tr>
                         )
                       })}
@@ -737,8 +737,8 @@ export default function Dashboard() {
                   </table>
                 </Card>
                 {myRank && !leaderboard.some(e => e.is_me) && (
-                  <div style={{ background: 'rgba(91,110,245,0.06)', border: '1px solid rgba(91,110,245,0.2)', borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
-                    <div><span style={{ color: 'rgba(255,255,255,0.4)', marginRight: 8 }}>Votre position :</span><span style={{ fontWeight: 800, color: '#5B6EF5' }}>#{myRank.rank}</span></div>
+                  <div style={{ background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 12, padding: '14px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10 }}>
+                    <div><span style={{ color: 'rgba(255,255,255,0.4)', marginRight: 8 }}>Votre position :</span><span style={{ fontWeight: 800, color: '#3B82F6' }}>#{myRank.rank}</span></div>
                     <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>{myRank.sales_count} vente{myRank.sales_count > 1 ? 's' : ''} · {myRank.total_commission.toLocaleString('fr-FR')} €</div>
                   </div>
                 )}

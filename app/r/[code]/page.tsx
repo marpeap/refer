@@ -50,22 +50,22 @@ export default async function ReferralLandingPage({ params }: Props) {
   ];
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#080810', color: '#fff', fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#0A0F1C', color: '#fff', fontFamily: "'Inter', sans-serif" }}>
       {/* Hero */}
       <div style={{ position: 'relative', overflow: 'hidden', padding: '80px 24px 60px', textAlign: 'center' }}>
         <div style={{
           position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-          background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(91,110,245,0.25) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse 80% 60% at 50% -10%, rgba(59,130,246,0.25) 0%, transparent 70%)',
           pointerEvents: 'none',
         }} />
         <div style={{ maxWidth: 640, margin: '0 auto', position: 'relative' }}>
           <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-1px', marginBottom: 8 }}>
-            mar<span style={{ color: '#5B6EF5' }}>peap</span>
+            mar<span style={{ color: '#3B82F6' }}>peap</span>
           </div>
           <div style={{
             display: 'inline-block',
-            background: 'rgba(91,110,245,0.12)',
-            border: '1px solid rgba(91,110,245,0.3)',
+            background: 'rgba(59,130,246,0.12)',
+            border: '1px solid rgba(59,130,246,0.3)',
             borderRadius: 100,
             padding: '6px 16px',
             fontSize: 13,
@@ -76,7 +76,7 @@ export default async function ReferralLandingPage({ params }: Props) {
           </div>
           <h1 style={{ fontSize: 'clamp(28px, 5vw, 52px)', fontWeight: 800, lineHeight: 1.1, margin: '0 0 20px' }}>
             {firstName} vous recommande <br />
-            <span style={{ color: '#5B6EF5' }}>Marpeap</span>
+            <span style={{ color: '#3B82F6' }}>Marpeap</span>
           </h1>
           <p style={{ color: 'rgba(255,255,255,0.55)', fontSize: 18, margin: '0 0 36px', lineHeight: 1.6 }}>
             L'agence digitale qui transforme votre présence en ligne.<br />
@@ -87,13 +87,13 @@ export default async function ReferralLandingPage({ params }: Props) {
             style={{
               display: 'inline-block',
               padding: '16px 40px',
-              background: 'linear-gradient(135deg, #5B6EF5, #9B5BF5)',
+              background: 'linear-gradient(135deg, #3B82F6, #8B5CF6)',
               color: '#fff',
               textDecoration: 'none',
               borderRadius: 12,
               fontWeight: 700,
               fontSize: 16,
-              boxShadow: '0 8px 32px rgba(91,110,245,0.35)',
+              boxShadow: '0 8px 32px rgba(59,130,246,0.35)',
             }}
           >
             Découvrir l'offre →
@@ -144,7 +144,7 @@ export default async function ReferralLandingPage({ params }: Props) {
               <div style={{ fontSize: 32, marginBottom: 12 }}>{pack.icon}</div>
               <div style={{ fontWeight: 800, fontSize: 18, marginBottom: 6 }}>{pack.name}</div>
               <div style={{ color: 'rgba(255,255,255,0.5)', fontSize: 13, marginBottom: 12 }}>{pack.desc}</div>
-              <div style={{ color: '#5B6EF5', fontWeight: 700, fontSize: 14 }}>{pack.price}</div>
+              <div style={{ color: '#3B82F6', fontWeight: 700, fontSize: 14 }}>{pack.price}</div>
             </div>
           ))}
         </div>
@@ -154,7 +154,7 @@ export default async function ReferralLandingPage({ params }: Props) {
             style={{
               display: 'inline-block',
               padding: '14px 36px',
-              background: '#5B6EF5',
+              background: '#3B82F6',
               color: '#fff',
               textDecoration: 'none',
               borderRadius: 10,
