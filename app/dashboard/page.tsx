@@ -38,6 +38,9 @@ function generateQRDataUrl(text: string): string {
   return `data:image/svg+xml;base64,${btoa(svgContent)}`
 }
 
+/* ── Shared UI ─────────────────────────────────────────── */
+const Card = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (<div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, ...style }}>{children}</div>)
+
 /* ══════════════════════════════════════════════════════════ */
 export default function Dashboard() {
   const [user, setUser] = useState<User | null>(null)
@@ -201,7 +204,6 @@ export default function Dashboard() {
   const visibleAnnouncements = announcements.filter(a => !dismissedAnnouncements.includes(a.id))
   const annTypeColor: Record<string, string> = { info: '#3B82F6', success: '#10B981', warning: '#F5A623', promo: '#8B5CF6' }
   const TAB_STYLE = (active: boolean): React.CSSProperties => ({ padding: '9px 18px', background: active ? '#3B82F6' : 'rgba(255,255,255,0.04)', border: active ? 'none' : '1px solid rgba(255,255,255,0.08)', borderRadius: 8, color: active ? '#fff' : 'rgba(255,255,255,0.5)', cursor: 'pointer', fontSize: 13, fontWeight: active ? 700 : 500, fontFamily: "'Inter', sans-serif", whiteSpace: 'nowrap' as const, transition: 'all 0.2s' })
-  const Card = ({ children, style }: { children: React.ReactNode; style?: React.CSSProperties }) => (<div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 16, ...style }}>{children}</div>)
   const StatCard = ({ value, label, color, sub }: { value: string | number; label: string; color?: string; sub?: string }) => (
     <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12, padding: '16px 20px', minWidth: 120 }}>
       <div style={{ fontSize: 26, fontWeight: 800, fontFamily: "'Montserrat', sans-serif", color: color || '#fff' }}>{value}</div>
@@ -398,7 +400,7 @@ export default function Dashboard() {
                       style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff', fontSize: 14, fontFamily: "'Inter', sans-serif" }}
                     >
                       <option value="" style={{ background: '#1a1a2e' }}>Choisir un pack</option>
-                      {PACKS.filter(p => p.name !== 'M-CAMPAIGN').map(p => (
+                      {PACKS.filter(p => !['M-LOCAL', 'M-SHOP LITE', 'M-CALLING'].includes(p.name)).map(p => (
                         <option key={p.name} value={p.name} style={{ background: '#1a1a2e' }}>{p.name} — {p.price}€ {commissions[p.name] ? `(+${commissions[p.name]}€ commission)` : ''}</option>
                       ))}
                     </select>

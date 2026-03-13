@@ -5,7 +5,7 @@ import crypto from 'crypto';
 
 export const runtime = 'nodejs';
 
-const EXCLUDED_PACKS_V1 = ['M-CAMPAIGN'];
+const EXCLUDED_PACKS_V1 = ['M-LOCAL', 'M-SHOP LITE', 'M-CALLING'];
 
 function hmacSign(body: string, secret: string): string {
   return crypto.createHmac('sha256', secret).update(body).digest('hex');
@@ -114,7 +114,15 @@ export async function POST(req: NextRequest) {
       if (!existingSales.length) {
         await query("UPDATE sales SET status = 'failed' WHERE id = $1", [saleId]);
       }
-      return NextResponse.json({ error: 'Erreur lors de la creation de la session de paiement' }, { status: 502 });
+
+      // Forward specific known errors from the app
+      let userMessage = 'Erreur lors de la création de la session de paiement';
+      try {
+        const parsed = JSON.parse(errBody);
+        if (appResponse.status === 403) userMessage = parsed.detail || 'Accès refusé pour cet email';
+        else if (appResponse.status === 400) userMessage = parsed.detail || 'Données invalides';
+      } catch {}
+      return NextResponse.json({ error: userMessage }, { status: appResponse.status >= 500 ? 502 : appResponse.status });
     }
 
     const { checkout_url, session_id } = await appResponse.json();
