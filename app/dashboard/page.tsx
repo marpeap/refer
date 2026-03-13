@@ -57,6 +57,7 @@ export default function Dashboard() {
   const [myRank, setMyRank] = useState<{rank:number;total_commission:number;sales_count:number}|null>(null)
   const [leaderboardLoading, setLeaderboardLoading] = useState(false)
   const [dismissedAnnouncements, setDismissedAnnouncements] = useState<string[]>([])
+  const [activeFiche, setActiveFiche] = useState('M-ONE')
   const [copied, setCopied] = useState('')
   const [otpCode, setOtpCode] = useState('')
   const [signatureImage, setSignatureImage] = useState('')
@@ -788,14 +789,73 @@ export default function Dashboard() {
                 <a href="https://storage.marpeap.digital/contracts/1b79abe8-53d2-4d8e-9f02-a95b4a34c695.pdf" target="_blank" rel="noopener noreferrer" style={{ padding: '9px 18px', background: '#3B82F6', color: '#fff', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, flexShrink: 0 }}>Ouvrir PDF →</a>
               </div>
             </Card>
-            <Card style={{ overflow: 'hidden' }}>
-              <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}><span style={{ color: '#F54EA2' }}>M-CALLING</span> — Fiche produit</div></div>
-              <div style={{ padding: '20px 24px' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="https://api.marpeap.digital/static/presentations/Fiche_MCALLING.png" alt="Fiche M-CALLING" style={{ width: '100%', maxWidth: 640, borderRadius: 10, display: 'block' }} />
-                <a href="https://api.marpeap.digital/static/presentations/Fiche_MCALLING.png" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 10, padding: '7px 14px', background: 'rgba(245,78,162,0.12)', border: '1px solid rgba(245,78,162,0.2)', color: '#F54EA2', textDecoration: 'none', borderRadius: 6, fontSize: 13, fontWeight: 600 }}>Plein écran →</a>
+            <div>
+              <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 16, fontWeight: 700, marginBottom: 12 }}>📋 Fiches produits M-PACKS</div>
+              <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
+                {([
+                  { name: 'M-ONE', color: '#4F8AFF' },
+                  { name: 'M-CAMPAIGN', color: '#10B981' },
+                  { name: 'M-NEURAL', color: '#9B5BF5' },
+                  { name: 'M-CORP', color: '#F1C40F' },
+                ] as const).map(p => (
+                  <button key={p.name} onClick={() => setActiveFiche(p.name)} style={{
+                    padding: '8px 16px', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                    border: activeFiche === p.name ? `1.5px solid ${p.color}` : '1.5px solid rgba(255,255,255,0.08)',
+                    background: activeFiche === p.name ? `${p.color}18` : 'rgba(255,255,255,0.03)',
+                    color: activeFiche === p.name ? p.color : 'rgba(255,255,255,0.4)',
+                    transition: 'all 0.2s',
+                  }}>{p.name}</button>
+                ))}
               </div>
-            </Card>
+              {activeFiche === 'M-ONE' && (
+                <Card style={{ overflow: 'hidden' }}>
+                  <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}><span style={{ color: '#4F8AFF' }}>M-ONE</span> — Site web one-page premium</div>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Design premium, optimisé SEO, livré en 72h — 290 €</div>
+                  </div>
+                  <div style={{ padding: '20px 24px' }}>
+                    <iframe src="/presentations/M-ONE_72H_Digital_Excellence.pdf" title="Fiche M-ONE" style={{ width: '100%', height: 520, border: 'none', borderRadius: 10, background: '#111' }} />
+                    <a href="/presentations/M-ONE_72H_Digital_Excellence.pdf" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 12, padding: '9px 18px', background: 'rgba(79,138,255,0.12)', border: '1px solid rgba(79,138,255,0.25)', color: '#4F8AFF', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>Ouvrir PDF →</a>
+                  </div>
+                </Card>
+              )}
+              {activeFiche === 'M-CAMPAIGN' && (
+                <Card style={{ overflow: 'hidden' }}>
+                  <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}><span style={{ color: '#10B981' }}>M-CAMPAIGN</span> — Agent Google Ads autonome</div>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Gestion IA de vos campagnes publicitaires 24/7 — sur abonnement</div>
+                  </div>
+                  <div style={{ padding: '20px 24px' }}>
+                    <iframe src="/presentations/M-CAMPAIGN_Autonomous_Google_Ads.pdf" title="Fiche M-CAMPAIGN" style={{ width: '100%', height: 520, border: 'none', borderRadius: 10, background: '#111' }} />
+                    <a href="/presentations/M-CAMPAIGN_Autonomous_Google_Ads.pdf" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 12, padding: '9px 18px', background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)', color: '#10B981', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>Ouvrir PDF →</a>
+                  </div>
+                </Card>
+              )}
+              {activeFiche === 'M-NEURAL' && (
+                <Card style={{ overflow: 'hidden' }}>
+                  <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}><span style={{ color: '#9B5BF5' }}>M-NEURAL</span> — Chatbot IA expert 24/7</div>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Instance IA entraînée sur vos données, intégrée à votre site — 180 €</div>
+                  </div>
+                  <div style={{ padding: '20px 24px' }}>
+                    <iframe src="/presentations/M-NEURAL_24_7_AI_Expert.pdf" title="Fiche M-NEURAL" style={{ width: '100%', height: 520, border: 'none', borderRadius: 10, background: '#111' }} />
+                    <a href="/presentations/M-NEURAL_24_7_AI_Expert.pdf" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 12, padding: '9px 18px', background: 'rgba(155,91,245,0.12)', border: '1px solid rgba(155,91,245,0.25)', color: '#9B5BF5', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>Ouvrir PDF →</a>
+                  </div>
+                </Card>
+              )}
+              {activeFiche === 'M-CORP' && (
+                <Card style={{ overflow: 'hidden' }}>
+                  <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}><span style={{ color: '#F1C40F' }}>M-CORP</span> — Équipe IA autonome (5 agents)</div>
+                    <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Stratège, Prospecteur, Commercial, Créatif, Analyste — 820 €</div>
+                  </div>
+                  <div style={{ padding: '20px 24px' }}>
+                    <iframe src="/presentations/M-CORP_Autonomous_Team.pdf" title="Fiche M-CORP" style={{ width: '100%', height: 520, border: 'none', borderRadius: 10, background: '#111' }} />
+                    <a href="/presentations/M-CORP_Autonomous_Team.pdf" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 12, padding: '9px 18px', background: 'rgba(241,196,15,0.12)', border: '1px solid rgba(241,196,15,0.25)', color: '#F1C40F', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>Ouvrir PDF →</a>
+                  </div>
+                </Card>
+              )}
+            </div>
           </div>
         )}
 
