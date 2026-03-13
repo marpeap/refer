@@ -22,16 +22,16 @@ export async function GET(req: NextRequest) {
   const earnedSet = new Map(earnedRows.map((r: any) => [r.badge_id, r.earned_at]));
 
   // Current stats for progress calculation
-  const [salesRow] = await query('SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1', [referrerId]);
+  const [salesRow] = await query("SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1 AND status = 'confirmed'", [referrerId]);
   const salesCount = Number(salesRow?.cnt ?? 0);
 
-  const [commRow] = await query('SELECT COALESCE(SUM(commission_amount),0) AS total FROM sales WHERE referrer_id = $1', [referrerId]);
+  const [commRow] = await query("SELECT COALESCE(SUM(commission_amount),0) AS total FROM sales WHERE referrer_id = $1 AND status = 'confirmed'", [referrerId]);
   const commTotal = Number(commRow?.total ?? 0);
 
   const [refRow] = await query('SELECT tier FROM referrers WHERE id = $1', [referrerId]);
   const tier = refRow?.tier ?? 'bronze';
 
-  const servRows = await query('SELECT DISTINCT service FROM sales WHERE referrer_id = $1', [referrerId]);
+  const servRows = await query("SELECT DISTINCT service FROM sales WHERE referrer_id = $1 AND status = 'confirmed'", [referrerId]);
   const services = servRows.map((r: any) => r.service);
 
   const [filRow] = await query('SELECT COUNT(*) AS cnt FROM referrers WHERE referred_by = $1', [referrerId]);

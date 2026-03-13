@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       parrain.full_name AS parrain_name, parrain.code AS parrain_code,
       filleul.full_name AS filleul_name, filleul.code AS filleul_code
     FROM cascade_commissions cc
-    JOIN sales s ON s.id = cc.sale_id
+    JOIN sales s ON s.id = cc.sale_id AND s.status = 'confirmed'
     JOIN referrers parrain ON parrain.id = cc.referrer_id
     JOIN referrers filleul ON filleul.id = cc.filleul_id
     ORDER BY cc.created_at DESC

@@ -5,6 +5,8 @@ const pool = new Pool({
   ssl: false,
 });
 
+export { pool };
+
 export async function query(text: string, params?: any[]) {
   const client = await pool.connect();
   try {
@@ -126,6 +128,28 @@ export async function runMigrations() {
     await client.query(`ALTER TABLE sales ADD COLUMN IF NOT EXISTS commission_paid BOOLEAN DEFAULT FALSE`);
     await client.query(`ALTER TABLE sales ADD COLUMN IF NOT EXISTS paid_at TIMESTAMPTZ`);
     await client.query(`ALTER TABLE referrers ADD COLUMN IF NOT EXISTS tier VARCHAR DEFAULT 'bronze'`);
+
+    // 10. Flux "Créer une Vente" — colonnes sales
+    await client.query(`ALTER TABLE sales ADD COLUMN IF NOT EXISTS status VARCHAR DEFAULT 'confirmed'`);
+    await client.query(`ALTER TABLE sales ADD COLUMN IF NOT EXISTS checkout_session_id VARCHAR`);
+    await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_sales_checkout_session_id ON sales(checkout_session_id)`);
+    await client.query(`ALTER TABLE sales ADD COLUMN IF NOT EXISTS source VARCHAR DEFAULT 'webhook'`);
+    await client.query(`ALTER TABLE sales ADD COLUMN IF NOT EXISTS client_email VARCHAR`);
+    await client.query(`ALTER TABLE sales ADD COLUMN IF NOT EXISTS client_phone VARCHAR`);
+
+    // 11. Registre de consentement RGPD
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS consent_registry (
+        id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        referrer_id   UUID REFERENCES referrers(id) ON DELETE CASCADE,
+        client_email  VARCHAR NOT NULL,
+        consent_type  VARCHAR NOT NULL,
+        given_at      TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    // 12. Contrainte unicité cascade_commissions (idempotence webhook replay)
+    await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_cascade_commissions_sale_referrer ON cascade_commissions(sale_id, referrer_id)`);
 
     console.log('[DB] Migrations completed');
   } catch (err) {

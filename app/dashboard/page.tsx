@@ -49,7 +49,7 @@ export default function Dashboard() {
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [loading, setLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'accueil'|'ventes'|'analytics'|'objectifs'|'catalogue'|'ressources'|'classement'>('accueil')
+  const [activeTab, setActiveTab] = useState<'accueil'|'ventes'|'analytics'|'objectifs'|'catalogue'|'ressources'|'classement'|'vente'>('accueil')
   const [leaderboard, setLeaderboard] = useState<{rank:number;name:string;tier:string;sales_count:number;total_commission:number;is_me:boolean}[]>([])
   const [myRank, setMyRank] = useState<{rank:number;total_commission:number;sales_count:number}|null>(null)
   const [leaderboardLoading, setLeaderboardLoading] = useState(false)
@@ -64,6 +64,11 @@ export default function Dashboard() {
   const [pushEnabled, setPushEnabled] = useState(false)
   const [pushLoading, setPushLoading] = useState(false)
   const [nextPayment, setNextPayment] = useState<string|null>(null)
+  const [venteForm, setVenteForm] = useState({ client_email: '', client_name: '', client_phone: '', company_name: '', service: '' })
+  const [venteLoading, setVenteLoading] = useState(false)
+  const [venteResult, setVenteResult] = useState<{ checkout_url: string; sale_id: string } | null>(null)
+  const [venteError, setVenteError] = useState('')
+  const venteEnabled = process.env.NEXT_PUBLIC_VENTE_ENABLED === 'true'
   const router = useRouter()
 
   useEffect(() => {
@@ -279,7 +284,7 @@ export default function Dashboard() {
 
         {/* ── Tabs ── */}
         <div style={{ display: 'flex', gap: 6, marginBottom: 24, overflowX: 'auto', paddingBottom: 2 }}>
-          {([['accueil', '🏠 Accueil'], ['ventes', '💰 Ventes'], ['analytics', '📈 Analytics'], ['objectifs', '🎯 Objectifs'], ['catalogue', '📦 Catalogue'], ['ressources', '📁 Ressources'], ['classement', '🏆 Classement']] as [string, string][]).map(([tab, label]) => (
+          {([['accueil', '🏠 Accueil'], ...(venteEnabled ? [['vente', '🛒 Créer une vente']] : []), ['ventes', '💰 Ventes'], ['analytics', '📈 Analytics'], ['objectifs', '🎯 Objectifs'], ['catalogue', '📦 Catalogue'], ['ressources', '📁 Ressources'], ['classement', '🏆 Classement']] as [string, string][]).map(([tab, label]) => (
             <button key={tab} style={TAB_STYLE(activeTab === tab)} onClick={() => { setActiveTab(tab as any); if (tab === 'classement') loadLeaderboard() }}>{label}</button>
           ))}
         </div>
@@ -349,6 +354,97 @@ export default function Dashboard() {
                 {pushLoading ? '...' : pushEnabled ? '🔕 Désactiver' : '🔔 Activer'}
               </button>
             </Card>
+          </div>
+        )}
+
+        {/* ══════════════ TAB: CREER UNE VENTE ══════════════ */}
+        {activeTab === 'vente' && venteEnabled && (
+          <div style={{ maxWidth: 560 }}>
+            <div style={{ marginBottom: 20 }}>
+              <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Créer une vente</div>
+              <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', maxWidth: 500 }}>Générez un lien de paiement Stripe pour votre prospect. Il recevra le lien par email après le paiement.</div>
+            </div>
+
+            {venteResult ? (
+              <Card style={{ padding: 24 }}>
+                <div style={{ textAlign: 'center', marginBottom: 20 }}>
+                  <div style={{ fontSize: 40, marginBottom: 8 }}>✅</div>
+                  <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 4 }}>Lien de paiement généré !</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>Envoyez ce lien à votre prospect pour qu'il procède au paiement.</div>
+                </div>
+                <div style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 10, padding: 14, marginBottom: 16, wordBreak: 'break-all', fontSize: 13, color: '#3B82F6', fontFamily: 'monospace' }}>
+                  {venteResult.checkout_url}
+                </div>
+                <div style={{ display: 'flex', gap: 10 }}>
+                  <button onClick={() => { navigator.clipboard.writeText(venteResult.checkout_url); setCopied('vente-url'); setTimeout(() => setCopied(''), 2000) }} style={{ flex: 1, padding: '10px', background: copied === 'vente-url' ? 'rgba(46,213,115,0.15)' : '#3B82F6', border: 'none', borderRadius: 8, color: copied === 'vente-url' ? '#10B981' : '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700, fontFamily: "'Inter', sans-serif" }}>
+                    {copied === 'vente-url' ? '✓ Copié' : '📋 Copier le lien'}
+                  </button>
+                  <button onClick={() => { setVenteResult(null); setVenteForm({ client_email: '', client_name: '', client_phone: '', company_name: '', service: '' }); setVenteError('') }} style={{ padding: '10px 18px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, color: 'rgba(255,255,255,0.6)', cursor: 'pointer', fontSize: 13, fontWeight: 600, fontFamily: "'Inter', sans-serif" }}>
+                    Nouvelle vente
+                  </button>
+                </div>
+              </Card>
+            ) : (
+              <Card style={{ padding: 24 }}>
+                {venteError && (
+                  <div style={{ background: 'rgba(255,71,87,0.1)', border: '1px solid rgba(255,71,87,0.2)', borderRadius: 8, padding: '10px 14px', marginBottom: 16, fontSize: 13, color: '#FF4757' }}>{venteError}</div>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>Pack *</label>
+                    <select
+                      value={venteForm.service}
+                      onChange={e => setVenteForm(f => ({ ...f, service: e.target.value }))}
+                      style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff', fontSize: 14, fontFamily: "'Inter', sans-serif" }}
+                    >
+                      <option value="" style={{ background: '#1a1a2e' }}>Choisir un pack</option>
+                      {PACKS.filter(p => p.name !== 'M-CAMPAIGN').map(p => (
+                        <option key={p.name} value={p.name} style={{ background: '#1a1a2e' }}>{p.name} — {p.price}€ {commissions[p.name] ? `(+${commissions[p.name]}€ commission)` : ''}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>Email du prospect *</label>
+                    <input type="email" value={venteForm.client_email} onChange={e => setVenteForm(f => ({ ...f, client_email: e.target.value }))} placeholder="prospect@email.com" style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff', fontSize: 14, fontFamily: "'Inter', sans-serif" }} />
+                  </div>
+                  <div>
+                    <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>Nom du prospect *</label>
+                    <input type="text" value={venteForm.client_name} onChange={e => setVenteForm(f => ({ ...f, client_name: e.target.value }))} placeholder="Jean Dupont" style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff', fontSize: 14, fontFamily: "'Inter', sans-serif" }} />
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>Téléphone</label>
+                      <input type="tel" value={venteForm.client_phone} onChange={e => setVenteForm(f => ({ ...f, client_phone: e.target.value }))} placeholder="06 12 34 56 78" style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff', fontSize: 14, fontFamily: "'Inter', sans-serif" }} />
+                    </div>
+                    <div>
+                      <label style={{ display: 'block', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.5)', marginBottom: 6 }}>Société</label>
+                      <input type="text" value={venteForm.company_name} onChange={e => setVenteForm(f => ({ ...f, company_name: e.target.value }))} placeholder="Ma Société" style={{ width: '100%', padding: '10px 12px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, color: '#fff', fontSize: 14, fontFamily: "'Inter', sans-serif" }} />
+                    </div>
+                  </div>
+                  <button
+                    disabled={venteLoading || !venteForm.service || !venteForm.client_email || !venteForm.client_name}
+                    onClick={async () => {
+                      setVenteLoading(true); setVenteError('')
+                      try {
+                        const token = localStorage.getItem('refer_token')
+                        const res = await fetch('/api/sales/initiate', {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+                          body: JSON.stringify(venteForm),
+                        })
+                        const data = await res.json()
+                        if (res.ok) { setVenteResult(data) }
+                        else { setVenteError(data.error || 'Erreur') }
+                      } catch { setVenteError('Erreur réseau') }
+                      finally { setVenteLoading(false) }
+                    }}
+                    style={{ padding: '12px', background: venteLoading ? 'rgba(59,130,246,0.3)' : '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: venteLoading ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700, fontFamily: "'Inter', sans-serif", marginTop: 4 }}
+                  >
+                    {venteLoading ? 'Génération en cours...' : '🛒 Générer le lien de paiement'}
+                  </button>
+                </div>
+              </Card>
+            )}
           </div>
         )}
 

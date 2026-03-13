@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { query } from '@/lib/db';
+import { query, pool } from '@/lib/db';
 import { checkAndAwardBadges } from '@/lib/badges';
 import { sendPushNotif } from '@/lib/push';
 import { BADGE_DEFINITIONS } from '@/lib/badges';
+import crypto from 'crypto';
 
 export const runtime = 'nodejs';
 
@@ -69,21 +70,21 @@ async function checkChallenges(referrerId: string, month: string): Promise<void>
 
   // Fetch stats needed for challenge evaluation
   const [salesCountRow] = await query(
-    'SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1',
+    "SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1 AND status = 'confirmed'",
     [referrerId]
   );
   const salesCount = Number(salesCountRow?.cnt ?? 0);
 
   const [monthAmountRow] = await query(
     `SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales
-     WHERE referrer_id = $1 AND TO_CHAR(created_at, 'YYYY-MM') = $2`,
+     WHERE referrer_id = $1 AND status = 'confirmed' AND TO_CHAR(created_at, 'YYYY-MM') = $2`,
     [referrerId, month]
   );
   const monthAmount = Number(monthAmountRow?.total ?? 0);
 
   const monthSalesByService = await query(
     `SELECT service, COUNT(*) AS cnt FROM sales
-     WHERE referrer_id = $1 AND TO_CHAR(created_at, 'YYYY-MM') = $2
+     WHERE referrer_id = $1 AND status = 'confirmed' AND TO_CHAR(created_at, 'YYYY-MM') = $2
      GROUP BY service`,
     [referrerId, month]
   );
@@ -91,7 +92,7 @@ async function checkChallenges(referrerId: string, month: string): Promise<void>
   monthSalesByService.forEach((r: any) => { serviceMap[r.service] = Number(r.cnt); });
 
   const [monthSalesRow] = await query(
-    `SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1 AND TO_CHAR(created_at, 'YYYY-MM') = $2`,
+    `SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1 AND status = 'confirmed' AND TO_CHAR(created_at, 'YYYY-MM') = $2`,
     [referrerId, month]
   );
   const monthSalesCount = Number(monthSalesRow?.cnt ?? 0);
@@ -121,16 +122,28 @@ async function checkChallenges(referrerId: string, month: string): Promise<void>
 }
 
 export async function POST(req: NextRequest) {
+  // H3: timing-safe secret comparison
   const secret = req.headers.get('x-webhook-secret');
-  if (!secret || secret !== process.env.WEBHOOK_SECRET) {
+  const expected = process.env.WEBHOOK_SECRET || '';
+  if (
+    !secret ||
+    !expected ||
+    secret.length !== expected.length ||
+    !crypto.timingSafeEqual(Buffer.from(secret), Buffer.from(expected))
+  ) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
-    const { referrer_code, client_name, service, amount } = await req.json();
+    // H2: accept checkout_session_id for idempotence
+    const { referrer_code, client_name, service, amount, checkout_session_id, client_email, client_phone } = await req.json();
 
     if (!referrer_code || !client_name || !service || amount === undefined) {
       return NextResponse.json({ error: 'Missing fields' }, { status: 400 });
+    }
+
+    if (typeof amount !== 'number' || amount <= 0) {
+      return NextResponse.json({ error: 'Invalid amount' }, { status: 400 });
     }
 
     const referrers = await query(
@@ -157,35 +170,79 @@ export async function POST(req: NextRequest) {
       ? Number(customRate[0].commission_amount)
       : globalRate.length > 0 ? Number(globalRate[0].commission_amount) : 0;
 
-    const saleRows = await query(
-      `INSERT INTO sales (id, referrer_id, client_name, service, amount, commission_amount, admin_note, created_at)
-       VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, NOW())
-       RETURNING id`,
-      [referrerId, client_name, service, amount, commission, `Auto via app.marpeap.digital`]
-    );
-    const saleId = saleRows[0].id;
+    // M2: Transaction for INSERT sale + UPDATE tier + INSERT cascade
+    const txClient = await pool.connect();
+    let saleId: string;
+    let cascadeAmount = 0;
+    try {
+      await txClient.query('BEGIN');
 
-    // Auto-update tier
-    const salesCount = await query('SELECT COUNT(*) as cnt FROM sales WHERE referrer_id = $1', [referrerId]);
-    const count = Number(salesCount[0]?.cnt ?? 0);
-    const tier = count >= 10 ? 'gold' : count >= 3 ? 'silver' : 'bronze';
-    await query('UPDATE referrers SET tier = $1 WHERE id = $2', [tier, referrerId]);
-
-    // Cascade commission (MLM niveau 1)
-    if (referredBy && commission > 0) {
-      const [rateRow] = await query('SELECT rate FROM cascade_rate WHERE id = 1');
-      const cascadeRate = Number(rateRow?.rate ?? 5);
-      const cascadeAmount = Math.round(commission * cascadeRate) / 100;
-
-      if (cascadeAmount > 0) {
-        await query(`
-          INSERT INTO cascade_commissions (sale_id, referrer_id, filleul_id, amount)
-          VALUES ($1, $2, $3, $4)
-        `, [saleId, referredBy, referrerId, cascadeAmount]);
-
-        // Notify parrain
-        sendPushNotif(referredBy, '💸 Commission cascade !', `${referrerName} a fait une vente — +${cascadeAmount.toFixed(2)}€`).catch(() => {});
+      // H2: Idempotent INSERT via checkout_session_id
+      let saleResult;
+      if (checkout_session_id) {
+        saleResult = await txClient.query(
+          `INSERT INTO sales (id, referrer_id, client_name, service, amount, commission_amount, admin_note, status, source, checkout_session_id, client_email, client_phone, created_at)
+           VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, 'confirmed', 'webhook', $7, $8, $9, NOW())
+           ON CONFLICT (checkout_session_id)
+           DO UPDATE SET status = 'confirmed', amount = EXCLUDED.amount, commission_amount = EXCLUDED.commission_amount
+           RETURNING id`,
+          [referrerId, client_name, service, amount, commission, 'Auto via app.marpeap.digital', checkout_session_id, client_email || null, client_phone || null]
+        );
+      } else {
+        saleResult = await txClient.query(
+          `INSERT INTO sales (id, referrer_id, client_name, service, amount, commission_amount, admin_note, status, source, created_at)
+           VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, 'confirmed', 'webhook', NOW())
+           RETURNING id`,
+          [referrerId, client_name, service, amount, commission, 'Auto via app.marpeap.digital']
+        );
       }
+      saleId = saleResult.rows[0].id;
+
+      // Auto-update tier
+      const tierResult = await txClient.query(
+        "SELECT COUNT(*) as cnt FROM sales WHERE referrer_id = $1 AND status = 'confirmed'",
+        [referrerId]
+      );
+      const count = Number(tierResult.rows[0]?.cnt ?? 0);
+      const tier = count >= 10 ? 'gold' : count >= 3 ? 'silver' : 'bronze';
+      await txClient.query('UPDATE referrers SET tier = $1 WHERE id = $2', [tier, referrerId]);
+
+      // Cascade commission (MLM niveau 1)
+      if (referredBy && commission > 0) {
+        const parrainResult = await txClient.query(
+          "SELECT id FROM referrers WHERE id = $1 AND status = 'active'",
+          [referredBy]
+        );
+
+        if (parrainResult.rows.length > 0) {
+          const rateResult = await txClient.query('SELECT rate FROM cascade_rate WHERE id = 1');
+          const cascadeRate = Number(rateResult.rows[0]?.rate ?? 5);
+          cascadeAmount = Math.round(commission * cascadeRate) / 100;
+
+          if (cascadeAmount > 0) {
+            // P5: ON CONFLICT for cascade dedup
+            await txClient.query(`
+              INSERT INTO cascade_commissions (sale_id, referrer_id, filleul_id, amount)
+              VALUES ($1, $2, $3, $4)
+              ON CONFLICT (sale_id, referrer_id) DO NOTHING
+            `, [saleId, referredBy, referrerId, cascadeAmount]);
+          }
+        }
+      }
+
+      await txClient.query('COMMIT');
+    } catch (txError) {
+      await txClient.query('ROLLBACK');
+      throw txError;
+    } finally {
+      txClient.release();
+    }
+
+    // Side-effects AFTER commit (H1)
+
+    // Notify parrain (cascade)
+    if (referredBy && cascadeAmount > 0) {
+      sendPushNotif(referredBy, '💸 Commission cascade !', `${referrerName} a fait une vente — +${cascadeAmount.toFixed(2)}€`).catch(() => {});
     }
 
     // Check and award badges
@@ -207,6 +264,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, commission, sale_id: saleId });
   } catch (error: any) {
     console.error('Webhook sale error:', error);
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    // Error sanitize: never expose internal error messages
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -75,13 +75,13 @@ export async function checkAndAwardBadges(referrerId: string): Promise<string[]>
 
   // Fetch referrer stats
   const [salesCountRow] = await query(
-    'SELECT COUNT(*) as cnt FROM sales WHERE referrer_id = $1',
+    "SELECT COUNT(*) as cnt FROM sales WHERE referrer_id = $1 AND status = 'confirmed'",
     [referrerId]
   );
   const salesCount = Number(salesCountRow?.cnt ?? 0);
 
   const [commissionRow] = await query(
-    'SELECT COALESCE(SUM(commission_amount), 0) as total FROM sales WHERE referrer_id = $1',
+    "SELECT COALESCE(SUM(commission_amount), 0) as total FROM sales WHERE referrer_id = $1 AND status = 'confirmed'",
     [referrerId]
   );
   const commissionTotal = Number(commissionRow?.total ?? 0);
@@ -93,7 +93,7 @@ export async function checkAndAwardBadges(referrerId: string): Promise<string[]>
   const tier = referrerRow?.tier ?? 'bronze';
 
   const servicesRows = await query(
-    'SELECT DISTINCT service FROM sales WHERE referrer_id = $1',
+    "SELECT DISTINCT service FROM sales WHERE referrer_id = $1 AND status = 'confirmed'",
     [referrerId]
   );
   const services = servicesRows.map((r: any) => r.service);

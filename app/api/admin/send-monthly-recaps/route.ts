@@ -13,9 +13,10 @@ export async function POST(req: NextRequest) {
   // Default: last month
   const body = await req.json().catch(() => ({}));
   const now = new Date();
+  const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
   const month =
     body.month ||
-    `${now.getFullYear()}-${String(now.getMonth()).padStart(2, '0')}`; // previous month
+    `${lastMonth.getFullYear()}-${String(lastMonth.getMonth() + 1).padStart(2, '0')}`;
 
   const referrers = await query(
     "SELECT id FROM referrers WHERE status = 'active'"
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
   let sent = 0;
   for (const r of referrers) {
     const [hasActivity] = await query(
-      `SELECT 1 FROM sales WHERE referrer_id = $1 AND TO_CHAR(created_at, 'YYYY-MM') = $2 LIMIT 1`,
+      `SELECT 1 FROM sales WHERE referrer_id = $1 AND status = 'confirmed' AND TO_CHAR(created_at, 'YYYY-MM') = $2 LIMIT 1`,
       [r.id, month]
     );
     if (hasActivity) {

@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
       COALESCE(SUM(commission_amount), 0) AS commission
     FROM sales
     WHERE referrer_id = $1
+      AND status = 'confirmed'
       AND created_at >= NOW() - INTERVAL '8 weeks'
     GROUP BY week
     ORDER BY week ASC
@@ -32,6 +33,7 @@ export async function GET(req: NextRequest) {
     SELECT service, COUNT(*) AS count, COALESCE(SUM(commission_amount), 0) AS commission
     FROM sales
     WHERE referrer_id = $1
+      AND status = 'confirmed'
     GROUP BY service
     ORDER BY count DESC
   `, [referrerId]);
@@ -43,6 +45,7 @@ export async function GET(req: NextRequest) {
       COALESCE(SUM(commission_amount), 0) AS total
     FROM sales
     WHERE referrer_id = $1
+      AND status = 'confirmed'
       AND created_at >= NOW() - INTERVAL '3 months'
     GROUP BY month
     ORDER BY month DESC
@@ -70,7 +73,7 @@ export async function GET(req: NextRequest) {
     [referrerId]
   );
   const salesMonth = await query(
-    "SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1 AND created_at >= date_trunc('month', NOW())",
+    "SELECT COUNT(*) AS cnt FROM sales WHERE referrer_id = $1 AND status = 'confirmed' AND created_at >= date_trunc('month', NOW())",
     [referrerId]
   );
   const totalClicks = Number(clicksTotal[0]?.cnt ?? 0);

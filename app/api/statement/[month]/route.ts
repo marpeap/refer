@@ -35,7 +35,7 @@ export async function GET(
   const sales = await query(
     `SELECT client_name, service, amount, commission_amount, created_at
      FROM sales
-     WHERE referrer_id = $1 AND TO_CHAR(created_at, 'YYYY-MM') = $2
+     WHERE referrer_id = $1 AND status = 'confirmed' AND TO_CHAR(created_at, 'YYYY-MM') = $2
      ORDER BY created_at ASC`,
     [payload.id, month]
   );

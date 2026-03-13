@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
         COUNT(s.id)::int            AS sales_count,
         COALESCE(SUM(s.commission_amount), 0) AS total_commission
       FROM referrers r
-      LEFT JOIN sales s ON s.referrer_id = r.id
+      LEFT JOIN sales s ON s.referrer_id = r.id AND s.status = 'confirmed'
       WHERE r.status = 'active'
       GROUP BY r.id, r.full_name, r.tier
       ORDER BY total_commission DESC, sales_count DESC
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
           COALESCE(SUM(s.commission_amount), 0) AS total_commission,
           COUNT(s.id)::int AS sales_count
         FROM referrers r
-        LEFT JOIN sales s ON s.referrer_id = r.id
+        LEFT JOIN sales s ON s.referrer_id = r.id AND s.status = 'confirmed'
         WHERE r.status = 'active'
         GROUP BY r.id
       ) sub

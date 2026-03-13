@@ -18,17 +18,17 @@ export async function GET(req: NextRequest) {
 
   // Sales stats
   const salesMonth = await query(
-    "SELECT COUNT(*) AS cnt FROM sales WHERE created_at >= date_trunc('month', NOW())"
+    "SELECT COUNT(*) AS cnt FROM sales WHERE status = 'confirmed' AND created_at >= date_trunc('month', NOW())"
   );
-  const salesAll = await query('SELECT COUNT(*) AS cnt FROM sales');
+  const salesAll = await query("SELECT COUNT(*) AS cnt FROM sales WHERE status = 'confirmed'");
 
   // Commission stats
   const commMonth = await query(
-    "SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales WHERE created_at >= date_trunc('month', NOW())"
+    "SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales WHERE status = 'confirmed' AND created_at >= date_trunc('month', NOW())"
   );
-  const commAll = await query('SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales');
+  const commAll = await query("SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales WHERE status = 'confirmed'");
   const commPending = await query(
-    "SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales WHERE commission_paid = false"
+    "SELECT COALESCE(SUM(commission_amount), 0) AS total FROM sales WHERE status = 'confirmed' AND commission_paid = false"
   );
 
   // Top referrer this month
@@ -36,7 +36,7 @@ export async function GET(req: NextRequest) {
     SELECT r.full_name AS name, COUNT(s.id) AS sales_count, COALESCE(SUM(s.commission_amount), 0) AS commission
     FROM referrers r
     JOIN sales s ON s.referrer_id = r.id
-    WHERE s.created_at >= date_trunc('month', NOW())
+    WHERE s.status = 'confirmed' AND s.created_at >= date_trunc('month', NOW())
     GROUP BY r.id, r.full_name
     ORDER BY commission DESC
     LIMIT 1
@@ -49,7 +49,8 @@ export async function GET(req: NextRequest) {
       COUNT(*) AS sales,
       COALESCE(SUM(commission_amount), 0) AS commission
     FROM sales
-    WHERE created_at >= NOW() - INTERVAL '6 months'
+    WHERE status = 'confirmed'
+      AND created_at >= NOW() - INTERVAL '6 months'
     GROUP BY TO_CHAR(date_trunc('month', created_at), 'YYYY-MM')
     ORDER BY month ASC
   `);
@@ -58,6 +59,7 @@ export async function GET(req: NextRequest) {
   const byService = await query(`
     SELECT service, COUNT(*) AS count, COALESCE(SUM(commission_amount), 0) AS commission
     FROM sales
+    WHERE status = 'confirmed'
     GROUP BY service
     ORDER BY count DESC
   `);

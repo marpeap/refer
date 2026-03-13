@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
         r.created_at,
         COUNT(s.id) as sales_count
       FROM referrers r
-      LEFT JOIN sales s ON s.referrer_id = r.id
+      LEFT JOIN sales s ON s.referrer_id = r.id AND s.status = 'confirmed'
       GROUP BY r.id, r.full_name, r.email, r.phone, r.code, r.status, r.created_at
       ORDER BY r.created_at DESC
     `);

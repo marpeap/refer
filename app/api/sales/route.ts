@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const result = await query(
       `SELECT id, client_name, service, amount, commission_amount, commission_paid, paid_at, admin_note, created_at
-       FROM sales WHERE referrer_id = $1 ORDER BY created_at DESC`,
+       FROM sales WHERE referrer_id = $1 AND status = 'confirmed' ORDER BY created_at DESC`,
       [payload.id]
     );
 

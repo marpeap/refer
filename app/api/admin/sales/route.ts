@@ -24,6 +24,7 @@ export async function GET(req: NextRequest) {
         s.commission_paid,
         s.paid_at,
         s.admin_note,
+        s.status,
         s.created_at,
         r.full_name as referrer_name,
         r.code as referrer_code
@@ -75,7 +76,7 @@ export async function POST(req: NextRequest) {
     );
 
     // Auto-update tier
-    const salesCount = await query('SELECT COUNT(*) as cnt FROM sales WHERE referrer_id = $1', [referrer_id]);
+    const salesCount = await query("SELECT COUNT(*) as cnt FROM sales WHERE referrer_id = $1 AND status = 'confirmed'", [referrer_id]);
     const count = Number(salesCount[0]?.cnt ?? 0);
     const tier = count >= 10 ? 'gold' : count >= 3 ? 'silver' : 'bronze';
     await query('UPDATE referrers SET tier = $1 WHERE id = $2', [tier, referrer_id]);
