@@ -1,5 +1,68 @@
 import { query } from './db';
 
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+export async function sendCheckoutLinkEmail(
+  clientEmail: string,
+  clientName: string,
+  service: string,
+  checkoutUrl: string,
+  referrerName: string,
+): Promise<boolean> {
+  const firstName = escapeHtml(clientName.split(' ')[0]);
+  const safeName = escapeHtml(clientName);
+  const safeService = escapeHtml(service);
+  const safeReferrer = escapeHtml(referrerName);
+
+  const html = `
+    <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 560px; margin: 0 auto; background: #080810; color: #fff; border-radius: 16px; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, rgba(91,110,245,0.3), rgba(155,91,245,0.2)); padding: 32px 32px 24px;">
+        <div style="font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">mar<span style="color: #5B6EF5;">peap</span></div>
+        <div style="margin-top: 8px; color: rgba(255,255,255,0.6); font-size: 14px;">Votre lien de paiement</div>
+      </div>
+      <div style="padding: 32px;">
+        <h2 style="margin: 0 0 8px; font-size: 22px; font-weight: 800;">Bonjour ${firstName} 👋</h2>
+        <p style="margin: 0 0 24px; color: rgba(255,255,255,0.6); font-size: 14px; line-height: 1.6;">
+          <strong>${safeReferrer}</strong> vous a préparé un accès au pack <strong style="color: #5B6EF5;">${safeService}</strong> de Marpeap Digitals.
+        </p>
+
+        <div style="background: rgba(91,110,245,0.08); border: 1px solid rgba(91,110,245,0.2); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center;">
+          <div style="font-size: 14px; color: rgba(255,255,255,0.5); margin-bottom: 16px;">Cliquez ci-dessous pour procéder au paiement sécurisé via Stripe :</div>
+          <a href="${checkoutUrl}" style="display: inline-block; padding: 14px 32px; background: #5B6EF5; color: #fff; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 15px;">Accéder au paiement →</a>
+        </div>
+
+        <p style="margin: 0 0 8px; color: rgba(255,255,255,0.35); font-size: 12px; line-height: 1.5;">
+          Ce lien est valable 24 heures. Si vous n'êtes pas à l'origine de cette demande, ignorez simplement cet email.
+        </p>
+        <p style="margin: 0; color: rgba(255,255,255,0.35); font-size: 12px; line-height: 1.5;">
+          Paiement 100% sécurisé par <strong>Stripe</strong>. Aucune donnée bancaire n'est stockée par Marpeap.
+        </p>
+      </div>
+    </div>
+  `;
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
+      },
+      body: JSON.stringify({
+        from: 'Marpeap <noreply@marpeap.digital>',
+        to: clientEmail,
+        subject: `${safeReferrer} vous invite à découvrir ${safeService} — Marpeap Digitals`,
+        html,
+      }),
+    });
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 export async function sendMonthlyRecap(referrerId: string, month: string): Promise<void> {
   // month format: 'YYYY-MM' ex: '2026-02'
   const [year, mon] = month.split('-');

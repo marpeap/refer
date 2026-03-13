@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
 import { verifyToken } from '@/lib/jwt';
+import { sendCheckoutLinkEmail } from '@/lib/mailer';
 import crypto from 'crypto';
 
 export const runtime = 'nodejs';
@@ -132,6 +133,16 @@ export async function POST(req: NextRequest) {
       'UPDATE sales SET checkout_session_id = $1 WHERE id = $2',
       [session_id, saleId]
     );
+
+    // Send checkout link to prospect (non-blocking)
+    const [ref] = await query('SELECT full_name FROM referrers WHERE id = $1', [referrerId]);
+    sendCheckoutLinkEmail(
+      client_email.toLowerCase(),
+      client_name,
+      service,
+      checkout_url,
+      ref?.full_name || referrer.code,
+    ).catch(err => console.error('[sales/initiate] Email error:', err));
 
     return NextResponse.json({ checkout_url, sale_id: saleId });
   } catch (error: any) {

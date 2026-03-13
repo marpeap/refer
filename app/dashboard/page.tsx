@@ -372,7 +372,7 @@ export default function Dashboard() {
                 <div style={{ textAlign: 'center', marginBottom: 20 }}>
                   <div style={{ fontSize: 40, marginBottom: 8 }}>✅</div>
                   <div style={{ fontWeight: 700, fontSize: 16, marginBottom: 4 }}>Lien de paiement généré !</div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>Envoyez ce lien à votre prospect pour qu'il procède au paiement.</div>
+                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)' }}>Un email avec le lien de paiement a été envoyé au prospect. Vous pouvez aussi le copier ci-dessous.</div>
                 </div>
                 <div style={{ background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 10, padding: 14, marginBottom: 16, wordBreak: 'break-all', fontSize: 13, color: '#3B82F6', fontFamily: 'monospace' }}>
                   {venteResult.checkout_url}
