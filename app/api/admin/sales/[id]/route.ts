@@ -2,17 +2,18 @@ import { query } from '@/lib/db';
 
 export const runtime = 'nodejs';
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAdminPassword } from '@/lib/admin-auth';
 
-function verifyAdminPassword(req: NextRequest): boolean {
+function checkAdmin(req: NextRequest): boolean {
   const adminPassword = req.headers.get('x-admin-password');
-  return adminPassword === process.env.ADMIN_PASSWORD;
+  return verifyAdminPassword(adminPassword);
 }
 
 export async function PATCH(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  if (!verifyAdminPassword(req)) {
+  if (!checkAdmin(req)) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
   }
 
@@ -41,7 +42,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  if (!verifyAdminPassword(req)) {
+  if (!checkAdmin(req)) {
     return NextResponse.json({ error: 'Non autorisé' }, { status: 401 });
   }
 

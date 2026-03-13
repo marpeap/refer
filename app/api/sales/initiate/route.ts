@@ -36,6 +36,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Champs obligatoires manquants' }, { status: 400 });
     }
 
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(client_email)) {
+      return NextResponse.json({ error: 'Email invalide' }, { status: 400 });
+    }
+
     // Validate pack (M-CAMPAIGN excluded v1)
     if (EXCLUDED_PACKS_V1.includes(service)) {
       return NextResponse.json({ error: 'Ce pack n\'est pas disponible pour le moment' }, { status: 400 });
@@ -45,6 +51,13 @@ export async function POST(req: NextRequest) {
     if (client_email.toLowerCase() === referrer.email.toLowerCase()) {
       return NextResponse.json({ error: 'Auto-parrainage interdit' }, { status: 400 });
     }
+
+    // Inline expiry: mark stale initiated sales as expired (supplements daily cron)
+    await query(
+      `UPDATE sales SET status = 'expired'
+       WHERE referrer_id = $1 AND status = 'initiated' AND created_at < NOW() - INTERVAL '24 hours'`,
+      [referrerId]
+    );
 
     // Anti-double-click: check for existing initiated sale in last 24h
     const existingSales = await query(
@@ -74,10 +87,11 @@ export async function POST(req: NextRequest) {
       );
       saleId = newSale.id;
 
-      // RGPD consent registry
+      // RGPD consent registry (dedup on retry)
       await query(
         `INSERT INTO consent_registry (referrer_id, client_email, consent_type)
-         VALUES ($1, $2, 'referral_checkout')`,
+         VALUES ($1, $2, 'referral_checkout')
+         ON CONFLICT (referrer_id, client_email, consent_type) DO NOTHING`,
         [referrerId, client_email.toLowerCase()]
       );
     }
@@ -111,10 +125,8 @@ export async function POST(req: NextRequest) {
       const errBody = await appResponse.text();
       console.error('[sales/initiate] App error:', appResponse.status, errBody);
 
-      // If sale was just created, mark as failed
-      if (!existingSales.length) {
-        await query("UPDATE sales SET status = 'failed' WHERE id = $1", [saleId]);
-      }
+      // Mark sale as failed (whether new or retried)
+      await query("UPDATE sales SET status = 'failed' WHERE id = $1 AND status = 'initiated'", [saleId]);
 
       // Forward specific known errors from the app
       let userMessage = 'Erreur lors de la création de la session de paiement';

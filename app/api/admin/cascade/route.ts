@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { verifyAdminPassword } from '@/lib/admin-auth';
 
 export const runtime = 'nodejs';
 
 function checkAdmin(req: NextRequest) {
-  return req.headers.get('x-admin-password') === process.env.ADMIN_PASSWORD;
+  return verifyAdminPassword(req.headers.get('x-admin-password'));
 }
 
 export async function GET(req: NextRequest) {

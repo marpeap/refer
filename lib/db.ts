@@ -20,6 +20,53 @@ export async function query(text: string, params?: any[]) {
 export async function runMigrations() {
   const client = await pool.connect();
   try {
+    // ── 0a. Core table: referrers ──────────────────────────────────
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS referrers (
+        id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        full_name     VARCHAR NOT NULL,
+        email         VARCHAR NOT NULL UNIQUE,
+        phone         VARCHAR,
+        password_hash VARCHAR NOT NULL,
+        code          VARCHAR NOT NULL UNIQUE,
+        status        VARCHAR DEFAULT 'pending',
+        tier          VARCHAR DEFAULT 'bronze',
+        referred_by   UUID REFERENCES referrers(id),
+        activated_at  TIMESTAMPTZ,
+        created_at    TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    // ── 0b. Core table: sales ──────────────────────────────────────
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS sales (
+        id                  UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        referrer_id         UUID REFERENCES referrers(id),
+        client_name         VARCHAR NOT NULL,
+        service             VARCHAR NOT NULL,
+        amount              NUMERIC NOT NULL,
+        commission_amount   NUMERIC DEFAULT 0,
+        status              VARCHAR DEFAULT 'confirmed',
+        source              VARCHAR DEFAULT 'webhook',
+        checkout_session_id VARCHAR,
+        client_email        VARCHAR,
+        client_phone        VARCHAR,
+        admin_note          TEXT,
+        commission_paid     BOOLEAN DEFAULT FALSE,
+        paid_at             TIMESTAMPTZ,
+        created_at          TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
+    // ── 0c. Core table: commission_rates ───────────────────────────
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS commission_rates (
+        pack_name         VARCHAR PRIMARY KEY,
+        commission_amount NUMERIC NOT NULL,
+        updated_at        TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+
     // 1. Tracking clics sur /r/CODE
     await client.query(`
       CREATE TABLE IF NOT EXISTS link_clicks (
@@ -150,6 +197,16 @@ export async function runMigrations() {
 
     // 12. Contrainte unicité cascade_commissions (idempotence webhook replay)
     await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_cascade_commissions_sale_referrer ON cascade_commissions(sale_id, referrer_id)`);
+
+    // 13. Consent registry unique constraint (dedup on retry)
+    await client.query(`CREATE UNIQUE INDEX IF NOT EXISTS idx_consent_registry_referrer_email_type ON consent_registry(referrer_id, client_email, consent_type)`);
+
+    // 14. Performance indexes
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_sales_referrer_id ON sales(referrer_id)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_sales_status ON sales(status)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_sales_client_email ON sales(client_email)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_sales_referrer_status ON sales(referrer_id, status)`);
+    await client.query(`CREATE INDEX IF NOT EXISTS idx_cascade_commissions_referrer_id ON cascade_commissions(referrer_id)`);
 
     console.log('[DB] Migrations completed');
   } catch (err) {

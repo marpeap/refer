@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { verifyAdminPassword } from '@/lib/admin-auth';
 
 export const runtime = 'nodejs';
 
@@ -7,7 +8,7 @@ export async function POST(req: NextRequest) {
   // Accept admin password or CRON_SECRET
   const adminPassword = req.headers.get('x-admin-password');
   const cronSecret = req.headers.get('authorization')?.replace('Bearer ', '');
-  const isAdmin = adminPassword === process.env.ADMIN_PASSWORD;
+  const isAdmin = verifyAdminPassword(adminPassword);
   const isCron = cronSecret === process.env.CRON_SECRET;
 
   if (!isAdmin && !isCron) {
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
 
     // For each sale with a checkout_session_id, try to expire the Stripe session via app
     const appUrl = process.env.APP_API_URL || 'https://api.marpeap.digital';
-    const webhookSecret = process.env.WEBHOOK_SECRET || '';
+    const webhookSecret = process.env.REFER_WEBHOOK_SECRET || process.env.WEBHOOK_SECRET || '';
     let expiredSessions = 0;
 
     for (const sale of expiredSales) {

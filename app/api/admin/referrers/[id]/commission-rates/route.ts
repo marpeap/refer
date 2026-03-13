@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { verifyAdminPassword } from '@/lib/admin-auth';
 
 export const runtime = 'nodejs';
 
 function checkAuth(req: NextRequest) {
-  return req.headers.get('x-admin-password') === process.env.ADMIN_PASSWORD;
+  return verifyAdminPassword(req.headers.get('x-admin-password'));
 }
 
 // GET  — taux personnalisés de l'apporteur, fusionnés avec les taux globaux

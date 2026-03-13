@@ -180,14 +180,29 @@ export async function POST(req: NextRequest) {
       // H2: Idempotent INSERT via checkout_session_id
       let saleResult;
       if (checkout_session_id) {
-        saleResult = await txClient.query(
-          `INSERT INTO sales (id, referrer_id, client_name, service, amount, commission_amount, admin_note, status, source, checkout_session_id, client_email, client_phone, created_at)
-           VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, 'confirmed', 'webhook', $7, $8, $9, NOW())
-           ON CONFLICT (checkout_session_id)
-           DO UPDATE SET status = 'confirmed', amount = EXCLUDED.amount, commission_amount = EXCLUDED.commission_amount
+        // Race mitigation: if checkout_session_id not yet saved on initiated sale,
+        // try to match and update the initiated sale first
+        const initiatedMatch = await txClient.query(
+          `UPDATE sales SET checkout_session_id = $1, status = 'confirmed', amount = $2, commission_amount = $3
+           WHERE referrer_id = $4 AND status = 'initiated' AND checkout_session_id IS NULL
+             AND client_email = $5 AND service = $6
+             AND created_at > NOW() - INTERVAL '2 hours'
            RETURNING id`,
-          [referrerId, client_name, service, amount, commission, 'Auto via app.marpeap.digital', checkout_session_id, client_email || null, client_phone || null]
+          [checkout_session_id, amount, commission, referrerId, client_email || '', service]
         );
+
+        if (initiatedMatch.rows.length > 0) {
+          saleResult = initiatedMatch;
+        } else {
+          saleResult = await txClient.query(
+            `INSERT INTO sales (id, referrer_id, client_name, service, amount, commission_amount, admin_note, status, source, checkout_session_id, client_email, client_phone, created_at)
+             VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, $6, 'confirmed', 'webhook', $7, $8, $9, NOW())
+             ON CONFLICT (checkout_session_id)
+             DO UPDATE SET status = 'confirmed', amount = EXCLUDED.amount, commission_amount = EXCLUDED.commission_amount
+             RETURNING id`,
+            [referrerId, client_name, service, amount, commission, 'Auto via app.marpeap.digital', checkout_session_id, client_email || null, client_phone || null]
+          );
+        }
       } else {
         saleResult = await txClient.query(
           `INSERT INTO sales (id, referrer_id, client_name, service, amount, commission_amount, admin_note, status, source, created_at)

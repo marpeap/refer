@@ -1,13 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { verifyAdminPassword } from '@/lib/admin-auth';
 
 export const runtime = 'nodejs';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD as string;
-
 export async function GET(request: NextRequest) {
   const password = request.headers.get('x-admin-password');
-  if (password !== ADMIN_PASSWORD) {
+  if (!verifyAdminPassword(password)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

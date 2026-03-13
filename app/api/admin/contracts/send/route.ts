@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { query } from '@/lib/db';
+import { verifyAdminPassword } from '@/lib/admin-auth';
 
 export const runtime = 'nodejs';
 import { PDFDocument, StandardFonts } from 'pdf-lib';
 import { Resend } from 'resend';
 import crypto from 'crypto';
 
-const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD as string;
 const STORAGE_URL = process.env.STORAGE_URL as string;
 const UPLOAD_SECRET = process.env.UPLOAD_SECRET as string;
 const RESEND_API_KEY = process.env.RESEND_API_KEY as string;
@@ -23,7 +23,7 @@ function calculateHash(buffer: Buffer): string {
 
 export async function POST(request: NextRequest) {
   const password = request.headers.get('x-admin-password');
-  if (password !== ADMIN_PASSWORD) {
+  if (!verifyAdminPassword(password)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 

@@ -1,10 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { verifyAdminPassword } from '@/lib/admin-auth';
 
 export async function POST(req: NextRequest) {
   try {
     const { password } = await req.json();
 
-    if (password === process.env.ADMIN_PASSWORD) {
+    if (verifyAdminPassword(password)) {
       return NextResponse.json({ ok: true }, { status: 200 });
     }
 

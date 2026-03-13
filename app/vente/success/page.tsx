@@ -8,18 +8,20 @@ export default function VenteSuccessPage() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
   const [status, setStatus] = useState<string>('pending')
-  const [error, setError] = useState<string | null>(null)
+  const [isReferrer, setIsReferrer] = useState(false)
 
   const isEnabled = process.env.NEXT_PUBLIC_VENTE_ENABLED === 'true'
 
   useEffect(() => {
     if (!isEnabled || !sessionId) return
 
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('refer_token')
     if (!token) {
-      setError('Session expirée')
+      // Prospect (no referrer account) — show immediate thank-you
+      setStatus('prospect')
       return
     }
+    setIsReferrer(true)
 
     let attempts = 0
     const maxAttempts = 15 // 15 x 2s = 30s
@@ -64,6 +66,15 @@ export default function VenteSuccessPage() {
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#080810', color: '#fff', fontFamily: "'DM Sans', sans-serif" }}>
       <div style={{ maxWidth: 480, textAlign: 'center', padding: 32 }}>
+        {status === 'prospect' && (
+          <>
+            <div style={{ fontSize: 48, marginBottom: 16 }}>&#9989;</div>
+            <h1 style={{ fontSize: 24, fontWeight: 800, marginBottom: 8, color: '#2ED573' }}>Merci pour votre paiement !</h1>
+            <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: 14, marginBottom: 24 }}>Votre paiement a bien ete pris en compte. Vous recevrez un email de confirmation sous peu.</p>
+            <p style={{ color: 'rgba(255,255,255,0.35)', fontSize: 13 }}>Vous pouvez fermer cette page.</p>
+          </>
+        )}
+
         {status === 'pending' && (
           <>
             <div style={{ fontSize: 48, marginBottom: 16 }}>&#8987;</div>
@@ -114,9 +125,6 @@ export default function VenteSuccessPage() {
           </>
         )}
 
-        {error && (
-          <p style={{ color: '#FF4757', marginTop: 16 }}>{error}</p>
-        )}
       </div>
     </div>
   )
