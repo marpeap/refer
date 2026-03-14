@@ -24,7 +24,7 @@ const PACKS = [
   { name: 'M-SHOP LITE', price: 490, color: '#F5A623', tagline: 'Boutique E-Commerce Pro', description: 'Une boutique en ligne complète avec gestion des paiements.', target: 'Créateurs, artisans, commerces physiques', features: ['Boutique avec panier & Stripe', 'Gestion produits, stocks, livraisons', 'Design adapté à votre marque', 'SEO optimisé'], pitchArgs: ['Vendez 24h/24 sans effort', 'Boutique pro en moins d\'une semaine', 'Concurrencez Amazon sur votre niche'] },
   { name: 'M-LOCAL', price: 190, color: '#10B981', tagline: 'Visibilité Google Maps', description: 'Optimisation complète de votre fiche Google Business.', target: 'Restaurants, coiffeurs, plombiers, médecins', features: ['Optimisation fiche Google Business', 'Photos & contenus SEO', 'Stratégie mots-clés locaux', 'Résultats en 30 jours'], pitchArgs: ['80% des recherches locales aboutissent à une visite', 'Le pack le moins cher, souvent le plus impactant', '"Trouvez un plombier près de moi" — soyez le 1er'] },
   { name: 'M-CALLING', price: 490, color: '#F54EA2', tagline: 'Standardiste IA 24h/24', description: 'Un agent vocal IA répond à tous les appels 24h/24, 7j/7.', target: 'Cabinets médicaux, restaurants, hôtels, agences', features: ['Réponse instantanée 24h/24', 'Prise de rendez-vous auto', 'Disponible en plusieurs langues', 'Zéro coût de recrutement'], pitchArgs: ['Plus jamais d\'appel manqué', 'Remplace un standardiste pour 30€/mois', 'Vos concurrents paient encore un humain'] },
-  { name: 'M-CAMPAIGN', price: 519.99, color: '#00C9A7', tagline: 'Gestionnaire Google Ads IA', description: 'Un agent IA gère vos campagnes Google Ads en continu.', target: 'E-commerce, agences, cliniques, formations', features: ['Création & optimisation campagnes', 'Suivi temps réel', 'Rapports mensuels clairs', 'Consultation de démarrage'], pitchArgs: ['Dépensez moins en pub, gagnez plus', 'Votre budget travaille 24h/24', 'Résultats mesurables dès le 1er mois'] },
+  { name: 'M-CAMPAIGN', price: 519.99, color: '#2ED573', tagline: 'Gestionnaire Google Ads IA', description: 'Un agent IA gère vos campagnes Google Ads en continu.', target: 'E-commerce, agences, cliniques, formations', features: ['Création & optimisation campagnes', 'Suivi temps réel', 'Rapports mensuels clairs', 'Consultation de démarrage'], pitchArgs: ['Dépensez moins en pub, gagnez plus', 'Votre budget travaille 24h/24', 'Résultats mesurables dès le 1er mois'] },
   { name: 'M-NEURAL', price: 180, color: '#9B5BF5', tagline: 'ChatBot IA sur vos données', description: 'Un chatbot intelligent formé sur vos propres données.', target: 'E-commerce, SaaS, formateurs en ligne', features: ['IA formée sur votre contenu', 'Intégration site en 48h', 'Répond 24h/24', 'Réduit tickets support de 70%'], pitchArgs: ['Finies les réponses aux mêmes questions', 'Plus abordable qu\'un CDI support', 'Vos clients adorent les réponses en 3 secondes'] },
   { name: 'M-CORP', price: 820, color: '#F1C40F', tagline: 'Équipe de 5 Agents IA autonomes', description: '5 agents IA spécialisés automatisent vos processus métiers.', target: 'PME à partir de 5 employés, entreprises en croissance', features: ['5 agents IA personnalisés', 'Automatisation tâches répétitives', 'Intégrations CRM, Slack, Drive', 'Formation équipe + support'], pitchArgs: ['Votre propre équipe IA pour le prix d\'un freelance', 'ROI moyen : 40h économisées/mois', 'Le pack "transformer sa boîte"'] },
 ]
@@ -770,31 +770,13 @@ export default function Dashboard() {
         {/* ══════════════ TAB: RESSOURCES ══════════════ */}
         {activeTab === 'ressources' && (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
-            <div><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Ressources & présentations</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>Tous les outils pour comprendre Marpeap et convaincre vos prospects.</div></div>
-            <Card style={{ overflow: 'hidden' }}>
-              <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}>🎬 Marpeap — Le Moteur 24/7</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Vidéo de présentation de l'entreprise</div></div>
-              <div style={{ padding: '20px 24px' }}>
-                <video controls style={{ width: '100%', maxWidth: 720, borderRadius: 10, background: '#000', display: 'block' }} preload="metadata">
-                  <source src="https://api.marpeap.digital/static/presentations/Marpeap___Moteur_24_7.mp4" type="video/mp4" />
-                </video>
-              </div>
-            </Card>
-            <Card style={{ padding: 24 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ width: 48, height: 48, background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 22, flexShrink: 0 }}>📘</div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700, marginBottom: 4 }}>Marpeap Growth Machine</div>
-                  <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)', lineHeight: 1.5 }}>Présentation complète : vision, offre, positionnement.</div>
-                </div>
-                <a href="https://storage.marpeap.digital/contracts/1b79abe8-53d2-4d8e-9f02-a95b4a34c695.pdf" target="_blank" rel="noopener noreferrer" style={{ padding: '9px 18px', background: '#3B82F6', color: '#fff', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600, flexShrink: 0 }}>Ouvrir PDF →</a>
-              </div>
-            </Card>
+            <div><div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 6 }}>Ressources & présentations</div><div style={{ fontSize: 13, color: 'rgba(255,255,255,0.35)' }}>Fiches produits pour comprendre l'offre Marpeap et convaincre vos prospects.</div></div>
             <div>
               <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 16, fontWeight: 700, marginBottom: 12 }}>📋 Fiches produits M-PACKS</div>
               <div style={{ display: 'flex', gap: 6, marginBottom: 16, flexWrap: 'wrap' }}>
                 {([
                   { name: 'M-ONE', color: '#4F8AFF' },
-                  { name: 'M-CAMPAIGN', color: '#10B981' },
+                  { name: 'M-CAMPAIGN', color: '#2ED573' },
                   { name: 'M-NEURAL', color: '#9B5BF5' },
                   { name: 'M-CORP', color: '#F1C40F' },
                 ] as const).map(p => (
@@ -822,12 +804,12 @@ export default function Dashboard() {
               {activeFiche === 'M-CAMPAIGN' && (
                 <Card style={{ overflow: 'hidden' }}>
                   <div style={{ padding: '18px 24px 14px', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                    <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}><span style={{ color: '#10B981' }}>M-CAMPAIGN</span> — Agent Google Ads autonome</div>
+                    <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 15, fontWeight: 700 }}><span style={{ color: '#2ED573' }}>M-CAMPAIGN</span> — Agent Google Ads autonome</div>
                     <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.3)', marginTop: 4 }}>Gestion IA de vos campagnes publicitaires 24/7 — sur abonnement</div>
                   </div>
                   <div style={{ padding: '20px 24px' }}>
                     <iframe src="/presentations/M-CAMPAIGN_Autonomous_Google_Ads.pdf" title="Fiche M-CAMPAIGN" style={{ width: '100%', height: 520, border: 'none', borderRadius: 10, background: '#111' }} />
-                    <a href="/presentations/M-CAMPAIGN_Autonomous_Google_Ads.pdf" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 12, padding: '9px 18px', background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.25)', color: '#10B981', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>Ouvrir PDF →</a>
+                    <a href="/presentations/M-CAMPAIGN_Autonomous_Google_Ads.pdf" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', marginTop: 12, padding: '9px 18px', background: 'rgba(46,213,115,0.12)', border: '1px solid rgba(46,213,115,0.25)', color: '#2ED573', textDecoration: 'none', borderRadius: 8, fontSize: 13, fontWeight: 600 }}>Ouvrir PDF →</a>
                   </div>
                 </Card>
               )}
