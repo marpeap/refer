@@ -158,7 +158,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ checkout_url, sale_id: saleId });
   } catch (error: any) {
-    console.error('[sales/initiate] Error:', error);
+    console.error('[sales/initiate] Error:', error?.message || error, error?.stack?.split('\n').slice(0, 5).join('\n'));
     return NextResponse.json({ error: 'Erreur interne' }, { status: 500 });
   }
 }
