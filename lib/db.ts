@@ -18,8 +18,9 @@ export async function query(text: string, params?: any[]) {
 }
 
 export async function runMigrations() {
-  const client = await pool.connect();
+  let client;
   try {
+    client = await pool.connect();
     // ── 0a. Core table: referrers ──────────────────────────────────
     await client.query(`
       CREATE TABLE IF NOT EXISTS referrers (
@@ -212,6 +213,6 @@ export async function runMigrations() {
   } catch (err) {
     console.error('[DB] Migration error:', err);
   } finally {
-    client.release();
+    client?.release();
   }
 }
