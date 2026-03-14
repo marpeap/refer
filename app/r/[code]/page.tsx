@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation';
 import { query } from '@/lib/db';
 import type { Metadata } from 'next';
 
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: { code: string };
 }
