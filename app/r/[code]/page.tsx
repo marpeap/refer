@@ -29,7 +29,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ReferralLandingPage({ params }: Props) {
-  try {
   const code = params.code.toUpperCase();
   const referrers = await query(
     "SELECT full_name, tier FROM referrers WHERE code = $1 AND status = 'active'",
@@ -175,8 +174,4 @@ export default async function ReferralLandingPage({ params }: Props) {
       </div>
     </div>
   );
-  } catch (err: any) {
-    console.error('[/r/code] Error:', err?.message || err, err?.stack);
-    return <div style={{ color: '#fff', padding: 40 }}>Debug: {err?.message || String(err)}</div>;
-  }
 }
