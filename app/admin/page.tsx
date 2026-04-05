@@ -103,7 +103,7 @@ interface CascadeCommission {
 
 const services = ['M-ONE', 'M-SHOP LITE', 'M-LOCAL', 'M-CALLING', 'M-CAMPAIGN', 'M-NEURAL', 'M-CORP']
 
-const SERVICE_COLORS = ['#3B82F6', '#8B5CF6', '#10B981', '#F59E0B', '#EF4444', '#06B6D4', '#F97316']
+const SERVICE_COLORS = ['#36D8B0', '#9B5BF5', '#F0B429', '#4F8AFF', '#EF4444', '#06B6D4', '#F54EA2']
 
 type TabType = 'dashboard' | 'referrers' | 'sales' | 'commissions' | 'contracts' | 'annonces' | 'challenges' | 'cascade'
 
@@ -115,7 +115,6 @@ export default function Admin() {
   const [activeTab, setActiveTab] = useState<TabType>('dashboard')
   const [dataLoading, setDataLoading] = useState(false)
 
-  // Existing state
   const [referrers, setReferrers] = useState<Referrer[]>([])
   const [sales, setSales] = useState<Sale[]>([])
   const [contracts, setContracts] = useState<Contract[]>([])
@@ -131,16 +130,13 @@ export default function Admin() {
   const [referrerRatesSaving, setReferrerRatesSaving] = useState(false)
   const [saleForm, setSaleForm] = useState({ referrer_code: '', client_name: '', service: services[0], amount: '', admin_note: '' })
 
-  // New state — Dashboard
   const [adminStats, setAdminStats] = useState<AdminStats | null>(null)
 
-  // New state — Annonces
   const [announcements, setAnnouncements] = useState<Announcement[]>([])
   const [announcementForm, setAnnouncementForm] = useState({ title: '', content: '', type: 'info', expires_at: '' })
   const [announcementCreating, setAnnouncementCreating] = useState(false)
   const [showAnnouncementForm, setShowAnnouncementForm] = useState(false)
 
-  // New state — Challenges
   const [challenges, setChallenges] = useState<Challenge[]>([])
   const [expandedChallenge, setExpandedChallenge] = useState<string | null>(null)
   const [challengeCreating, setChallengeCreating] = useState(false)
@@ -156,7 +152,6 @@ export default function Admin() {
     bonus_amount: '50'
   })
 
-  // New state — Cascade
   const [cascadeRate, setCascadeRate] = useState(5)
   const [cascadeRateEdit, setCascadeRateEdit] = useState('5')
   const [cascadeRateSaving, setCascadeRateSaving] = useState(false)
@@ -524,24 +519,25 @@ export default function Admin() {
   }
 
   // ── Helpers ────────────────────────────────────────────────────────────────
+  const statusConfig: Record<string, { label: string; cls: string }> = {
+    pending: { label: 'En attente', cls: 'badge-gold' },
+    active: { label: 'Actif', cls: 'badge-mint' },
+    suspended: { label: 'Suspendu', cls: 'badge-red' },
+  }
+
   const getStatusBadge = (status: string) => {
-    const colors: Record<string, string> = { pending: '#f59e0b', active: '#10b981', suspended: '#ef4444' }
-    const labels: Record<string, string> = { pending: 'En attente', active: 'Actif', suspended: 'Suspendu' }
-    return (
-      <span style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, backgroundColor: colors[status] + '20', color: colors[status] }}>
-        {labels[status]}
-      </span>
-    )
+    const cfg = statusConfig[status] || statusConfig.pending
+    return <span className={cfg.cls}>{cfg.label}</span>
   }
 
   const getTierBadge = (_tier: string, salesCount: number) => {
     const t = salesCount >= 10 ? 'gold' : salesCount >= 3 ? 'silver' : 'bronze'
-    const cfg = { bronze: { label: 'Bronze', color: '#cd7f32' }, silver: { label: 'Silver', color: '#a8a9ad' }, gold: { label: 'Gold', color: '#f1c40f' } }[t] || { label: 'Bronze', color: '#cd7f32' }
-    return (
-      <span style={{ padding: '3px 10px', borderRadius: 10, fontSize: 11, fontWeight: 700, backgroundColor: cfg.color + '22', color: cfg.color, border: `1px solid ${cfg.color}44` }}>
-        {cfg.label}
-      </span>
-    )
+    const cfg: Record<string, { label: string; cls: string }> = {
+      bronze: { label: 'Bronze', cls: 'inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-[#CD7F32]/15 text-[#CD7F32] border border-[#CD7F32]/25' },
+      silver: { label: 'Silver', cls: 'inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-bold bg-white/5 text-text-secondary border border-white/10' },
+      gold: { label: 'Gold', cls: 'badge-gold' },
+    }
+    return <span className={cfg[t].cls}>{cfg[t].label}</span>
   }
 
   const formatDate = (dateString: string) =>
@@ -556,80 +552,85 @@ export default function Admin() {
   }
 
   const announcementTypeColor: Record<string, string> = {
-    info: '#3B82F6', success: '#10b981', warning: '#f59e0b', promo: '#8B5CF6'
-  }
-
-  const inputStyle: React.CSSProperties = {
-    width: '100%', padding: '10px 12px', backgroundColor: '#0A0F1C',
-    border: '1px solid #374151', borderRadius: '6px', color: '#ffffff', fontSize: '14px', boxSizing: 'border-box'
+    info: '#36D8B0', success: '#36D8B0', warning: '#F0B429', promo: '#9B5BF5'
   }
 
   const tabs: { id: TabType; label: string }[] = [
-    { id: 'dashboard', label: '📊 Tableau de bord' },
-    { id: 'referrers', label: '👥 Apporteurs' },
-    { id: 'sales', label: '💰 Ventes' },
-    { id: 'commissions', label: '🏆 Commissions' },
-    { id: 'contracts', label: '📄 Contrats' },
-    { id: 'annonces', label: '📢 Annonces' },
-    { id: 'challenges', label: '🎯 Challenges' },
-    { id: 'cascade', label: '🔗 Cascade' },
+    { id: 'dashboard', label: 'Tableau de bord' },
+    { id: 'referrers', label: 'Apporteurs' },
+    { id: 'sales', label: 'Ventes' },
+    { id: 'commissions', label: 'Commissions' },
+    { id: 'contracts', label: 'Contrats' },
+    { id: 'annonces', label: 'Annonces' },
+    { id: 'challenges', label: 'Challenges' },
+    { id: 'cascade', label: 'Cascade' },
   ]
 
-  // ── Login screen ────────────────────────────────────────────────────────────
+  const chartTooltipStyle = { background: '#0B1A1F', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, color: '#EDF0F3', fontSize: 12 }
+
+  // ── Login screen ──────────────────────────────────────────────────────────
   if (!isAuthenticated) {
     return (
-      <main style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
-        <div style={{ width: '100%', maxWidth: '420px' }}>
-          <h1 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '32px', fontWeight: 800, marginBottom: '8px', textAlign: 'center' }}>Administration</h1>
-          <p style={{ textAlign: 'center', color: '#9CA3AF', marginBottom: '32px' }}>Accès réservé</p>
+      <main className="min-h-screen bg-bg-base font-body flex items-center justify-center px-5 py-10">
+        <div className="w-full max-w-[420px]">
+          <h1 className="font-display text-[28px] font-semibold text-text-primary text-center mb-2" style={{ letterSpacing: '-0.02em' }}>
+            Administration
+          </h1>
+          <p className="text-text-muted text-sm text-center mb-8">Accès réservé</p>
+
           {error && (
-            <div style={{ padding: '16px', backgroundColor: '#7f1d1d', border: '1px solid #450a0a', borderRadius: '8px', marginBottom: '24px', textAlign: 'center', color: '#EF4444' }}>
+            <div className="bg-accent-red/10 border border-accent-red/20 rounded-lg px-4 py-3 mb-6 text-sm text-accent-red text-center font-body">
               {error}
             </div>
           )}
-          <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+
+          <form onSubmit={handleVerify} className="flex flex-col gap-5">
             <div>
-              <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#9CA3AF' }}>Mot de passe admin</label>
+              <label className="label">Mot de passe admin</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                style={{ width: '100%', padding: '14px 16px', backgroundColor: '#111827', border: '1px solid #374151', borderRadius: '8px', color: '#ffffff', fontSize: '16px', boxSizing: 'border-box' }}
-                placeholder="Mot de passe" required />
+                className="input py-3.5 text-base" placeholder="Mot de passe" required />
             </div>
-            <button type="submit" disabled={loading} style={{ padding: '16px', backgroundColor: '#3B82F6', color: '#ffffff', border: 'none', borderRadius: '8px', fontSize: '16px', fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1 }}>
+            <button type="submit" disabled={loading}
+              className={`btn-primary py-3.5 justify-center text-base ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}>
               {loading ? 'Vérification...' : 'Accéder'}
             </button>
           </form>
-          <p style={{ textAlign: 'center', marginTop: '24px' }}>
-            <Link href="/" style={{ color: '#9CA3AF', textDecoration: 'none', fontSize: '14px' }}>Retour à l&apos;accueil</Link>
+          <p className="text-center mt-6">
+            <Link href="/" className="text-text-muted hover:text-accent-mint text-sm transition-colors">
+              Retour à l'accueil
+            </Link>
           </p>
         </div>
       </main>
     )
   }
 
-  // ── Main layout ─────────────────────────────────────────────────────────────
+  // ── Main layout ───────────────────────────────────────────────────────────
   return (
-    <main style={{ minHeight: '100vh', padding: '24px' }}>
+    <main className="min-h-screen bg-bg-base font-body p-4 md:p-6">
       {/* Header */}
-      <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '24px', borderBottom: '1px solid #374151', marginBottom: '24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '24px', fontWeight: 800, color: '#ffffff' }}>
-              mar<span style={{ color: '#3B82F6' }}>peap</span>
-            </span>
+      <header className="flex justify-between items-center pb-5 border-b border-bg-border mb-6">
+        <div className="flex items-center gap-5">
+          <Link href="/" className="font-display text-xl font-bold text-text-primary tracking-tight">
+            marpeap
           </Link>
-          <span style={{ color: '#3B82F6', fontWeight: 500 }}>Admin</span>
+          <span className="text-accent-mint font-medium text-sm">Admin</span>
         </div>
         <button onClick={() => { sessionStorage.removeItem('admin_auth'); sessionStorage.removeItem('admin_password'); setIsAuthenticated(false) }}
-          style={{ padding: '8px 16px', backgroundColor: 'transparent', border: '1px solid #3B82F6', borderRadius: '6px', color: '#3B82F6', cursor: 'pointer', fontSize: '14px' }}>
+          className="btn-ghost text-xs py-1.5 px-3">
           Déconnexion
         </button>
       </header>
 
       {/* Tabs */}
-      <div style={{ display: 'flex', gap: '6px', marginBottom: '28px', flexWrap: 'wrap' }}>
+      <div className="flex gap-1.5 mb-7 flex-wrap">
         {tabs.map(tab => (
           <button key={tab.id} onClick={() => setActiveTab(tab.id)}
-            style={{ padding: '10px 18px', backgroundColor: activeTab === tab.id ? '#3B82F6' : '#111827', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: 'pointer', fontSize: '13px', fontWeight: activeTab === tab.id ? 700 : 500 }}>
+            className={`px-4 py-2 rounded-lg text-[13px] font-medium transition-colors cursor-pointer ${
+              activeTab === tab.id
+                ? 'bg-accent-mint text-bg-base'
+                : 'bg-bg-surface text-text-secondary hover:text-text-primary hover:bg-bg-elevated'
+            }`}>
             {tab.label}
           </button>
         ))}
@@ -639,58 +640,58 @@ export default function Admin() {
       {activeTab === 'dashboard' && (
         <section>
           {dataLoading || !adminStats ? (
-            <div style={{ textAlign: 'center', padding: '60px', color: '#9CA3AF' }}>Chargement...</div>
+            <div className="text-center py-16 text-text-muted">Chargement...</div>
           ) : (
             <>
               {/* Stat cards */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16, marginBottom: 28 }}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-7">
                 {[
-                  { label: 'Apporteurs actifs', value: adminStats.referrers.active, sub: `${adminStats.referrers.pending} en attente`, color: '#3B82F6' },
-                  { label: 'Ventes ce mois', value: adminStats.sales.this_month, sub: `${adminStats.sales.all_time} au total`, color: '#8B5CF6' },
-                  { label: 'Commissions à verser', value: `${adminStats.commissions.pending.toLocaleString('fr-FR')} €`, sub: `${adminStats.commissions.this_month.toLocaleString('fr-FR')} € ce mois`, color: '#f59e0b' },
-                  { label: 'Top apporteur', value: adminStats.top_referrer?.name ?? '-', sub: adminStats.top_referrer ? `${adminStats.top_referrer.sales} ventes — ${adminStats.top_referrer.commission} €` : '', color: '#10B981' },
+                  { label: 'Apporteurs actifs', value: adminStats.referrers.active, sub: `${adminStats.referrers.pending} en attente`, color: 'text-accent-mint' },
+                  { label: 'Ventes ce mois', value: adminStats.sales.this_month, sub: `${adminStats.sales.all_time} au total`, color: 'text-[#9B5BF5]' },
+                  { label: 'Commissions à verser', value: `${adminStats.commissions.pending.toLocaleString('fr-FR')} €`, sub: `${adminStats.commissions.this_month.toLocaleString('fr-FR')} € ce mois`, color: 'text-accent-gold' },
+                  { label: 'Top apporteur', value: adminStats.top_referrer?.name ?? '-', sub: adminStats.top_referrer ? `${adminStats.top_referrer.sales} ventes — ${adminStats.top_referrer.commission} €` : '', color: 'text-accent-mint' },
                 ].map((card, i) => (
-                  <div key={i} style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: '18px 20px' }}>
-                    <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 6 }}>{card.label}</div>
-                    <div style={{ fontSize: 22, fontWeight: 800, color: card.color, marginBottom: 4 }}>{card.value}</div>
-                    <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.35)' }}>{card.sub}</div>
+                  <div key={i} className="card p-5">
+                    <div className="stat-label mb-1.5">{card.label}</div>
+                    <div className={`text-xl font-mono font-bold ${card.color} mb-1`}>{card.value}</div>
+                    <div className="text-xs text-text-muted">{card.sub}</div>
                   </div>
                 ))}
               </div>
 
-              {/* Area chart — commissions par mois */}
+              {/* Area chart */}
               {adminStats.series_monthly.length > 0 && (
-                <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: '20px 24px', marginBottom: 20 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: 'rgba(255,255,255,0.8)' }}>Évolution mensuelle</div>
+                <div className="card p-5 mb-5">
+                  <div className="text-sm font-display font-semibold text-text-primary mb-4">Évolution mensuelle</div>
                   <ResponsiveContainer width="100%" height={220}>
                     <AreaChart data={adminStats.series_monthly} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                       <defs>
                         <linearGradient id="adminCommGrad" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#3B82F6" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#3B82F6" stopOpacity={0} />
+                          <stop offset="5%" stopColor="#36D8B0" stopOpacity={0.3} />
+                          <stop offset="95%" stopColor="#36D8B0" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                      <XAxis dataKey="month" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip contentStyle={{ background: '#1F2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', fontSize: 12 }} />
-                      <Area type="monotone" dataKey="commission" name="Commissions (€)" stroke="#3B82F6" fill="url(#adminCommGrad)" strokeWidth={2} dot={false} />
-                      <Area type="monotone" dataKey="sales" name="Ventes" stroke="#8B5CF6" fill="none" strokeWidth={2} strokeDasharray="5 5" dot={false} />
+                      <XAxis dataKey="month" tick={{ fill: 'rgba(237,240,243,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fill: 'rgba(237,240,243,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
+                      <Tooltip contentStyle={chartTooltipStyle} />
+                      <Area type="monotone" dataKey="commission" name="Commissions (€)" stroke="#36D8B0" fill="url(#adminCommGrad)" strokeWidth={2} dot={false} />
+                      <Area type="monotone" dataKey="sales" name="Ventes" stroke="#9B5BF5" fill="none" strokeWidth={2} strokeDasharray="5 5" dot={false} />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
               )}
 
-              {/* Bar chart — par service */}
+              {/* Bar chart */}
               {adminStats.by_service.length > 0 && (
-                <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: '20px 24px' }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 16, color: 'rgba(255,255,255,0.8)' }}>Répartition par service</div>
+                <div className="card p-5">
+                  <div className="text-sm font-display font-semibold text-text-primary mb-4">Répartition par service</div>
                   <ResponsiveContainer width="100%" height={200}>
                     <BarChart data={adminStats.by_service} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                      <XAxis dataKey="service" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip contentStyle={{ background: '#1F2937', border: '1px solid #374151', borderRadius: 8, color: '#fff', fontSize: 12 }} />
+                      <XAxis dataKey="service" tick={{ fill: 'rgba(237,240,243,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fill: 'rgba(237,240,243,0.4)', fontSize: 11 }} axisLine={false} tickLine={false} />
+                      <Tooltip contentStyle={chartTooltipStyle} />
                       <Bar dataKey="count" name="Ventes" radius={[4, 4, 0, 0]}>
                         {adminStats.by_service.map((_, i) => (
                           <Cell key={i} fill={SERVICE_COLORS[i % SERVICE_COLORS.length]} />
@@ -709,39 +710,48 @@ export default function Admin() {
       {activeTab === 'referrers' && (
         <section>
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
+            <div className="text-center py-12 text-text-muted">Chargement...</div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse card overflow-hidden">
                 <thead>
-                  <tr style={{ backgroundColor: '#1F2937' }}>
+                  <tr className="bg-bg-elevated">
                     {['Nom', 'Email', 'Code', 'Statut', 'Niveau', 'Ventes', 'Actions'].map(h => (
-                      <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
+                      <th key={h} className="th">{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {referrers.map((referrer) => (
-                    <tr key={referrer.id} style={{ borderTop: '1px solid #374151' }}>
-                      <td style={{ padding: '16px' }}>
-                        <div>{referrer.full_name}</div>
-                        <div style={{ fontSize: 12, color: '#9CA3AF' }}>{referrer.phone}</div>
-                        <div style={{ fontSize: 11, color: '#6B7280', marginTop: 2 }}>{formatDate(referrer.created_at)}</div>
+                    <tr key={referrer.id} className="border-t border-bg-border table-row-hover">
+                      <td className="px-3 md:px-5 py-3">
+                        <div className="font-medium text-sm text-text-primary">{referrer.full_name}</div>
+                        <div className="text-xs text-text-muted">{referrer.phone}</div>
+                        <div className="text-[11px] text-text-muted mt-0.5">{formatDate(referrer.created_at)}</div>
                       </td>
-                      <td style={{ padding: '16px', color: '#9CA3AF', fontSize: 13 }}>{referrer.email}</td>
-                      <td style={{ padding: '16px', fontFamily: "'Fira Code', monospace", fontWeight: 700 }}>{referrer.code}</td>
-                      <td style={{ padding: '16px' }}>{getStatusBadge(referrer.status)}</td>
-                      <td style={{ padding: '16px', textAlign: 'center' }}>{getTierBadge(referrer.tier, referrer.sales_count)}</td>
-                      <td style={{ padding: '16px', textAlign: 'center', fontWeight: 700 }}>{referrer.sales_count}</td>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      <td className="px-3 md:px-5 py-3 text-text-secondary text-[13px]">{referrer.email}</td>
+                      <td className="px-3 md:px-5 py-3 font-mono font-bold text-sm text-accent-mint">{referrer.code}</td>
+                      <td className="px-3 md:px-5 py-3">{getStatusBadge(referrer.status)}</td>
+                      <td className="px-3 md:px-5 py-3 text-center">{getTierBadge(referrer.tier, referrer.sales_count)}</td>
+                      <td className="px-3 md:px-5 py-3 text-center font-mono font-bold text-sm">{referrer.sales_count}</td>
+                      <td className="px-3 md:px-5 py-3">
+                        <div className="flex gap-2 flex-wrap">
                           {referrer.status !== 'active' && (
-                            <button onClick={() => updateReferrerStatus(referrer.id, 'active')} style={{ padding: '6px 12px', backgroundColor: '#10b981', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>Activer</button>
+                            <button onClick={() => updateReferrerStatus(referrer.id, 'active')}
+                              className="px-3 py-1.5 bg-accent-mint/15 text-accent-mint border border-accent-mint/20 rounded text-xs font-semibold cursor-pointer hover:bg-accent-mint/25 transition-colors">
+                              Activer
+                            </button>
                           )}
                           {referrer.status === 'active' && (
-                            <button onClick={() => updateReferrerStatus(referrer.id, 'suspended')} style={{ padding: '6px 12px', backgroundColor: '#ef4444', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>Suspendre</button>
+                            <button onClick={() => updateReferrerStatus(referrer.id, 'suspended')}
+                              className="px-3 py-1.5 bg-accent-red/15 text-accent-red border border-accent-red/20 rounded text-xs font-semibold cursor-pointer hover:bg-accent-red/25 transition-colors">
+                              Suspendre
+                            </button>
                           )}
-                          <button onClick={() => openReferrerCommissionModal(referrer)} style={{ padding: '6px 12px', backgroundColor: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: '4px', color: '#3B82F6', cursor: 'pointer', fontSize: '12px', fontWeight: 600 }}>Commissions</button>
+                          <button onClick={() => openReferrerCommissionModal(referrer)}
+                            className="px-3 py-1.5 bg-accent-mint/10 text-accent-mint border border-accent-mint/20 rounded text-xs font-semibold cursor-pointer hover:bg-accent-mint/20 transition-colors">
+                            Commissions
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -757,55 +767,62 @@ export default function Admin() {
       {activeTab === 'sales' && (
         <section>
           {/* Sale Form */}
-          <div style={{ backgroundColor: '#111827', borderRadius: '12px', padding: '24px', marginBottom: '32px' }}>
-            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Enregistrer une vente</h3>
-            <form onSubmit={createSale} style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+          <div className="card p-6 mb-8">
+            <h3 className="font-display text-lg font-semibold text-text-primary mb-5" style={{ letterSpacing: '-0.01em' }}>
+              Enregistrer une vente
+            </h3>
+            <form onSubmit={createSale} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {[
                 { label: 'Code apporteur', key: 'referrer_code', type: 'text', placeholder: 'DUPONT-7K3M' },
                 { label: 'Nom client', key: 'client_name', type: 'text', placeholder: 'Nom du client' },
                 { label: 'Montant (€)', key: 'amount', type: 'number', placeholder: '15000' },
               ].map(field => (
                 <div key={field.key}>
-                  <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#9CA3AF' }}>{field.label}</label>
+                  <label className="label">{field.label}</label>
                   <input type={field.type} value={saleForm[field.key as keyof typeof saleForm]} onChange={(e) => setSaleForm({ ...saleForm, [field.key]: e.target.value })}
-                    style={inputStyle} placeholder={field.placeholder} required />
+                    className="input" placeholder={field.placeholder} required />
                 </div>
               ))}
               <div>
-                <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#9CA3AF' }}>Service</label>
+                <label className="label">Service</label>
                 <select value={saleForm.service} onChange={(e) => setSaleForm({ ...saleForm, service: e.target.value })}
-                  style={{ ...inputStyle, cursor: 'pointer' }} required>
+                  className="input cursor-pointer" required>
                   {services.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
-              <div style={{ gridColumn: '1 / -1' }}>
-                <label style={{ display: 'block', marginBottom: '6px', fontSize: '13px', color: '#9CA3AF' }}>Note (optionnel)</label>
+              <div className="sm:col-span-2 lg:col-span-3">
+                <label className="label">Note (optionnel)</label>
                 <input type="text" value={saleForm.admin_note} onChange={(e) => setSaleForm({ ...saleForm, admin_note: e.target.value })}
-                  style={inputStyle} placeholder="Note interne" />
+                  className="input" placeholder="Note interne" />
               </div>
               <div>
-                <button type="submit" style={{ padding: '12px 24px', backgroundColor: '#3B82F6', border: 'none', borderRadius: '6px', color: '#ffffff', cursor: 'pointer', fontSize: '14px', fontWeight: 500 }}>Enregistrer</button>
+                <button type="submit" className="btn-primary py-2.5 text-sm">Enregistrer</button>
               </div>
             </form>
           </div>
 
           {!dataLoading && sales.length > 0 && (
             <>
-              <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 12 }}>
-                <button onClick={exportCSV} style={{ padding: '8px 18px', background: 'rgba(59,130,246,0.12)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 8, color: '#3B82F6', cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>↓ Exporter CSV</button>
+              <div className="flex justify-end mb-3">
+                <button onClick={exportCSV} className="btn-ghost text-xs py-1.5 px-4">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+                  </svg>
+                  Exporter CSV
+                </button>
               </div>
               {(() => {
                 const unpaid = sales.filter(s => !s.commission_paid).reduce((a, s) => a + Number(s.commission_amount), 0)
                 const paid = sales.filter(s => s.commission_paid).reduce((a, s) => a + Number(s.commission_amount), 0)
                 return (
-                  <div style={{ display: 'flex', gap: 16, marginBottom: 24, flexWrap: 'wrap' }}>
-                    <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '14px 20px', flex: 1, minWidth: 160 }}>
-                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 4, textTransform: 'uppercase' }}>Commissions à verser</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: '#ef4444' }}>{unpaid.toLocaleString('fr-FR')} €</div>
+                  <div className="flex gap-4 mb-6 flex-wrap">
+                    <div className="bg-accent-red/8 border border-accent-red/20 rounded-xl p-4 flex-1 min-w-[160px]">
+                      <div className="stat-label mb-1">Commissions à verser</div>
+                      <div className="text-xl font-mono font-bold text-accent-red">{unpaid.toLocaleString('fr-FR')} €</div>
                     </div>
-                    <div style={{ background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 10, padding: '14px 20px', flex: 1, minWidth: 160 }}>
-                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 4, textTransform: 'uppercase' }}>Commissions versées</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: '#10b981' }}>{paid.toLocaleString('fr-FR')} €</div>
+                    <div className="bg-accent-mint/8 border border-accent-mint/20 rounded-xl p-4 flex-1 min-w-[160px]">
+                      <div className="stat-label mb-1">Commissions versées</div>
+                      <div className="text-xl font-mono font-bold text-accent-mint">{paid.toLocaleString('fr-FR')} €</div>
                     </div>
                   </div>
                 )
@@ -814,44 +831,47 @@ export default function Admin() {
           )}
 
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
+            <div className="text-center py-12 text-text-muted">Chargement...</div>
           ) : (
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse card overflow-hidden">
                 <thead>
-                  <tr style={{ backgroundColor: '#1F2937' }}>
+                  <tr className="bg-bg-elevated">
                     {['Apporteur', 'Client', 'Service', 'Montant', 'Commission', 'Paiement', 'Date', 'Actions'].map(h => (
-                      <th key={h} style={{ padding: '16px', textAlign: h === 'Montant' || h === 'Commission' ? 'right' : h === 'Paiement' ? 'center' : 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
+                      <th key={h} className={`th ${h === 'Montant' || h === 'Commission' ? 'text-right' : h === 'Paiement' ? 'text-center' : ''}`}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {sales.map((sale) => (
-                    <tr key={sale.id} style={{ borderTop: '1px solid #374151' }}>
-                      <td style={{ padding: '16px' }}>
-                        <div style={{ fontWeight: 600 }}>{sale.referrer_name}</div>
-                        <div style={{ fontSize: 11, color: '#3B82F6', fontFamily: 'monospace' }}>{sale.referrer_code}</div>
+                    <tr key={sale.id} className="border-t border-bg-border table-row-hover">
+                      <td className="px-3 md:px-5 py-3">
+                        <div className="font-semibold text-sm text-text-primary">{sale.referrer_name}</div>
+                        <div className="text-[11px] font-mono text-accent-mint">{sale.referrer_code}</div>
                       </td>
-                      <td style={{ padding: '16px', fontSize: 14 }}>{sale.client_name}</td>
-                      <td style={{ padding: '16px' }}>
-                        <span style={{ padding: '3px 8px', borderRadius: 100, fontSize: 12, fontWeight: 600, background: 'rgba(59,130,246,0.15)', color: '#3B82F6' }}>{sale.service}</span>
+                      <td className="px-3 md:px-5 py-3 text-sm text-text-primary">{sale.client_name}</td>
+                      <td className="px-3 md:px-5 py-3">
+                        <span className="badge-mint">{sale.service}</span>
                       </td>
-                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 600 }}>{Number(sale.amount).toLocaleString('fr-FR')} €</td>
-                      <td style={{ padding: '16px', textAlign: 'right', fontWeight: 800, color: '#10B981', fontSize: 15 }}>+{Number(sale.commission_amount).toLocaleString('fr-FR')} €</td>
-                      <td style={{ padding: '16px', textAlign: 'center' }}>
+                      <td className="px-3 md:px-5 py-3 text-right font-mono font-semibold text-sm">{Number(sale.amount).toLocaleString('fr-FR')} €</td>
+                      <td className="px-3 md:px-5 py-3 text-right font-mono font-bold text-accent-mint text-[15px]">+{Number(sale.commission_amount).toLocaleString('fr-FR')} €</td>
+                      <td className="px-3 md:px-5 py-3 text-center">
                         {sale.commission_paid ? (
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
-                            <span style={{ padding: '3px 10px', borderRadius: 10, fontSize: 11, fontWeight: 700, background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>Versé ✓</span>
-                            {sale.paid_at && <span style={{ fontSize: 10, color: '#6B7280' }}>{formatDate(sale.paid_at)}</span>}
-                            <button onClick={() => markCommissionPaid(sale.id, false)} style={{ fontSize: 10, color: '#9CA3AF', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'underline' }}>Annuler</button>
+                          <div className="flex flex-col items-center gap-1">
+                            <span className="badge-mint">Versé</span>
+                            {sale.paid_at && <span className="text-[10px] text-text-muted">{formatDate(sale.paid_at)}</span>}
+                            <button onClick={() => markCommissionPaid(sale.id, false)} className="text-[10px] text-text-muted underline cursor-pointer hover:text-text-secondary bg-transparent border-none">Annuler</button>
                           </div>
                         ) : (
-                          <button onClick={() => markCommissionPaid(sale.id, true)} style={{ padding: '6px 12px', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 6, color: '#10b981', cursor: 'pointer', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' }}>Marquer versé</button>
+                          <button onClick={() => markCommissionPaid(sale.id, true)}
+                            className="px-3 py-1.5 bg-accent-mint/10 border border-accent-mint/20 rounded-md text-accent-mint text-xs font-semibold cursor-pointer hover:bg-accent-mint/20 transition-colors whitespace-nowrap">
+                            Marquer versé
+                          </button>
                         )}
                       </td>
-                      <td style={{ padding: '16px', color: '#9CA3AF', fontSize: 13 }}>{formatDate(sale.created_at)}</td>
-                      <td style={{ padding: '16px' }}>
-                        <button onClick={() => deleteSale(sale.id)} style={{ padding: '6px 12px', backgroundColor: '#ef4444', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>Supprimer</button>
+                      <td className="px-3 md:px-5 py-3 text-text-muted text-[13px]">{formatDate(sale.created_at)}</td>
+                      <td className="px-3 md:px-5 py-3">
+                        <button onClick={() => deleteSale(sale.id)} className="btn-danger text-xs py-1 px-2.5">Supprimer</button>
                       </td>
                     </tr>
                   ))}
@@ -865,27 +885,30 @@ export default function Admin() {
       {/* ── COMMISSIONS TAB ───────────────────────────────────────────────── */}
       {activeTab === 'commissions' && (
         <section>
-          <div style={{ backgroundColor: '#111827', borderRadius: '12px', padding: '24px', maxWidth: '600px' }}>
-            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Taux de commission par service</h3>
-            <p style={{ color: '#9CA3AF', fontSize: '13px', marginBottom: '24px' }}>Taux globaux par défaut — appliqués à tous les apporteurs sauf override individuel.</p>
+          <div className="card p-6 max-w-[600px]">
+            <h3 className="font-display text-lg font-semibold text-text-primary mb-2" style={{ letterSpacing: '-0.01em' }}>
+              Taux de commission par service
+            </h3>
+            <p className="text-text-muted text-[13px] mb-6">Taux globaux par défaut — appliqués à tous les apporteurs sauf override individuel.</p>
             {dataLoading ? (
-              <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
+              <div className="text-center py-12 text-text-muted">Chargement...</div>
             ) : (
               <>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+                <div className="flex flex-col gap-3 mb-6">
                   {commissionRates.map((rate, idx) => (
-                    <div key={rate.pack_name} style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '12px 16px', backgroundColor: '#0A0F1C', borderRadius: '8px', border: '1px solid #374151' }}>
-                      <span style={{ flex: 1, fontWeight: 600, fontSize: '14px' }}>{rate.pack_name}</span>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <div key={rate.pack_name} className="flex items-center gap-4 p-3 bg-bg-elevated rounded-lg border border-bg-border">
+                      <span className="flex-1 font-semibold text-sm text-text-primary">{rate.pack_name}</span>
+                      <div className="flex items-center gap-2">
                         <input type="number" min="0" value={rate.commission_amount}
                           onChange={(e) => { const updated = [...commissionRates]; updated[idx] = { ...rate, commission_amount: parseFloat(e.target.value) || 0 }; setCommissionRates(updated) }}
-                          style={{ width: '100px', padding: '8px 12px', backgroundColor: '#111827', border: '1px solid #4B5563', borderRadius: '6px', color: '#ffffff', fontSize: '14px', textAlign: 'right' }} />
-                        <span style={{ color: '#9CA3AF', fontSize: '14px' }}>€</span>
+                          className="w-[100px] bg-bg-surface border border-bg-border rounded-md px-3 py-2 text-sm font-mono text-text-primary text-right focus:outline-none focus:border-accent-mint/50 transition-colors" />
+                        <span className="text-text-muted text-sm">€</span>
                       </div>
                     </div>
                   ))}
                 </div>
-                <button onClick={saveCommissions} disabled={commissionSaving} style={{ padding: '12px 32px', backgroundColor: commissionSaving ? '#374151' : '#3B82F6', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: commissionSaving ? 'not-allowed' : 'pointer', fontSize: '14px', fontWeight: 700, opacity: commissionSaving ? 0.7 : 1 }}>
+                <button onClick={saveCommissions} disabled={commissionSaving}
+                  className={`btn-primary py-2.5 px-8 text-sm ${commissionSaving ? 'opacity-60 cursor-not-allowed' : ''}`}>
                   {commissionSaving ? 'Sauvegarde...' : 'Enregistrer'}
                 </button>
               </>
@@ -897,16 +920,18 @@ export default function Admin() {
       {/* ── CONTRACTS TAB ─────────────────────────────────────────────────── */}
       {activeTab === 'contracts' && (
         <section>
-          <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Apporteurs actifs</h3>
+          <h3 className="font-display text-lg font-semibold text-text-primary mb-5" style={{ letterSpacing: '-0.01em' }}>
+            Apporteurs actifs
+          </h3>
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
+            <div className="text-center py-12 text-text-muted">Chargement...</div>
           ) : (
-            <div style={{ overflowX: 'auto', marginBottom: '48px' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
+            <div className="overflow-x-auto mb-12">
+              <table className="w-full border-collapse card overflow-hidden">
                 <thead>
-                  <tr style={{ backgroundColor: '#1F2937' }}>
+                  <tr className="bg-bg-elevated">
                     {['Nom', 'Email', 'Code', 'Statut contrat', 'Actions'].map(h => (
-                      <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
+                      <th key={h} className="th">{h}</th>
                     ))}
                   </tr>
                 </thead>
@@ -917,19 +942,19 @@ export default function Admin() {
                     const hasSent = rc.some(c => c.status === 'sent')
                     const contractStatus = hasSigned ? 'Signé' : hasSent ? 'Envoyé' : 'Aucun'
                     return (
-                      <tr key={referrer.id} style={{ borderTop: '1px solid #374151' }}>
-                        <td style={{ padding: '16px' }}>{referrer.full_name}</td>
-                        <td style={{ padding: '16px', color: '#9CA3AF' }}>{referrer.email}</td>
-                        <td style={{ padding: '16px', fontFamily: "'Fira Code', monospace", fontWeight: 700 }}>{referrer.code}</td>
-                        <td style={{ padding: '16px' }}>
-                          <span style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, backgroundColor: hasSigned ? '#10b98120' : hasSent ? '#f59e0b20' : '#6b728020', color: hasSigned ? '#10b981' : hasSent ? '#f59e0b' : '#6b7280' }}>
+                      <tr key={referrer.id} className="border-t border-bg-border table-row-hover">
+                        <td className="px-3 md:px-5 py-3 text-sm font-medium text-text-primary">{referrer.full_name}</td>
+                        <td className="px-3 md:px-5 py-3 text-text-secondary text-[13px]">{referrer.email}</td>
+                        <td className="px-3 md:px-5 py-3 font-mono font-bold text-sm text-accent-mint">{referrer.code}</td>
+                        <td className="px-3 md:px-5 py-3">
+                          <span className={hasSigned ? 'badge-mint' : hasSent ? 'badge-gold' : 'badge bg-white/5 text-text-muted border border-white/10'}>
                             {contractStatus}
                           </span>
                         </td>
-                        <td style={{ padding: '16px' }}>
+                        <td className="px-3 md:px-5 py-3">
                           {!hasSigned && (
                             <button onClick={() => { setSelectedReferrer(referrer); setContractModalOpen(true) }}
-                              style={{ padding: '6px 12px', backgroundColor: '#3B82F6', border: 'none', borderRadius: '4px', color: '#ffffff', cursor: 'pointer', fontSize: '12px' }}>
+                              className="btn-primary text-xs py-1.5 px-3">
                               Envoyer un contrat
                             </button>
                           )}
@@ -942,30 +967,32 @@ export default function Admin() {
             </div>
           )}
 
-          <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700, marginBottom: '20px' }}>Tous les contrats</h3>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
+          <h3 className="font-display text-lg font-semibold text-text-primary mb-5" style={{ letterSpacing: '-0.01em' }}>
+            Tous les contrats
+          </h3>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse card overflow-hidden">
               <thead>
-                <tr style={{ backgroundColor: '#1F2937' }}>
+                <tr className="bg-bg-elevated">
                   {['Apporteur', 'Date envoi', 'Statut', 'Date signature', 'Actions'].map(h => (
-                    <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
+                    <th key={h} className="th">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {contracts.map((contract) => (
-                  <tr key={contract.id} style={{ borderTop: '1px solid #374151' }}>
-                    <td style={{ padding: '16px' }}>{contract.full_name}</td>
-                    <td style={{ padding: '16px', color: '#9CA3AF' }}>{formatDate(contract.created_at)}</td>
-                    <td style={{ padding: '16px' }}>
-                      <span style={{ padding: '4px 12px', borderRadius: '12px', fontSize: '12px', fontWeight: 500, backgroundColor: contract.status === 'signed' ? '#10b98120' : '#f59e0b20', color: contract.status === 'signed' ? '#10b981' : '#f59e0b' }}>
+                  <tr key={contract.id} className="border-t border-bg-border table-row-hover">
+                    <td className="px-3 md:px-5 py-3 text-sm font-medium text-text-primary">{contract.full_name}</td>
+                    <td className="px-3 md:px-5 py-3 text-text-muted text-[13px]">{formatDate(contract.created_at)}</td>
+                    <td className="px-3 md:px-5 py-3">
+                      <span className={contract.status === 'signed' ? 'badge-mint' : 'badge-gold'}>
                         {contract.status === 'signed' ? 'Signé' : 'Envoyé'}
                       </span>
                     </td>
-                    <td style={{ padding: '16px', color: '#9CA3AF' }}>{contract.signed_at ? formatDate(contract.signed_at) : '-'}</td>
-                    <td style={{ padding: '16px' }}>
+                    <td className="px-3 md:px-5 py-3 text-text-muted text-[13px]">{contract.signed_at ? formatDate(contract.signed_at) : '-'}</td>
+                    <td className="px-3 md:px-5 py-3">
                       <a href={`https://storage.marpeap.digital/contracts/${contract.pdf_filename}`} target="_blank" rel="noopener noreferrer"
-                        style={{ padding: '6px 12px', backgroundColor: '#3B82F6', border: 'none', borderRadius: '4px', color: '#ffffff', textDecoration: 'none', cursor: 'pointer', fontSize: '12px', display: 'inline-block' }}>
+                        className="btn-primary text-xs py-1.5 px-3 no-underline">
                         Voir PDF
                       </a>
                     </td>
@@ -977,27 +1004,29 @@ export default function Admin() {
 
           {/* Contract Modal */}
           {contractModalOpen && selectedReferrer && (
-            <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', zIndex: 1000 }}>
-              <div style={{ backgroundColor: '#111827', borderRadius: '12px', padding: '32px', width: '100%', maxWidth: '600px', maxHeight: '90vh', overflow: 'auto' }}>
-                <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '20px', fontWeight: 700, marginBottom: '20px' }}>Envoyer un contrat à {selectedReferrer.full_name}</h3>
-                <form onSubmit={sendContract} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+            <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-[1000]">
+              <div className="card p-8 w-full max-w-[600px] max-h-[90vh] overflow-auto">
+                <h3 className="font-display text-lg font-semibold text-text-primary mb-5" style={{ letterSpacing: '-0.01em' }}>
+                  Envoyer un contrat à {selectedReferrer.full_name}
+                </h3>
+                <form onSubmit={sendContract} className="flex flex-col gap-5">
                   <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#9CA3AF' }}>Option 1 : Uploader un PDF</label>
+                    <label className="label">Option 1 : Uploader un PDF</label>
                     <input type="file" accept=".pdf" onChange={(e) => setContractPdfFile(e.target.files?.[0] || null)}
-                      style={{ width: '100%', padding: '12px', backgroundColor: '#0A0F1C', border: '1px solid #374151', borderRadius: '8px', color: '#ffffff', fontSize: '14px' }} />
+                      className="input py-3" />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500, color: '#9CA3AF' }}>Option 2 : Saisir le texte du contrat</label>
+                    <label className="label">Option 2 : Saisir le texte du contrat</label>
                     <textarea value={contractPdfText} onChange={(e) => setContractPdfText(e.target.value)} placeholder="Texte du contrat..." rows={6}
-                      style={{ width: '100%', padding: '12px', backgroundColor: '#0A0F1C', border: '1px solid #374151', borderRadius: '8px', color: '#ffffff', fontSize: '14px', resize: 'vertical', boxSizing: 'border-box' }} />
+                      className="input resize-y" />
                   </div>
-                  <div style={{ display: 'flex', gap: '12px', marginTop: '12px' }}>
+                  <div className="flex gap-3 mt-3">
                     <button type="button" onClick={() => { setContractModalOpen(false); setSelectedReferrer(null); setContractPdfFile(null); setContractPdfText('') }}
-                      style={{ flex: 1, padding: '14px', backgroundColor: 'transparent', border: '1px solid #9CA3AF', borderRadius: '8px', color: '#9CA3AF', cursor: 'pointer', fontSize: '16px', fontWeight: 500 }}>
+                      className="btn-ghost flex-1 py-3 justify-center">
                       Annuler
                     </button>
                     <button type="submit" disabled={sendContractLoading}
-                      style={{ flex: 1, padding: '14px', backgroundColor: '#3B82F6', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: sendContractLoading ? 'not-allowed' : 'pointer', fontSize: '16px', fontWeight: 700, opacity: sendContractLoading ? 0.7 : 1 }}>
+                      className={`btn-primary flex-1 py-3 justify-center ${sendContractLoading ? 'opacity-60 cursor-not-allowed' : ''}`}>
                       {sendContractLoading ? 'Envoi...' : 'Envoyer'}
                     </button>
                   </div>
@@ -1011,46 +1040,47 @@ export default function Admin() {
       {/* ── ANNONCES TAB ──────────────────────────────────────────────────── */}
       {activeTab === 'annonces' && (
         <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700 }}>Annonces</h3>
+          <div className="flex justify-between items-center mb-5">
+            <h3 className="font-display text-lg font-semibold text-text-primary" style={{ letterSpacing: '-0.01em' }}>Annonces</h3>
             <button onClick={() => setShowAnnouncementForm(!showAnnouncementForm)}
-              style={{ padding: '10px 20px', background: '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
-              {showAnnouncementForm ? '✕ Annuler' : '+ Nouvelle annonce'}
+              className={showAnnouncementForm ? 'btn-ghost text-sm' : 'btn-primary text-sm'}>
+              {showAnnouncementForm ? 'Annuler' : 'Nouvelle annonce'}
             </button>
           </div>
 
           {showAnnouncementForm && (
-            <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: 24, marginBottom: 24 }}>
-              <form onSubmit={createAnnouncement} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Titre</label>
+            <div className="card p-6 mb-6">
+              <form onSubmit={createAnnouncement} className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className="label">Titre</label>
                     <input type="text" value={announcementForm.title} onChange={e => setAnnouncementForm({ ...announcementForm, title: e.target.value })}
-                      style={inputStyle} placeholder="Titre de l'annonce" required />
+                      className="input" placeholder="Titre de l'annonce" required />
                   </div>
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Contenu</label>
+                  <div className="sm:col-span-2">
+                    <label className="label">Contenu</label>
                     <textarea value={announcementForm.content} onChange={e => setAnnouncementForm({ ...announcementForm, content: e.target.value })}
-                      style={{ ...inputStyle, resize: 'vertical' }} rows={3} placeholder="Contenu de l'annonce" required />
+                      className="input resize-y" rows={3} placeholder="Contenu de l'annonce" required />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Type</label>
+                    <label className="label">Type</label>
                     <select value={announcementForm.type} onChange={e => setAnnouncementForm({ ...announcementForm, type: e.target.value })}
-                      style={{ ...inputStyle, cursor: 'pointer' }}>
+                      className="input cursor-pointer">
                       {[['info', 'Info'], ['success', 'Succès'], ['warning', 'Alerte'], ['promo', 'Promo']].map(([v, l]) => (
                         <option key={v} value={v}>{l}</option>
                       ))}
                     </select>
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Expiration (optionnel)</label>
+                    <label className="label">Expiration (optionnel)</label>
                     <input type="datetime-local" value={announcementForm.expires_at} onChange={e => setAnnouncementForm({ ...announcementForm, expires_at: e.target.value })}
-                      style={inputStyle} />
+                      className="input" />
                   </div>
                 </div>
                 <div>
-                  <button type="submit" disabled={announcementCreating} style={{ padding: '12px 28px', background: announcementCreating ? '#374151' : '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: announcementCreating ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700 }}>
-                    {announcementCreating ? 'Création...' : 'Publier l\'annonce'}
+                  <button type="submit" disabled={announcementCreating}
+                    className={`btn-primary py-2.5 px-7 text-sm ${announcementCreating ? 'opacity-60 cursor-not-allowed' : ''}`}>
+                    {announcementCreating ? 'Création...' : "Publier l'annonce"}
                   </button>
                 </div>
               </form>
@@ -1058,36 +1088,43 @@ export default function Admin() {
           )}
 
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
+            <div className="text-center py-12 text-text-muted">Chargement...</div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="flex flex-col gap-3">
               {announcements.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF', background: '#111827', borderRadius: 12 }}>Aucune annonce</div>
+                <div className="text-center py-12 text-text-muted card">Aucune annonce</div>
               ) : announcements.map(ann => (
-                <div key={ann.id} style={{ background: '#111827', border: `1px solid ${ann.active ? announcementTypeColor[ann.type] + '33' : '#374151'}`, borderRadius: 12, padding: '16px 20px' }}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
-                    <span style={{ padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: announcementTypeColor[ann.type] + '22', color: announcementTypeColor[ann.type], flexShrink: 0 }}>
+                <div key={ann.id} className="card p-4" style={{ borderColor: ann.active ? announcementTypeColor[ann.type] + '33' : undefined }}>
+                  <div className="flex items-start gap-3">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-bold shrink-0"
+                      style={{ background: announcementTypeColor[ann.type] + '22', color: announcementTypeColor[ann.type] }}>
                       {ann.type}
                     </span>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, opacity: ann.active ? 1 : 0.5 }}>{ann.title}</div>
-                      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)', lineHeight: 1.5 }}>{ann.content}</div>
-                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.3)', marginTop: 8 }}>
+                    <div className="flex-1 min-w-0">
+                      <div className={`font-semibold text-[15px] text-text-primary mb-1 ${!ann.active ? 'opacity-50' : ''}`}>{ann.title}</div>
+                      <div className="text-[13px] text-text-secondary leading-relaxed">{ann.content}</div>
+                      <div className="text-[11px] text-text-muted mt-2">
                         {formatDate(ann.created_at)}{ann.expires_at ? ` · Expire le ${formatDate(ann.expires_at)}` : ''}
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                    <div className="flex gap-2 shrink-0">
                       <button onClick={() => pushAnnouncementAll(ann.id, ann.title, ann.content)}
-                        style={{ padding: '6px 12px', background: 'rgba(139,92,246,0.15)', border: '1px solid rgba(139,92,246,0.3)', borderRadius: 6, color: '#8B5CF6', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
-                        🔔 Push
+                        className="px-3 py-1.5 bg-[#9B5BF5]/10 border border-[#9B5BF5]/20 rounded-md text-[#9B5BF5] text-xs font-semibold cursor-pointer hover:bg-[#9B5BF5]/20 transition-colors">
+                        Push
                       </button>
                       <button onClick={() => toggleAnnouncement(ann.id, ann.active)}
-                        style={{ padding: '6px 12px', background: ann.active ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)', border: `1px solid ${ann.active ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}`, borderRadius: 6, color: ann.active ? '#ef4444' : '#10b981', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+                        className={`px-3 py-1.5 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                          ann.active
+                            ? 'bg-accent-red/10 border border-accent-red/20 text-accent-red hover:bg-accent-red/20'
+                            : 'bg-accent-mint/10 border border-accent-mint/20 text-accent-mint hover:bg-accent-mint/20'
+                        }`}>
                         {ann.active ? 'Désactiver' : 'Activer'}
                       </button>
                       <button onClick={() => deleteAnnouncement(ann.id)}
-                        style={{ padding: '6px 12px', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, color: '#ef4444', cursor: 'pointer', fontSize: 12 }}>
-                        ✕
+                        className="px-2.5 py-1.5 bg-accent-red/10 border border-accent-red/20 rounded-md text-accent-red text-xs cursor-pointer hover:bg-accent-red/20 transition-colors">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
                       </button>
                     </div>
                   </div>
@@ -1101,32 +1138,32 @@ export default function Admin() {
       {/* ── CHALLENGES TAB ────────────────────────────────────────────────── */}
       {activeTab === 'challenges' && (
         <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700 }}>Challenges mensuels</h3>
+          <div className="flex justify-between items-center mb-5">
+            <h3 className="font-display text-lg font-semibold text-text-primary" style={{ letterSpacing: '-0.01em' }}>Challenges mensuels</h3>
             <button onClick={() => setShowChallengeForm(!showChallengeForm)}
-              style={{ padding: '10px 20px', background: '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: 'pointer', fontSize: 13, fontWeight: 700 }}>
-              {showChallengeForm ? '✕ Annuler' : '+ Nouveau challenge'}
+              className={showChallengeForm ? 'btn-ghost text-sm' : 'btn-primary text-sm'}>
+              {showChallengeForm ? 'Annuler' : 'Nouveau challenge'}
             </button>
           </div>
 
           {showChallengeForm && (
-            <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: 24, marginBottom: 24 }}>
-              <form onSubmit={createChallenge} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 16 }}>
-                  <div style={{ gridColumn: '1 / -1' }}>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Titre</label>
+            <div className="card p-6 mb-6">
+              <form onSubmit={createChallenge} className="flex flex-col gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="sm:col-span-2 lg:col-span-3">
+                    <label className="label">Titre</label>
                     <input type="text" value={challengeForm.title} onChange={e => setChallengeForm({ ...challengeForm, title: e.target.value })}
-                      style={inputStyle} placeholder="Ex: 3 ventes ce mois" required />
+                      className="input" placeholder="Ex: 3 ventes ce mois" required />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Mois</label>
+                    <label className="label">Mois</label>
                     <input type="month" value={challengeForm.month} onChange={e => setChallengeForm({ ...challengeForm, month: e.target.value })}
-                      style={inputStyle} required />
+                      className="input" required />
                   </div>
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Type de condition</label>
+                    <label className="label">Type de condition</label>
                     <select value={challengeForm.condition_type} onChange={e => setChallengeForm({ ...challengeForm, condition_type: e.target.value as typeof challengeForm.condition_type })}
-                      style={{ ...inputStyle, cursor: 'pointer' }}>
+                      className="input cursor-pointer">
                       <option value="sales_count">Nb ventes ce mois</option>
                       <option value="service_sold">Service spécifique</option>
                       <option value="amount_total">Montant total commissions</option>
@@ -1135,45 +1172,46 @@ export default function Admin() {
 
                   {challengeForm.condition_type === 'sales_count' && (
                     <div>
-                      <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Nombre de ventes requis</label>
+                      <label className="label">Nombre de ventes requis</label>
                       <input type="number" min="1" value={challengeForm.condition_count} onChange={e => setChallengeForm({ ...challengeForm, condition_count: e.target.value })}
-                        style={inputStyle} required />
+                        className="input" required />
                     </div>
                   )}
 
                   {challengeForm.condition_type === 'service_sold' && (
                     <>
                       <div>
-                        <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Service</label>
+                        <label className="label">Service</label>
                         <select value={challengeForm.condition_service} onChange={e => setChallengeForm({ ...challengeForm, condition_service: e.target.value })}
-                          style={{ ...inputStyle, cursor: 'pointer' }}>
+                          className="input cursor-pointer">
                           {services.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                       </div>
                       <div>
-                        <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Nb ventes de ce service</label>
+                        <label className="label">Nb ventes de ce service</label>
                         <input type="number" min="1" value={challengeForm.condition_service_count} onChange={e => setChallengeForm({ ...challengeForm, condition_service_count: e.target.value })}
-                          style={inputStyle} required />
+                          className="input" required />
                       </div>
                     </>
                   )}
 
                   {challengeForm.condition_type === 'amount_total' && (
                     <div>
-                      <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Montant commissions (€)</label>
+                      <label className="label">Montant commissions (€)</label>
                       <input type="number" min="1" value={challengeForm.condition_amount} onChange={e => setChallengeForm({ ...challengeForm, condition_amount: e.target.value })}
-                        style={inputStyle} required />
+                        className="input" required />
                     </div>
                   )}
 
                   <div>
-                    <label style={{ display: 'block', marginBottom: 6, fontSize: 13, color: '#9CA3AF' }}>Bonus (€)</label>
+                    <label className="label">Bonus (€)</label>
                     <input type="number" min="1" value={challengeForm.bonus_amount} onChange={e => setChallengeForm({ ...challengeForm, bonus_amount: e.target.value })}
-                      style={inputStyle} required />
+                      className="input" required />
                   </div>
                 </div>
                 <div>
-                  <button type="submit" disabled={challengeCreating} style={{ padding: '12px 28px', background: challengeCreating ? '#374151' : '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: challengeCreating ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700 }}>
+                  <button type="submit" disabled={challengeCreating}
+                    className={`btn-primary py-2.5 px-7 text-sm ${challengeCreating ? 'opacity-60 cursor-not-allowed' : ''}`}>
                     {challengeCreating ? 'Création...' : 'Créer le challenge'}
                   </button>
                 </div>
@@ -1182,62 +1220,68 @@ export default function Admin() {
           )}
 
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
+            <div className="text-center py-12 text-text-muted">Chargement...</div>
           ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div className="flex flex-col gap-3">
               {challenges.length === 0 ? (
-                <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF', background: '#111827', borderRadius: 12 }}>Aucun challenge</div>
+                <div className="text-center py-12 text-text-muted card">Aucun challenge</div>
               ) : challenges.map(ch => (
-                <div key={ch.id} style={{ background: '#111827', border: `1px solid ${ch.active ? 'rgba(46,213,115,0.2)' : '#374151'}`, borderRadius: 12, overflow: 'hidden' }}>
-                  <div style={{ padding: '16px 20px', display: 'flex', alignItems: 'center', gap: 12 }}>
-                    <div style={{ flex: 1 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 4 }}>
-                        <span style={{ fontWeight: 700, fontSize: 15 }}>{ch.title}</span>
-                        <span style={{ padding: '2px 8px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: ch.active ? 'rgba(46,213,115,0.15)' : 'rgba(255,255,255,0.07)', color: ch.active ? '#10B981' : '#9CA3AF' }}>
+                <div key={ch.id} className="card overflow-hidden" style={{ borderColor: ch.active ? 'rgba(54,216,176,0.2)' : undefined }}>
+                  <div className="p-4 flex items-center gap-3">
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2.5 mb-1">
+                        <span className="font-semibold text-[15px] text-text-primary">{ch.title}</span>
+                        <span className={`badge ${ch.active ? 'badge-mint' : 'bg-white/5 text-text-muted border border-white/10'}`}>
                           {ch.active ? 'Actif' : 'Inactif'}
                         </span>
-                        <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{ch.month}</span>
+                        <span className="text-xs text-text-muted">{ch.month}</span>
                       </div>
-                      <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.5)' }}>{formatCondition(ch)}</div>
+                      <div className="text-[13px] text-text-secondary">{formatCondition(ch)}</div>
                     </div>
-                    <div style={{ textAlign: 'right', marginRight: 12 }}>
-                      <div style={{ fontSize: 20, fontWeight: 800, color: '#10B981' }}>+{Number(ch.bonus_amount).toLocaleString('fr-FR')} €</div>
-                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)' }}>{ch.completions?.length ?? 0} completion(s)</div>
+                    <div className="text-right mr-3">
+                      <div className="text-xl font-mono font-bold text-accent-mint">+{Number(ch.bonus_amount).toLocaleString('fr-FR')} €</div>
+                      <div className="text-[11px] text-text-muted">{ch.completions?.length ?? 0} completion(s)</div>
                     </div>
-                    <div style={{ display: 'flex', gap: 8 }}>
+                    <div className="flex gap-2">
                       {(ch.completions?.length ?? 0) > 0 && (
                         <button onClick={() => setExpandedChallenge(expandedChallenge === ch.id ? null : ch.id)}
-                          style={{ padding: '6px 12px', background: 'rgba(59,130,246,0.15)', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 6, color: '#3B82F6', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
-                          {expandedChallenge === ch.id ? '▲' : '▼'} Completions
+                          className="px-3 py-1.5 bg-accent-mint/10 border border-accent-mint/20 rounded-md text-accent-mint text-xs font-semibold cursor-pointer hover:bg-accent-mint/20 transition-colors">
+                          Completions
                         </button>
                       )}
                       <button onClick={() => toggleChallenge(ch.id, ch.active)}
-                        style={{ padding: '6px 12px', background: ch.active ? 'rgba(239,68,68,0.12)' : 'rgba(16,185,129,0.12)', border: `1px solid ${ch.active ? 'rgba(239,68,68,0.3)' : 'rgba(16,185,129,0.3)'}`, borderRadius: 6, color: ch.active ? '#ef4444' : '#10b981', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+                        className={`px-3 py-1.5 rounded-md text-xs font-semibold cursor-pointer transition-colors ${
+                          ch.active
+                            ? 'bg-accent-red/10 border border-accent-red/20 text-accent-red hover:bg-accent-red/20'
+                            : 'bg-accent-mint/10 border border-accent-mint/20 text-accent-mint hover:bg-accent-mint/20'
+                        }`}>
                         {ch.active ? 'Désactiver' : 'Activer'}
                       </button>
                       <button onClick={() => deleteChallenge(ch.id)}
-                        style={{ padding: '6px 12px', background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 6, color: '#ef4444', cursor: 'pointer', fontSize: 12 }}>
-                        ✕
+                        className="px-2.5 py-1.5 bg-accent-red/10 border border-accent-red/20 rounded-md text-accent-red text-xs cursor-pointer hover:bg-accent-red/20 transition-colors">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                          <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
                       </button>
                     </div>
                   </div>
 
                   {expandedChallenge === ch.id && (ch.completions?.length ?? 0) > 0 && (
-                    <div style={{ borderTop: '1px solid #374151', padding: '12px 20px', background: 'rgba(255,255,255,0.02)' }}>
-                      <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)', marginBottom: 10, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Completions</div>
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <div className="border-t border-bg-border p-4 bg-white/[0.02]">
+                      <div className="text-[10px] text-text-muted uppercase tracking-wider mb-2.5">Completions</div>
+                      <div className="flex flex-col gap-2">
                         {ch.completions.map(comp => (
-                          <div key={comp.referrer_id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '8px 12px', background: 'rgba(255,255,255,0.03)', borderRadius: 8 }}>
-                            <div style={{ flex: 1 }}>
-                              <span style={{ fontWeight: 600, fontSize: 14 }}>{comp.referrer_name}</span>
-                              <span style={{ fontSize: 12, color: '#3B82F6', fontFamily: 'monospace', marginLeft: 8 }}>{comp.referrer_code}</span>
+                          <div key={comp.referrer_id} className="flex items-center gap-3 p-2.5 bg-white/[0.03] rounded-lg">
+                            <div className="flex-1">
+                              <span className="font-semibold text-sm text-text-primary">{comp.referrer_name}</span>
+                              <span className="text-xs font-mono text-accent-mint ml-2">{comp.referrer_code}</span>
                             </div>
-                            <span style={{ fontSize: 12, color: 'rgba(255,255,255,0.4)' }}>{formatDate(comp.completed_at)}</span>
+                            <span className="text-xs text-text-muted">{formatDate(comp.completed_at)}</span>
                             {comp.bonus_paid ? (
-                              <span style={{ padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>Bonus versé ✓</span>
+                              <span className="badge-mint">Bonus versé</span>
                             ) : (
                               <button onClick={() => markChallengeBonusPaid(ch.id, comp.referrer_id)}
-                                style={{ padding: '5px 12px', background: 'rgba(16,185,129,0.12)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 6, color: '#10b981', cursor: 'pointer', fontSize: 12, fontWeight: 600 }}>
+                                className="px-3 py-1 bg-accent-mint/10 border border-accent-mint/20 rounded-md text-accent-mint text-xs font-semibold cursor-pointer hover:bg-accent-mint/20 transition-colors">
                                 Marquer bonus versé
                               </button>
                             )}
@@ -1257,86 +1301,86 @@ export default function Admin() {
       {activeTab === 'cascade' && (
         <section>
           {/* Rate card */}
-          <div style={{ background: '#111827', border: '1px solid #374151', borderRadius: 12, padding: '20px 24px', marginBottom: 24, maxWidth: 400 }}>
-            <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '16px', fontWeight: 700, marginBottom: 6 }}>Taux de commission cascade</h3>
-            <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 16 }}>Pourcentage de la commission du filleul reversé au parrain.</p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-              <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div className="card p-5 mb-6 max-w-[400px]">
+            <h3 className="font-display text-base font-semibold text-text-primary mb-1.5">Taux de commission cascade</h3>
+            <p className="text-[13px] text-text-muted mb-4">Pourcentage de la commission du filleul reversé au parrain.</p>
+            <div className="flex items-center gap-3">
+              <div className="flex-1 flex items-center gap-2">
                 <input type="number" min="0" max="100" step="0.5" value={cascadeRateEdit} onChange={e => setCascadeRateEdit(e.target.value)}
-                  style={{ width: 80, padding: '10px 12px', backgroundColor: '#0A0F1C', border: '1px solid #374151', borderRadius: 8, color: '#ffffff', fontSize: 18, fontWeight: 700, textAlign: 'center' }} />
-                <span style={{ fontSize: 18, fontWeight: 700, color: 'rgba(255,255,255,0.5)' }}>%</span>
+                  className="w-20 bg-bg-elevated border border-bg-border rounded-lg px-3 py-2.5 text-lg font-mono font-bold text-text-primary text-center focus:outline-none focus:border-accent-mint/50 transition-colors" />
+                <span className="text-lg font-bold text-text-muted">%</span>
               </div>
               <button onClick={updateCascadeRate} disabled={cascadeRateSaving}
-                style={{ padding: '10px 20px', background: cascadeRateSaving ? '#374151' : '#3B82F6', border: 'none', borderRadius: 8, color: '#fff', cursor: cascadeRateSaving ? 'not-allowed' : 'pointer', fontSize: 14, fontWeight: 700 }}>
+                className={`btn-primary py-2.5 text-sm ${cascadeRateSaving ? 'opacity-60 cursor-not-allowed' : ''}`}>
                 {cascadeRateSaving ? '...' : 'Enregistrer'}
               </button>
             </div>
-            <p style={{ fontSize: 12, color: 'rgba(255,255,255,0.3)', marginTop: 10 }}>Taux actuel en base : {cascadeRate}%</p>
+            <p className="text-xs text-text-muted mt-2.5">Taux actuel en base : {cascadeRate}%</p>
           </div>
 
           {/* Cascade commissions table */}
-          <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '16px', fontWeight: 700, marginBottom: 16 }}>Commissions cascade</h3>
+          <h3 className="font-display text-base font-semibold text-text-primary mb-4">Commissions cascade</h3>
           {dataLoading ? (
-            <div style={{ textAlign: 'center', padding: '48px', color: '#9CA3AF' }}>Chargement...</div>
+            <div className="text-center py-12 text-text-muted">Chargement...</div>
           ) : (
             <>
-              {/* Summary */}
               {cascadeCommissions.length > 0 && (() => {
                 const unpaid = cascadeCommissions.filter(c => !c.paid).reduce((a, c) => a + Number(c.amount), 0)
+                const total = cascadeCommissions.reduce((a, c) => a + Number(c.amount), 0)
                 return (
-                  <div style={{ display: 'flex', gap: 16, marginBottom: 20, flexWrap: 'wrap' }}>
-                    <div style={{ background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, padding: '14px 20px', flex: 1, minWidth: 160 }}>
-                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 4, textTransform: 'uppercase' }}>Cascade à verser</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: '#ef4444' }}>{unpaid.toLocaleString('fr-FR')} €</div>
+                  <div className="flex gap-4 mb-5 flex-wrap">
+                    <div className="bg-accent-red/8 border border-accent-red/20 rounded-xl p-4 flex-1 min-w-[160px]">
+                      <div className="stat-label mb-1">Cascade à verser</div>
+                      <div className="text-xl font-mono font-bold text-accent-red">{unpaid.toLocaleString('fr-FR')} €</div>
                     </div>
-                    <div style={{ background: 'rgba(46,213,115,0.08)', border: '1px solid rgba(46,213,115,0.2)', borderRadius: 10, padding: '14px 20px', flex: 1, minWidth: 160 }}>
-                      <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.35)', marginBottom: 4, textTransform: 'uppercase' }}>Total cascade</div>
-                      <div style={{ fontSize: 22, fontWeight: 800, color: '#10B981' }}>{cascadeCommissions.reduce((a, c) => a + Number(c.amount), 0).toLocaleString('fr-FR')} €</div>
+                    <div className="bg-accent-mint/8 border border-accent-mint/20 rounded-xl p-4 flex-1 min-w-[160px]">
+                      <div className="stat-label mb-1">Total cascade</div>
+                      <div className="text-xl font-mono font-bold text-accent-mint">{total.toLocaleString('fr-FR')} €</div>
                     </div>
                   </div>
                 )
               })()}
 
-              <div style={{ overflowX: 'auto' }}>
-                <table style={{ width: '100%', borderCollapse: 'collapse', backgroundColor: '#111827', borderRadius: '12px', overflow: 'hidden' }}>
+              <div className="overflow-x-auto">
+                <table className="w-full border-collapse card overflow-hidden">
                   <thead>
-                    <tr style={{ backgroundColor: '#1F2937' }}>
+                    <tr className="bg-bg-elevated">
                       {['Parrain', 'Filleul', 'Cascade', 'Statut', 'Date', 'Action'].map(h => (
-                        <th key={h} style={{ padding: '16px', textAlign: 'left', fontWeight: 500, color: '#9CA3AF' }}>{h}</th>
+                        <th key={h} className="th">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody>
                     {cascadeCommissions.length === 0 ? (
                       <tr>
-                        <td colSpan={6} style={{ padding: '48px', textAlign: 'center', color: '#9CA3AF' }}>Aucune commission cascade</td>
+                        <td colSpan={6} className="py-12 text-center text-text-muted">Aucune commission cascade</td>
                       </tr>
                     ) : cascadeCommissions.map(cc => (
-                      <tr key={cc.id} style={{ borderTop: '1px solid #374151' }}>
-                        <td style={{ padding: '16px' }}>
-                          <div style={{ fontWeight: 600 }}>{cc.parrain_name}</div>
-                          <div style={{ fontSize: 11, color: '#3B82F6', fontFamily: 'monospace' }}>{cc.parrain_code}</div>
+                      <tr key={cc.id} className="border-t border-bg-border table-row-hover">
+                        <td className="px-3 md:px-5 py-3">
+                          <div className="font-semibold text-sm text-text-primary">{cc.parrain_name}</div>
+                          <div className="text-[11px] font-mono text-accent-mint">{cc.parrain_code}</div>
                         </td>
-                        <td style={{ padding: '16px' }}>
-                          <div style={{ fontWeight: 500 }}>{cc.filleul_name}</div>
-                          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.4)', fontFamily: 'monospace' }}>{cc.filleul_code}</div>
+                        <td className="px-3 md:px-5 py-3">
+                          <div className="font-medium text-sm text-text-primary">{cc.filleul_name}</div>
+                          <div className="text-[11px] font-mono text-text-muted">{cc.filleul_code}</div>
                         </td>
-                        <td style={{ padding: '16px', fontWeight: 800, color: '#10B981', fontSize: 15 }}>+{Number(cc.amount).toLocaleString('fr-FR')} €</td>
-                        <td style={{ padding: '16px' }}>
+                        <td className="px-3 md:px-5 py-3 font-mono font-bold text-accent-mint text-[15px]">+{Number(cc.amount).toLocaleString('fr-FR')} €</td>
+                        <td className="px-3 md:px-5 py-3">
                           {cc.paid ? (
                             <div>
-                              <span style={{ padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: 'rgba(16,185,129,0.15)', color: '#10b981' }}>Versé ✓</span>
-                              {cc.paid_at && <div style={{ fontSize: 10, color: '#6B7280', marginTop: 4 }}>{formatDate(cc.paid_at)}</div>}
+                              <span className="badge-mint">Versé</span>
+                              {cc.paid_at && <div className="text-[10px] text-text-muted mt-1">{formatDate(cc.paid_at)}</div>}
                             </div>
                           ) : (
-                            <span style={{ padding: '3px 10px', borderRadius: 100, fontSize: 11, fontWeight: 700, background: 'rgba(239,68,68,0.12)', color: '#ef4444' }}>En attente</span>
+                            <span className="badge-red">En attente</span>
                           )}
                         </td>
-                        <td style={{ padding: '16px', color: '#9CA3AF', fontSize: 13 }}>{formatDate(cc.created_at)}</td>
-                        <td style={{ padding: '16px' }}>
+                        <td className="px-3 md:px-5 py-3 text-text-muted text-[13px]">{formatDate(cc.created_at)}</td>
+                        <td className="px-3 md:px-5 py-3">
                           {!cc.paid && (
                             <button onClick={() => markCascadePaid(cc.id)}
-                              style={{ padding: '6px 12px', background: 'rgba(16,185,129,0.15)', border: '1px solid rgba(16,185,129,0.3)', borderRadius: 6, color: '#10b981', cursor: 'pointer', fontSize: 12, fontWeight: 600, whiteSpace: 'nowrap' }}>
+                              className="px-3 py-1.5 bg-accent-mint/10 border border-accent-mint/20 rounded-md text-accent-mint text-xs font-semibold cursor-pointer hover:bg-accent-mint/20 transition-colors whitespace-nowrap">
                               Marquer versé
                             </button>
                           )}
@@ -1353,32 +1397,40 @@ export default function Admin() {
 
       {/* ── MODAL: Per-referrer commission rates ─────────────────────────── */}
       {referrerCommissionModal && (
-        <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', zIndex: 1000 }}>
-          <div style={{ backgroundColor: '#111827', borderRadius: '12px', padding: '32px', width: '100%', maxWidth: '520px', maxHeight: '90vh', overflow: 'auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '6px' }}>
-              <h3 style={{ fontFamily: "'Montserrat', sans-serif", fontSize: '18px', fontWeight: 700 }}>Commissions — {referrerCommissionModal.full_name}</h3>
-              <button onClick={() => setReferrerCommissionModal(null)} style={{ background: 'rgba(255,255,255,0.06)', border: 'none', color: 'rgba(255,255,255,0.5)', width: 30, height: 30, borderRadius: 6, cursor: 'pointer', fontSize: 16 }}>✕</button>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center p-6 z-[1000]">
+          <div className="card p-8 w-full max-w-[520px] max-h-[90vh] overflow-auto">
+            <div className="flex justify-between items-start mb-1.5">
+              <h3 className="font-display text-lg font-semibold text-text-primary" style={{ letterSpacing: '-0.01em' }}>
+                Commissions — {referrerCommissionModal.full_name}
+              </h3>
+              <button onClick={() => setReferrerCommissionModal(null)}
+                className="w-8 h-8 flex items-center justify-center bg-white/5 rounded-md text-text-muted hover:text-text-primary hover:bg-white/10 cursor-pointer transition-colors border-none">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+              </button>
             </div>
-            <p style={{ color: '#9CA3AF', fontSize: '12px', marginBottom: '20px' }}>
-              Taux personnalisés pour cet apporteur. Les cases marquées <span style={{ color: '#3B82F6' }}>globale</span> utilisent le taux par défaut.
+            <p className="text-text-muted text-xs mb-5">
+              Taux personnalisés pour cet apporteur. Les cases marquées <span className="text-accent-mint">globale</span> utilisent le taux par défaut.
             </p>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+            <div className="flex flex-col gap-2.5 mb-6">
               {referrerRates.map((rate, idx) => (
-                <div key={rate.pack_name} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '10px 14px', backgroundColor: '#0A0F1C', borderRadius: '8px', border: `1px solid ${rate.is_custom ? 'rgba(59,130,246,0.3)' : '#374151'}` }}>
-                  <span style={{ flex: 1, fontWeight: 600, fontSize: '13px' }}>{rate.pack_name}</span>
-                  {!rate.is_custom && <span style={{ fontSize: '10px', color: '#3B82F6', background: 'rgba(59,130,246,0.1)', padding: '2px 6px', borderRadius: 100 }}>globale</span>}
+                <div key={rate.pack_name} className={`flex items-center gap-3 p-3 bg-bg-elevated rounded-lg border ${rate.is_custom ? 'border-accent-mint/20' : 'border-bg-border'}`}>
+                  <span className="flex-1 font-semibold text-[13px] text-text-primary">{rate.pack_name}</span>
+                  {!rate.is_custom && <span className="text-[10px] text-accent-mint bg-accent-mint/10 px-1.5 py-0.5 rounded-full">globale</span>}
                   <input type="number" min="0" value={rate.commission_amount}
                     onChange={(e) => { const updated = [...referrerRates]; updated[idx] = { ...rate, commission_amount: parseFloat(e.target.value) || 0, is_custom: true }; setReferrerRates(updated) }}
-                    style={{ width: '90px', padding: '6px 10px', backgroundColor: '#111827', border: '1px solid #4B5563', borderRadius: '6px', color: '#ffffff', fontSize: '13px', textAlign: 'right' }} />
-                  <span style={{ color: '#9CA3AF', fontSize: '13px' }}>€</span>
+                    className="w-[90px] bg-bg-surface border border-bg-border rounded-md px-2.5 py-1.5 text-[13px] font-mono text-text-primary text-right focus:outline-none focus:border-accent-mint/50 transition-colors" />
+                  <span className="text-text-muted text-[13px]">€</span>
                 </div>
               ))}
             </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button onClick={resetReferrerCommissions} style={{ padding: '10px 16px', background: 'transparent', border: '1px solid #4B5563', borderRadius: '8px', color: '#9CA3AF', cursor: 'pointer', fontSize: '13px' }}>
+            <div className="flex gap-2.5">
+              <button onClick={resetReferrerCommissions} className="btn-ghost text-[13px] py-2.5 px-4">
                 Remettre les taux globaux
               </button>
-              <button onClick={saveReferrerCommissions} disabled={referrerRatesSaving} style={{ flex: 1, padding: '10px 24px', backgroundColor: referrerRatesSaving ? '#374151' : '#3B82F6', border: 'none', borderRadius: '8px', color: '#ffffff', cursor: referrerRatesSaving ? 'not-allowed' : 'pointer', fontSize: '14px', fontWeight: 700, opacity: referrerRatesSaving ? 0.7 : 1 }}>
+              <button onClick={saveReferrerCommissions} disabled={referrerRatesSaving}
+                className={`btn-primary flex-1 py-2.5 justify-center text-sm ${referrerRatesSaving ? 'opacity-60 cursor-not-allowed' : ''}`}>
                 {referrerRatesSaving ? 'Sauvegarde...' : 'Enregistrer'}
               </button>
             </div>

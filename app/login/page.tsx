@@ -35,74 +35,72 @@ export default function Login() {
   }
 
   return (
-    <main style={{ minHeight: '100vh', background: '#0A0F1C', color: '#fff', fontFamily: "'Inter', sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 16px' }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        input:focus { outline: none; border-color: rgba(59,130,246,0.6) !important; }
-      `}</style>
-
-      {/* Background */}
-      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }}>
-        <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)', borderRadius: '50%' }} />
+    <main className="min-h-screen bg-bg-base font-body flex items-center justify-center px-4 py-8">
+      {/* Background halos */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute -top-1/4 right-0 w-[500px] h-[500px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(54,216,176,0.06) 0%, transparent 70%)' }} />
       </div>
 
-      <div style={{ position: 'relative', width: '100%', maxWidth: 400 }}>
+      <div className="relative w-full max-w-[400px]">
         {/* Logo */}
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 24, fontWeight: 800, color: '#fff' }}>
-              mar<span style={{ color: '#3B82F6' }}>peap</span>
-            </span>
+        <div className="text-center mb-8">
+          <Link href="/" className="font-display text-xl font-bold text-text-primary tracking-tight">
+            marpeap
           </Link>
         </div>
 
         {/* Card */}
-        <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 20, padding: '36px 32px' }}>
-          <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 24, fontWeight: 800, marginBottom: 6, textAlign: 'center' }}>Connexion</div>
-          <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 14, textAlign: 'center', marginBottom: 28 }}>Accédez à votre espace apporteur</div>
+        <div className="card p-8 md:p-9">
+          <h1 className="font-display text-xl text-text-primary text-center mb-1.5 font-semibold" style={{ letterSpacing: '-0.015em' }}>
+            Connexion
+          </h1>
+          <p className="font-body text-text-muted text-sm text-center mb-7">
+            Accédez à votre espace apporteur
+          </p>
 
           {error && (
-            <div style={{ background: 'rgba(231,76,60,0.1)', border: '1px solid rgba(231,76,60,0.2)', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#EF4444', textAlign: 'center' }}>
+            <div className="bg-accent-red/10 border border-accent-red/20 rounded-lg px-4 py-3 mb-5 text-sm text-accent-red text-center font-body">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.5)', marginBottom: 7 }}>Email</label>
+              <label className="label">Email</label>
               <input
                 type="email"
                 value={formData.email}
                 onChange={e => setFormData({ ...formData, email: e.target.value })}
                 placeholder="jean@exemple.fr"
                 required
-                style={{ width: '100%', padding: '12px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 9, color: '#fff', fontSize: 15, fontFamily: "'Inter', sans-serif", transition: 'border-color 0.2s' }}
+                className="input"
               />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,0.5)', marginBottom: 7 }}>Mot de passe</label>
+              <label className="label">Mot de passe</label>
               <input
                 type="password"
                 value={formData.password}
                 onChange={e => setFormData({ ...formData, password: e.target.value })}
                 placeholder="Votre mot de passe"
                 required
-                style={{ width: '100%', padding: '12px 14px', background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.09)', borderRadius: 9, color: '#fff', fontSize: 15, fontFamily: "'Inter', sans-serif", transition: 'border-color 0.2s' }}
+                className="input"
               />
             </div>
             <button
               type="submit"
               disabled={loading}
-              style={{ padding: '13px', background: loading ? 'rgba(59,130,246,0.5)' : '#3B82F6', border: 'none', borderRadius: 9, color: '#fff', fontSize: 15, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 4, fontFamily: "'Inter', sans-serif", transition: 'opacity 0.2s' }}
+              className={`btn-primary py-2.5 justify-center text-sm mt-1 ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
             >
               {loading ? 'Connexion...' : 'Se connecter'}
             </button>
           </form>
 
-          <p style={{ textAlign: 'center', marginTop: 20, color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
+          <p className="text-center mt-5 text-text-muted text-sm font-body">
             Pas encore inscrit ?{' '}
-            <Link href="/register" style={{ color: '#3B82F6', textDecoration: 'none', fontWeight: 600 }}>Créer un compte</Link>
+            <Link href="/register" className="text-accent-mint hover:text-accent-mint-dim transition-colors font-medium">
+              Créer un compte
+            </Link>
           </p>
         </div>
       </div>

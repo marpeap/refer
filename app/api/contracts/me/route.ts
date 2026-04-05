@@ -4,7 +4,7 @@ import { query } from '@/lib/db';
 export const runtime = 'nodejs';
 import { verifyToken } from '@/lib/jwt';
 
-const STORAGE_URL = process.env.STORAGE_URL as string;
+const STORAGE_URL = process.env.STORAGE_URL;
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get('Authorization');
@@ -44,6 +44,9 @@ export async function GET(request: NextRequest) {
     );
 
     // Add full PDF URL
+    if (!STORAGE_URL) {
+      return NextResponse.json({ error: 'Storage not configured' }, { status: 503 });
+    }
     contract.pdf_url = `${STORAGE_URL}/contracts/${contract.pdf_filename}`;
 
     return NextResponse.json({ contract });

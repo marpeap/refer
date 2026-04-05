@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
       { status: 201 }
     );
   } catch (error: any) {
-    if (error.message?.includes('unique')) {
+    if (error.code === '23505' || error.message?.includes('unique')) {
       return NextResponse.json(
         { error: 'Cet email est déjà utilisé' },
         { status: 409 }

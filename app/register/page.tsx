@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 
@@ -58,87 +58,72 @@ function RegisterForm() {
     }
   }
 
-  const inputStyle = (hasError: boolean): React.CSSProperties => ({
-    width: '100%',
-    padding: '12px 14px',
-    background: hasError ? 'rgba(231,76,60,0.07)' : 'rgba(255,255,255,0.04)',
-    border: `1px solid ${hasError ? 'rgba(231,76,60,0.3)' : 'rgba(255,255,255,0.09)'}`,
-    borderRadius: 9,
-    color: '#fff',
-    fontSize: 15,
-    fontFamily: "'Inter', sans-serif",
-    transition: 'border-color 0.2s',
-  })
+  const fields = [
+    { key: 'full_name', label: 'Nom complet', type: 'text', placeholder: 'Jean Dupont' },
+    { key: 'email', label: 'Email', type: 'email', placeholder: 'jean@exemple.fr' },
+    { key: 'phone', label: 'Téléphone', type: 'tel', placeholder: '06 12 34 56 78' },
+    { key: 'password', label: 'Mot de passe', type: 'password', placeholder: '8 caractères minimum' },
+    { key: 'confirmPassword', label: 'Confirmation', type: 'password', placeholder: 'Confirmez votre mot de passe' },
+  ]
 
   return (
-    <main style={{ minHeight: '100vh', background: '#0A0F1C', color: '#fff', fontFamily: "'Inter', sans-serif", display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '32px 16px' }}>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap');
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        input:focus { outline: none; border-color: rgba(59,130,246,0.6) !important; }
-      `}</style>
-
-      <div style={{ position: 'fixed', inset: 0, pointerEvents: 'none' }}>
-        <div style={{ position: 'absolute', top: '-20%', right: '-10%', width: 500, height: 500, background: 'radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 70%)', borderRadius: '50%' }} />
-        <div style={{ position: 'absolute', bottom: '-20%', left: '-10%', width: 400, height: 400, background: 'radial-gradient(circle, rgba(139,92,246,0.05) 0%, transparent 70%)', borderRadius: '50%' }} />
+    <main className="min-h-screen bg-bg-base font-body flex items-center justify-center px-4 py-8">
+      {/* Background halos */}
+      <div className="fixed inset-0 pointer-events-none">
+        <div className="absolute -top-1/4 right-0 w-[500px] h-[500px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(54,216,176,0.06) 0%, transparent 70%)' }} />
+        <div className="absolute -bottom-1/4 -left-[10%] w-[400px] h-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(240,180,41,0.04) 0%, transparent 70%)' }} />
       </div>
 
-      <div style={{ position: 'relative', width: '100%', maxWidth: 460 }}>
-        <div style={{ textAlign: 'center', marginBottom: 28 }}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
-            <span style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 24, fontWeight: 800, color: '#fff' }}>
-              mar<span style={{ color: '#3B82F6' }}>peap</span>
-            </span>
+      <div className="relative w-full max-w-[460px]">
+        {/* Logo */}
+        <div className="text-center mb-7">
+          <Link href="/" className="font-display text-xl font-bold text-text-primary tracking-tight">
+            marpeap
           </Link>
         </div>
 
         {refCode && (
-          <div style={{
-            background: 'rgba(59,130,246,0.08)',
-            border: '1px solid rgba(59,130,246,0.2)',
-            borderRadius: 10,
-            padding: '10px 16px',
-            marginBottom: 16,
-            fontSize: 13,
-            color: 'rgba(255,255,255,0.6)',
-            textAlign: 'center',
-          }}>
-            🤝 Invité par le code partenaire <strong style={{ color: '#3B82F6' }}>{refCode}</strong>
+          <div className="bg-accent-mint/8 border border-accent-mint/20 rounded-xl px-4 py-2.5 mb-4 text-center">
+            <span className="font-body text-text-secondary text-xs">
+              Invité par le code partenaire <strong className="text-accent-mint">{refCode}</strong>
+            </span>
           </div>
         )}
 
         {message ? (
-          <div style={{ background: 'rgba(46,213,115,0.08)', border: '1px solid rgba(46,213,115,0.2)', borderRadius: 20, padding: '40px 32px', textAlign: 'center' }}>
-            <div style={{ fontSize: 40, marginBottom: 16 }}>✅</div>
-            <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 20, fontWeight: 800, marginBottom: 10 }}>Demande envoyée !</div>
-            <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 14, lineHeight: 1.6, marginBottom: 24 }}>{message}</div>
-            <Link href="/login" style={{ display: 'inline-block', padding: '11px 24px', background: '#3B82F6', color: '#fff', textDecoration: 'none', borderRadius: 9, fontWeight: 700, fontSize: 14 }}>
+          <div className="card p-8 md:p-10 text-center">
+            <div className="w-12 h-12 bg-accent-mint/10 border border-accent-mint/20 rounded-full flex items-center justify-center mx-auto mb-5">
+              <svg width="20" height="20" viewBox="0 0 18 18" fill="none" className="text-accent-mint">
+                <path d="M4 9l3.5 3.5L14 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <h2 className="font-display text-lg text-text-primary font-semibold mb-2" style={{ letterSpacing: '-0.01em' }}>
+              Demande envoyée
+            </h2>
+            <p className="font-body text-text-secondary text-sm leading-relaxed mb-6">{message}</p>
+            <Link href="/login" className="btn-primary py-2.5 px-6 text-sm">
               Se connecter
             </Link>
           </div>
         ) : (
-          <div style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 20, padding: '36px 32px' }}>
-            <div style={{ fontFamily: "'Montserrat', sans-serif", fontSize: 24, fontWeight: 800, marginBottom: 6, textAlign: 'center' }}>Devenir apporteur</div>
-            <div style={{ color: 'rgba(255,255,255,0.35)', fontSize: 14, textAlign: 'center', marginBottom: 28, lineHeight: 1.5 }}>
+          <div className="card p-8 md:p-9">
+            <h1 className="font-display text-xl text-text-primary text-center mb-1.5 font-semibold" style={{ letterSpacing: '-0.015em' }}>
+              Devenir apporteur
+            </h1>
+            <p className="font-body text-text-muted text-sm text-center mb-7 leading-relaxed">
               Rejoignez le programme et gagnez des commissions sur chaque vente.
-            </div>
+            </p>
 
             {errors.submit && (
-              <div style={{ background: 'rgba(231,76,60,0.1)', border: '1px solid rgba(231,76,60,0.2)', borderRadius: 8, padding: '12px 16px', marginBottom: 20, fontSize: 14, color: '#EF4444', textAlign: 'center' }}>
+              <div className="bg-accent-red/10 border border-accent-red/20 rounded-lg px-4 py-3 mb-5 text-sm text-accent-red text-center font-body">
                 {errors.submit}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-              {[
-                { key: 'full_name', label: 'Nom complet', type: 'text', placeholder: 'Jean Dupont' },
-                { key: 'email', label: 'Email', type: 'email', placeholder: 'jean@exemple.fr' },
-                { key: 'phone', label: 'Téléphone', type: 'tel', placeholder: '06 12 34 56 78' },
-                { key: 'password', label: 'Mot de passe', type: 'password', placeholder: '8 caractères minimum' },
-                { key: 'confirmPassword', label: 'Confirmation', type: 'password', placeholder: 'Confirmez votre mot de passe' },
-              ].map(field => (
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              {fields.map(field => (
                 <div key={field.key}>
-                  <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: errors[field.key] ? '#EF4444' : 'rgba(255,255,255,0.5)', marginBottom: 7 }}>
+                  <label className={`label ${errors[field.key] ? 'text-accent-red' : ''}`}>
                     {field.label}
                   </label>
                   <input
@@ -146,24 +131,28 @@ function RegisterForm() {
                     value={formData[field.key as keyof typeof formData]}
                     onChange={e => setFormData({ ...formData, [field.key]: e.target.value })}
                     placeholder={field.placeholder}
-                    style={inputStyle(!!errors[field.key])}
+                    className={`input ${errors[field.key] ? 'border-accent-red/30 bg-accent-red/5' : ''}`}
                   />
-                  {errors[field.key] && <span style={{ fontSize: 12, color: '#EF4444', marginTop: 4, display: 'block' }}>{errors[field.key]}</span>}
+                  {errors[field.key] && (
+                    <span className="text-xs text-accent-red mt-1 block font-body">{errors[field.key]}</span>
+                  )}
                 </div>
               ))}
 
               <button
                 type="submit"
                 disabled={loading}
-                style={{ padding: '13px', background: loading ? 'rgba(59,130,246,0.5)' : '#3B82F6', border: 'none', borderRadius: 9, color: '#fff', fontSize: 15, fontWeight: 700, cursor: loading ? 'not-allowed' : 'pointer', marginTop: 4, fontFamily: "'Inter', sans-serif" }}
+                className={`btn-primary py-2.5 justify-center text-sm mt-1 ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
               >
                 {loading ? 'Inscription...' : 'Soumettre ma demande'}
               </button>
             </form>
 
-            <p style={{ textAlign: 'center', marginTop: 20, color: 'rgba(255,255,255,0.3)', fontSize: 14 }}>
+            <p className="text-center mt-5 text-text-muted text-sm font-body">
               Déjà inscrit ?{' '}
-              <Link href="/login" style={{ color: '#3B82F6', textDecoration: 'none', fontWeight: 600 }}>Se connecter</Link>
+              <Link href="/login" className="text-accent-mint hover:text-accent-mint-dim transition-colors font-medium">
+                Se connecter
+              </Link>
             </p>
           </div>
         )}

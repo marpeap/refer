@@ -1,6 +1,8 @@
+import './globals.css'
+
 export const metadata = {
-  title: 'Marpeap - Programme d\'apporteurs d\'affaires',
-  description: 'Recommandez Marpeap. Touchez une commission.',
+  title: 'Marpeap - Programme apporteurs d\'affaires',
+  description: 'Recommandez Marpeap. Touchez une commission sur chaque vente.',
   viewport: 'width=device-width, initial-scale=1',
   icons: {
     icon: [
@@ -23,18 +25,11 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Montserrat:wght@700;800&family=Fira+Code:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Nunito+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap"
           rel="stylesheet"
         />
       </head>
-      <body style={{ 
-        margin: 0, 
-        padding: 0, 
-        backgroundColor: '#0A0F1C',
-        color: '#F9FAFB',
-        fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-        minHeight: '100vh'
-      }}>
+      <body className="bg-bg-base text-text-primary font-body min-h-screen">
         {children}
       </body>
     </html>
