@@ -85,14 +85,12 @@ export default function Home() {
                   fontWeight: 700,
                 }}
               >
-                Vendez des sites web
-                <br />
-                <span className="text-accent-mint">sans en créer un seul.</span>
+                180 à 820€ par client recommandé.
               </h1>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={100}>
-              <p className="font-body text-text-secondary text-lg md:text-xl leading-relaxed mb-8 max-w-lg">
-                Partagez votre lien, on s'occupe du reste. Commission versée à chaque vente.
+              <p className="font-body text-text-secondary text-lg md:text-xl leading-relaxed mb-8 max-w-md">
+                Recommandez les solutions digitales Marpeap. Commission versée chaque mois, sans plafond.
               </p>
             </ScrollReveal>
             <ScrollReveal direction="up" delay={200}>
@@ -312,12 +310,10 @@ export default function Home() {
         <div className="max-w-[600px] mx-auto text-center">
           <ScrollReveal direction="up" delay={0}>
             <h2 className="font-display text-text-primary mb-5" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', lineHeight: 1.1, letterSpacing: '-0.025em', fontWeight: 700 }}>
-              Votre réseau a de la valeur.
-              <br />
-              <span className="text-accent-mint">Monétisez-le.</span>
+              Prêt à recommander ?
             </h2>
             <p className="font-body text-text-secondary text-[15px] mb-10 max-w-sm mx-auto leading-relaxed">
-              Créez votre compte, recevez votre lien, commencez à recommander.
+              Inscription en 2 minutes. Votre premier lien de parrainage dans la foulée.
             </p>
             <Link href="/register" className="btn-primary py-3.5 px-10 text-[15px] font-semibold">
               Créer mon compte gratuit
