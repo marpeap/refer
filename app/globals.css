@@ -117,11 +117,10 @@
 /* Landing background */
 .landing-bg {
   background:
-    radial-gradient(ellipse 100% 45% at 18% 3%, rgba(54, 216, 176, 0.06) 0%, transparent 55%),
-    radial-gradient(ellipse 60% 35% at 85% 15%, rgba(240, 180, 41, 0.04) 0%, transparent 50%),
-    radial-gradient(ellipse 80% 40% at 50% 70%, rgba(54, 216, 176, 0.03) 0%, transparent 45%),
+    radial-gradient(ellipse 100% 45% at 18% 3%, rgba(54, 216, 176, 0.10) 0%, transparent 55%),
+    radial-gradient(ellipse 60% 35% at 85% 15%, rgba(240, 180, 41, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse 80% 40% at 50% 70%, rgba(54, 216, 176, 0.04) 0%, transparent 45%),
     linear-gradient(170deg, #0A1A1F 0%, #060E12 40%, #050C10 100%);
-  background-attachment: fixed;
 }
 
 /* Grain overlay */

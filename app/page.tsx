@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import ScrollReveal from '@/components/ScrollReveal'
+import Navbar from '@/components/Navbar'
 
 export const metadata = {
   title: 'Marpeap — Programme apporteurs d\'affaires',
@@ -55,21 +56,7 @@ export default function Home() {
     <div className="min-h-screen landing-bg">
 
       {/* ═══ NAV ═══ */}
-      <nav className="sticky top-0 z-50 backdrop-blur-xl border-b border-bg-border bg-bg-base/80">
-        <div className="max-w-[1100px] mx-auto px-6 h-[56px] flex items-center justify-between">
-          <Link href="/" className="font-display text-lg font-bold text-text-primary tracking-tight">
-            marpeap
-          </Link>
-          <div className="flex items-center gap-3">
-            <Link href="/login" className="font-body text-sm text-text-secondary hover:text-text-primary transition-colors hidden sm:block">
-              Connexion
-            </Link>
-            <Link href="/register" className="btn-primary py-2 px-5 text-sm">
-              Devenir apporteur
-            </Link>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       {/* ═══ HERO ═══ */}
       <section className="relative z-10 pt-24 md:pt-36 pb-10 md:pb-14 px-6">
@@ -119,7 +106,7 @@ export default function Home() {
                 { value: '2 min', label: 'pour s\'inscrire' },
               ].map(stat => (
                 <div key={stat.label} className="flex items-baseline gap-2">
-                  <span className="font-mono text-lg md:text-xl font-bold text-text-primary tracking-tight">{stat.value}</span>
+                  <span className="font-display text-xl md:text-2xl font-bold text-text-primary" style={{ letterSpacing: '-0.025em' }}>{stat.value}</span>
                   <span className="font-body text-xs text-text-muted">{stat.label}</span>
                 </div>
               ))}
@@ -129,8 +116,8 @@ export default function Home() {
       </section>
 
       {/* ═══ COMMENT ÇA MARCHE — timeline layout ═══ */}
-      <section className="relative z-10 px-6 py-20 md:py-32" style={{
-        background: 'linear-gradient(180deg, var(--bg-surface) 0%, var(--bg-base) 100%)',
+      <section id="fonctionnement" className="relative z-10 px-6 py-20 md:py-32" style={{
+        background: 'radial-gradient(ellipse 90% 50% at 90% 10%, rgba(54,216,176,0.07) 0%, transparent 55%), linear-gradient(180deg, #0d2028 0%, #0b1a1f 50%, var(--bg-base) 100%)',
       }}>
         <div className="max-w-[1100px] mx-auto grid grid-cols-1 lg:grid-cols-[340px_1fr] gap-12 lg:gap-20">
           {/* Left — heading */}
@@ -176,7 +163,7 @@ export default function Home() {
       </section>
 
       {/* ═══ CATALOGUE — distinct gradient cards ═══ */}
-      <section className="relative z-10 px-6 pt-20 pb-16 md:pt-28 md:pb-20">
+      <section id="commissions" className="relative z-10 px-6 pt-20 pb-16 md:pt-28 md:pb-20">
         <div className="max-w-[1100px] mx-auto">
           <ScrollReveal direction="up" delay={0}>
             <div className="max-w-lg mb-12">
@@ -193,7 +180,7 @@ export default function Home() {
             {PACKS.map((pack, i) => (
               <ScrollReveal key={pack.name} direction="up" delay={i * 80}>
                 <div
-                  className="rounded-2xl p-6 border transition-all duration-200 hover:scale-[1.02] hover:brightness-110 h-full flex flex-col"
+                  className="rounded-2xl p-6 border transition-all duration-200 hover:scale-[1.02] h-full flex flex-col"
                   style={{
                     background: pack.gradient,
                     borderColor: pack.border,
@@ -224,7 +211,7 @@ export default function Home() {
 
       {/* ═══ AVANTAGES — zigzag split ═══ */}
       <section className="relative z-10 px-6 py-24 md:py-36" style={{
-        background: 'radial-gradient(ellipse 80% 40% at 80% 20%, rgba(240,180,41,0.04) 0%, transparent 50%), var(--bg-surface)',
+        background: 'radial-gradient(ellipse 80% 50% at 75% 15%, rgba(240,180,41,0.10) 0%, transparent 55%), radial-gradient(ellipse 70% 40% at 15% 85%, rgba(54,216,176,0.06) 0%, transparent 50%), linear-gradient(170deg, #101a12 0%, var(--bg-surface) 35%, #0b1a1f 100%)',
       }}>
         <div className="max-w-[1100px] mx-auto">
           <ScrollReveal direction="up" delay={0}>
@@ -269,8 +256,10 @@ export default function Home() {
                     </p>
                   </div>
                   {/* Metric block */}
-                  <div className={`shrink-0 rounded-2xl border border-bg-border p-8 md:p-10 ${i === 0 ? 'bg-accent-mint/[0.04]' : i === 1 ? 'bg-accent-gold/[0.04]' : 'bg-[#9B5BF5]/[0.04]'}`}>
-                    <div className={`font-mono text-3xl md:text-4xl font-bold tracking-tight mb-1 ${i === 0 ? 'text-accent-mint' : i === 1 ? 'text-accent-gold' : 'text-[#9B5BF5]'}`}>
+                  <div className={`shrink-0 rounded-2xl p-8 md:p-10 ${i === 0 ? 'bg-accent-mint/[0.10] border border-accent-mint/25' : i === 1 ? 'bg-accent-gold/[0.10] border border-accent-gold/25' : 'border'}`}
+                    style={i === 2 ? { background: 'rgba(155,91,245,0.10)', borderColor: 'rgba(155,91,245,0.25)' } : undefined}
+                  >
+                    <div className={`font-display text-3xl md:text-4xl font-bold mb-1 ${i === 0 ? 'text-accent-mint' : i === 1 ? 'text-accent-gold' : 'text-[#9B5BF5]'}`} style={{ letterSpacing: '-0.03em', lineHeight: 1.05 }}>
                       {item.metric}
                     </div>
                     <div className="font-body text-text-muted text-xs">{item.metricLabel}</div>
@@ -283,7 +272,9 @@ export default function Home() {
       </section>
 
       {/* ═══ TRUST — simple strip ═══ */}
-      <section className="relative z-10 px-6 py-14 md:py-16 border-t border-b border-bg-border">
+      <section className="relative z-10 px-6 py-14 md:py-16 border-t border-b border-bg-border" style={{
+        background: 'linear-gradient(0deg, var(--bg-surface) 0%, var(--bg-base) 100%)',
+      }}>
         <div className="max-w-[900px] mx-auto">
           <ScrollReveal direction="up" delay={0}>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 text-center">
@@ -306,7 +297,9 @@ export default function Home() {
       </section>
 
       {/* ═══ CTA FINAL ═══ */}
-      <section className="relative z-10 px-6 pt-24 pb-20 md:pt-36 md:pb-28">
+      <section className="relative z-10 px-6 pt-24 pb-20 md:pt-36 md:pb-28" style={{
+        background: 'radial-gradient(ellipse 80% 70% at 50% 90%, rgba(54,216,176,0.09) 0%, transparent 60%)',
+      }}>
         <div className="max-w-[600px] mx-auto text-center">
           <ScrollReveal direction="up" delay={0}>
             <h2 className="font-display text-text-primary mb-5" style={{ fontSize: 'clamp(1.75rem, 4vw, 2.75rem)', lineHeight: 1.1, letterSpacing: '-0.025em', fontWeight: 700 }}>
