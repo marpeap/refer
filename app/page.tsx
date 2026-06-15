@@ -180,7 +180,7 @@ export default function Home() {
             {PACKS.map((pack, i) => (
               <ScrollReveal key={pack.name} direction="up" delay={i * 80}>
                 <div
-                  className="rounded-2xl p-6 border transition-all duration-200 hover:scale-[1.02] h-full flex flex-col"
+                  className="rounded-2xl p-6 border transition-all duration-200 hover:brightness-[1.12] h-full flex flex-col"
                   style={{
                     background: pack.gradient,
                     borderColor: pack.border,
@@ -277,14 +277,14 @@ export default function Home() {
       }}>
         <div className="max-w-[900px] mx-auto">
           <ScrollReveal direction="up" delay={0}>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10 text-center">
+            <div className="grid grid-cols-2 gap-6 md:flex md:divide-x md:divide-bg-border text-center">
               {[
                 { value: 'Gratuit', label: 'Inscription' },
                 { value: '0€', label: 'Frais cachés' },
                 { value: 'Mensuel', label: 'Versement' },
                 { value: '1 clic', label: 'Annulation' },
               ].map(item => (
-                <div key={item.label}>
+                <div key={item.label} className="flex-1 md:px-10 first:md:pl-0 last:md:pr-0">
                   <div className="font-display text-lg md:text-xl font-bold text-text-primary mb-0.5" style={{ letterSpacing: '-0.01em' }}>
                     {item.value}
                   </div>
